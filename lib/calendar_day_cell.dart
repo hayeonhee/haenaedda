@@ -19,7 +19,6 @@ class CalendarDayCell extends StatelessWidget {
       child: AspectRatio(
         aspectRatio: 1,
         child: Container(
-          alignment: Alignment.topLeft,
           child: Stack(
             children: [
               Text(dayText, style: const TextStyle(fontSize: 10)),
