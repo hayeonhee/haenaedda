@@ -19,13 +19,14 @@ class CalendarDayCell extends StatelessWidget {
       child: AspectRatio(
         aspectRatio: 1,
         child: Container(
-          decoration: BoxDecoration(
-            color: hasRecord ? Colors.deepPurple : Colors.white,
-            border: Border.all(color: Colors.black),
-            borderRadius: BorderRadius.circular(8),
-          ),
           alignment: Alignment.topLeft,
-          child: Text(dayText),
+          child: Stack(
+            children: [
+              Text(dayText, style: const TextStyle(fontSize: 10)),
+              if (hasRecord)
+                Positioned(child: Image.asset('assets/did_it_stamp_kor.png')),
+            ],
+          ),
         ),
       ),
     );
