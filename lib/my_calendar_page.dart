@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'calendar_day_cell.dart';
-import 'empty_cell.dart';
+import 'package:haenaedda/calendar_screen.dart';
+import 'package:haenaedda/main.dart';
+import 'package:haenaedda/model/calendar_grid_layout.dart';
 
 class MyCalendarPage extends StatefulWidget {
   final String title;
@@ -44,27 +45,11 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
               }),
             ),
             const SizedBox(height: 10),
-            GridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 7,
-              childAspectRatio: 1,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 8,
-              children: List.generate(totalCellsCount, (index) {
-                if (index < leadingBlanks) {
-                  return const EmptyCell();
-                } else if (index < leadingBlanks + totalDaysOfMonth) {
-                  int day = index - leadingBlanks + 1;
-                  return CalendarDayCell(
-                    dayText: '$day',
-                    hasRecord: true,
-                    onTap: () {},
-                  );
-                } else {
-                  return const EmptyCell();
-                }
-              }),
-            ),
+            CalendarScreen(
+              dateLayout: dateLayout,
+              selectedDates: selectedDates,
+              onCellTap: (selectedDate) => toggleDate(kUserGoal, selectedDate),
+            )
           ],
         ),
       ),
