@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CalendarDayCell extends StatelessWidget {
   final String dayText;
   final bool hasRecord;
-  final VoidCallback onTap;
+  final void Function(DateTime) onTap;
 
   const CalendarDayCell({
     super.key,
@@ -15,7 +15,7 @@ class CalendarDayCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => onTap(cellDate),
       child: AspectRatio(
         aspectRatio: 1,
         child: Stack(
