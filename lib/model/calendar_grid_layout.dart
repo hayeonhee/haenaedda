@@ -18,4 +18,14 @@ class CalendarGridLayout {
     trailingBlanks = (7 - partialCellCount % 7) % 7;
     totalCellCount = partialCellCount + trailingBlanks;
   }
+
+  bool isNotEmptyCell(int index) {
+    return index >= leadingBlanks && index < leadingBlanks + totalDaysOfMonth;
+  }
+
+  DateTime dateFromIndex(int index) {
+    assert(isNotEmptyCell(index), 'Invalid index: $index. Not a date cell.');
+    final day = index - leadingBlanks + 1;
+    return DateTime(year, month, day);
+  }
 }
