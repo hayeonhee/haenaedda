@@ -9,6 +9,8 @@ class CalendarGridLayout {
   late final int totalCellCount;
 
   CalendarGridLayout(this.baseDate) {
+    year = baseDate.year;
+    month = baseDate.month;
     int firstWeekday = DateTime(year, month, 1).weekday % 7;
     totalDaysOfMonth = DateTime(year, month + 1, 0).day;
     leadingBlanks = firstWeekday;
