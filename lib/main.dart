@@ -14,6 +14,15 @@ class Haenaedda extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: (context, child) {
+        final mediaQuery = MediaQuery.of(context);
+        return MediaQuery(
+          data: mediaQuery.copyWith(
+            textScaleFactor: mediaQuery.textScaleFactor,
+          ),
+          child: child!,
+        );
+      },
       title: 'HAENAEDDA — I did it',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

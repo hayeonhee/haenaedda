@@ -18,14 +18,16 @@ class CalendarDayCell extends StatelessWidget {
       onTap: onTap,
       child: AspectRatio(
         aspectRatio: 1,
-        child: Container(
-          decoration: BoxDecoration(
-            color: hasRecord ? Colors.deepPurple : Colors.white,
-            border: Border.all(color: Colors.black),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          alignment: Alignment.topLeft,
-          child: Text(dayText),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(dayText),
+            ),
+            if (hasRecord)
+              Positioned(child: Image.asset('assets/did_it_stamp_kor.png')),
+          ],
         ),
       ),
     );
