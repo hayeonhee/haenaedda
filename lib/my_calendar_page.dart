@@ -17,15 +17,6 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
 
   @override
   Widget build(BuildContext context) {
-    int year = DateTime.now().year;
-    int month = DateTime.now().month;
-    int firstWeekday = DateTime(year, month, 1).weekday % 7;
-    int totalDaysOfMonth = DateTime(year, month + 1, 0).day;
-    int leadingBlanks = firstWeekday;
-    int totalCells = leadingBlanks + totalDaysOfMonth;
-    int trailingBlanks = (7 - totalCells % 7) % 7;
-    int totalCellsCount = totalCells + trailingBlanks;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
