@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CalendarDayCell extends StatelessWidget {
-  final String dayText;
+  final DateTime cellDate;
   final bool hasRecord;
-  final VoidCallback onTap;
+  final void Function(DateTime) onTap;
 
   const CalendarDayCell({
     super.key,
-    required this.dayText,
+    required this.cellDate,
     required this.hasRecord,
     required this.onTap,
   });
@@ -15,7 +15,7 @@ class CalendarDayCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => onTap(cellDate),
       child: AspectRatio(
         aspectRatio: 1,
         child: Stack(
@@ -23,7 +23,7 @@ class CalendarDayCell extends StatelessWidget {
           children: [
             FittedBox(
               fit: BoxFit.scaleDown,
-              child: Text(dayText),
+              child: Text('${cellDate.day}'),
             ),
             if (hasRecord)
               Positioned(child: Image.asset('assets/did_it_stamp_kor.png')),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'calendar_day_cell.dart';
-import 'empty_cell.dart';
+import 'package:haenaedda/calendar_screen.dart';
+import 'package:haenaedda/main.dart';
+import 'package:haenaedda/model/calendar_grid_layout.dart';
 
 class MyCalendarPage extends StatefulWidget {
   final String title;
@@ -15,16 +16,28 @@ class MyCalendarPage extends StatefulWidget {
 class _MyCalendarPageState extends State<MyCalendarPage> {
   final daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
+  Map<String, Set<DateTime>> recordsByGoal = {};
+
+  void toggleDate(String goal, DateTime date) {
+    final records = recordsByGoal[goal] ?? <DateTime>{};
+
+    setState(() {
+      if (records.contains(date)) {
+        records.remove(date);
+      } else {
+        records.add(date);
+      }
+      recordsByGoal[goal] = records;
+    });
+  }
+
+  // TODO: Always display the current month in this version
+  DateTime focusedDate = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
-    int year = DateTime.now().year;
-    int month = DateTime.now().month;
-    int firstWeekday = DateTime(year, month, 1).weekday % 7;
-    int totalDaysOfMonth = DateTime(year, month + 1, 0).day;
-    int leadingBlanks = firstWeekday;
-    int totalCells = leadingBlanks + totalDaysOfMonth;
-    int trailingBlanks = (7 - totalCells % 7) % 7;
-    int totalCellsCount = totalCells + trailingBlanks;
+    final selectedDates = recordsByGoal[kUserGoal] ?? {};
+    final dateLayout = CalendarGridLayout(focusedDate);
 
     return Scaffold(
       appBar: AppBar(
@@ -37,7 +50,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
           children: [
             const SizedBox(height: 20),
             Text(
-              '$year년 $month월',
+              '${focusedDate.year}년 ${focusedDate.month}월',
               style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 20),
@@ -53,27 +66,11 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
               }),
             ),
             const SizedBox(height: 10),
-            GridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 7,
-              childAspectRatio: 1,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 8,
-              children: List.generate(totalCellsCount, (index) {
-                if (index < leadingBlanks) {
-                  return const EmptyCell();
-                } else if (index < leadingBlanks + totalDaysOfMonth) {
-                  int day = index - leadingBlanks + 1;
-                  return CalendarDayCell(
-                    dayText: '$day',
-                    hasRecord: true,
-                    onTap: () {},
-                  );
-                } else {
-                  return const EmptyCell();
-                }
-              }),
-            ),
+            CalendarScreen(
+              dateLayout: dateLayout,
+              selectedDates: selectedDates,
+              onCellTap: (selectedDate) => toggleDate(kUserGoal, selectedDate),
+            )
           ],
         ),
       ),
