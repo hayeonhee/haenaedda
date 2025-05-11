@@ -16,8 +16,29 @@ class MyCalendarPage extends StatefulWidget {
 class _MyCalendarPageState extends State<MyCalendarPage> {
   final daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
+  Map<String, Set<DateTime>> recordsByGoal = {};
+
+  void toggleDate(String goal, DateTime date) {
+    final records = recordsByGoal[goal] ?? <DateTime>{};
+
+    setState(() {
+      if (records.contains(date)) {
+        records.remove(date);
+      } else {
+        records.add(date);
+      }
+      recordsByGoal[goal] = records;
+    });
+  }
+
+  // TODO: Always display the current month in this version
+  DateTime focusedDate = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
+    final selectedDates = recordsByGoal[kUserGoal] ?? {};
+    final dateLayout = CalendarGridLayout(focusedDate);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -29,7 +50,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
           children: [
             const SizedBox(height: 20),
             Text(
-              '$year년 $month월',
+              '${focusedDate.year}년 ${focusedDate.month}월',
               style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 20),
