@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'my_calendar_page.dart';
+import 'package:haenaedda/constants/app_theme.dart';
+import 'package:haenaedda/my_calendar_page.dart';
 
 // TODO: Let the user set a goal
 String kUserGoal = 'User\'s goal';
@@ -24,10 +25,9 @@ class Haenaedda extends StatelessWidget {
         );
       },
       title: 'HAENAEDDA — I did it',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.system,
       home: MyCalendarPage(title: kUserGoal),
     );
   }

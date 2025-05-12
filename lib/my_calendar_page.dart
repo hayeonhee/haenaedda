@@ -14,7 +14,8 @@ class MyCalendarPage extends StatefulWidget {
 }
 
 class _MyCalendarPageState extends State<MyCalendarPage> {
-  final daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+  // TODO: Change app language based on user's device settings
+  final daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
   Map<String, Set<DateTime>> recordsByGoal = {};
 
@@ -40,15 +41,11 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
     final dateLayout = CalendarGridLayout(focusedDate);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 80),
             Text(
               '${focusedDate.year}년 ${focusedDate.month}월',
               style: const TextStyle(fontSize: 20),
@@ -59,7 +56,11 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
                 return Expanded(
                   child: Text(
                     daysOfWeek[index],
-                    style: const TextStyle(fontSize: 15),
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 );
