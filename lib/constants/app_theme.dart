@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:haenaedda/constants/app_colors.dart';
-import 'package:haenaedda/constants/app_typography.dart';
 
 final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
@@ -19,7 +18,7 @@ final ThemeData lightTheme = ThemeData(
     error: AppColors.error,
     onError: AppColors.onError,
   ),
-  textTheme: AppTypography.textTheme(AppColors.onSurface),
+  fontFamily: 'Pretendard',
 );
 
 final ThemeData darkTheme = ThemeData(
@@ -39,5 +38,5 @@ final ThemeData darkTheme = ThemeData(
     error: AppColors.darkError,
     onError: AppColors.darkOnError,
   ),
-  textTheme: AppTypography.textTheme(AppColors.darkOnSurface),
+  fontFamily: 'Pretendard',
 );
