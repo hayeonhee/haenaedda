@@ -15,6 +15,7 @@ class CalendarDayCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () => onTap(cellDate),
       child: AspectRatio(
         aspectRatio: 1,
