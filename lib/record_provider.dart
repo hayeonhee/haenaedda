@@ -17,4 +17,8 @@ class RecordProvider extends ChangeNotifier {
     _recordsByTopic[topic] = topicRecords;
     notifyListeners();
   }
+
+  Future<void> loadRecords() async {}
+
+  Future<void> saveRecords() async {}
 }
