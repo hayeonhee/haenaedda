@@ -22,6 +22,9 @@ class Haenaedda extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final recordProvider = Provider.of<RecordProvider>(context, listen: false);
+    recordProvider.loadRecords();
+
     return MaterialApp(
       builder: (context, child) {
         final mediaQuery = MediaQuery.of(context);

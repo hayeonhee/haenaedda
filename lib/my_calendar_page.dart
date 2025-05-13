@@ -23,6 +23,14 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
   DateTime focusedDate = DateTime.now();
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<RecordProvider>().loadRecords();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final recordProvider = context.watch<RecordProvider>();
     final selectedDates = recordProvider.getRecords(kUserGoal);
