@@ -1,23 +1,25 @@
 import 'package:flutter/foundation.dart';
+import 'package:haenaedda/model/goal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:haenaedda/utils/record_serializer.dart';
 
 class RecordProvider extends ChangeNotifier {
-  final Map<String, Set<DateTime>> _recordsByTopic = {};
+  final List<Goal> _goals = [];
+  final Map<String, Set<DateTime>> _recordsByGoalId = {};
 
-  Map<String, Set<DateTime>> get recordsByTopic => _recordsByTopic;
+  Map<String, Set<DateTime>> get recordsByGoal => _recordsByGoalId;
 
-  Set<DateTime> getRecords(String topic) => _recordsByTopic[topic] ?? {};
+  Set<DateTime> getRecords(String goal) => _recordsByGoalId[goal] ?? {};
 
-  void toggleRecord(String topic, DateTime date) {
-    final topicRecords = _recordsByTopic[topic] ?? <DateTime>{};
-    if (topicRecords.contains(date)) {
-      topicRecords.remove(date);
+  void toggleRecord(String goalId, DateTime date) {
+    final goalRecords = _recordsByGoalId[goalId] ?? <DateTime>{};
+    if (goalRecords.contains(date)) {
+      goalRecords.remove(date);
     } else {
-      topicRecords.add(date);
+      goalRecords.add(date);
     }
-    _recordsByTopic[topic] = topicRecords;
+    _recordsByGoalId[goalId] = goalRecords;
     saveRecords();
     notifyListeners();
   }
@@ -28,7 +30,7 @@ class RecordProvider extends ChangeNotifier {
     for (String key in keys) {
       final dates = prefs.getString(key);
       if (dates != null) {
-        _recordsByTopic[key] = jsonToDateTimeSet(dates);
+        _recordsByGoalId[key] = jsonToDateTimeSet(dates);
       }
     }
     notifyListeners();
@@ -36,7 +38,7 @@ class RecordProvider extends ChangeNotifier {
 
   Future<void> saveRecords() async {
     final prefs = await SharedPreferences.getInstance();
-    for (final entry in _recordsByTopic.entries) {
+    for (final entry in _recordsByGoalId.entries) {
       final dates = dateTimeSetToJson(entry.value);
       await prefs.setString(entry.key, dates);
     }
