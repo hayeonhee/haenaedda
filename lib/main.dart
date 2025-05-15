@@ -32,7 +32,7 @@ class _HaenaeddaState extends State<Haenaedda> {
     Future.microtask(() async {
       final recordProvider =
           Provider.of<RecordProvider>(context, listen: false);
-      final goal = await recordProvider.initializeAndGetGoal();
+      final goal = await recordProvider.initializeAndGetFirstGoal();
       setState(() {
         goalId = goal.id;
       });
