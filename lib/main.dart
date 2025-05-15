@@ -60,7 +60,7 @@ class _HaenaeddaState extends State<Haenaedda> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
-      home: MyCalendarPage(title: kUserGoal),
+      home: MyCalendarPage(goalId: nonNullableGoalId),
     );
   }
 }

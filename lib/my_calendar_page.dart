@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/calendar_screen.dart';
-import 'package:haenaedda/main.dart';
 import 'package:haenaedda/model/calendar_grid_layout.dart';
 import 'package:haenaedda/record_provider.dart';
 
 class MyCalendarPage extends StatefulWidget {
-  final String title;
+  final String goalId;
 
-  const MyCalendarPage({super.key, required this.title});
+  const MyCalendarPage({super.key, required this.goalId});
 
   @override
   State<MyCalendarPage> createState() => _MyCalendarPageState();
@@ -23,17 +22,9 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
   DateTime focusedDate = DateTime.now();
 
   @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
-      context.read<RecordProvider>().loadRecords();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final recordProvider = context.watch<RecordProvider>();
-    final selectedDates = recordProvider.getRecords(kUserGoal);
+    final selectedDates = recordProvider.getRecords(widget.goalId);
     final dateLayout = CalendarGridLayout(focusedDate);
 
     return Scaffold(
@@ -67,7 +58,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
               dateLayout: dateLayout,
               selectedDates: selectedDates,
               onCellTap: (selectedDate) =>
-                  recordProvider.toggleRecord(kUserGoal, selectedDate),
+                  recordProvider.toggleRecord(widget.goalId, selectedDate),
             ),
           ],
         ),
