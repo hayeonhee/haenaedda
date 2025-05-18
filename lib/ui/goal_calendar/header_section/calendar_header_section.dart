@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:haenaedda/goal_display_text.dart';
-import 'package:haenaedda/goal_edit_field.dart';
 import 'package:haenaedda/model/goal.dart';
-import 'package:haenaedda/month_navigation_bar.dart';
+import 'package:haenaedda/ui/goal_calendar/header_section/goal_display_text.dart';
+import 'package:haenaedda/ui/goal_calendar/header_section/goal_edit_field.dart';
+import 'package:haenaedda/ui/goal_calendar/header_section/month_navigation_bar.dart';
 
 class CalendarHeaderSection extends StatefulWidget {
   final Goal goal;
