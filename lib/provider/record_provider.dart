@@ -50,6 +50,14 @@ class RecordProvider extends ChangeNotifier {
     return AddGoalResult.success;
   }
 
+  void renameGoal(String goalId, String newTitle) {
+    final goal = _goals.firstWhere((goal) => goal.id == goalId);
+    if (goal != null) {
+      goal.name = newTitle;
+      notifyListeners();
+    }
+  }
+
   void toggleRecord(String goalId, DateTime date) {
     final goalRecords = _recordsByGoalId[goalId] ?? <DateTime>{};
     if (goalRecords.contains(date)) {

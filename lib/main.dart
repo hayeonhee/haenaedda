@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/constants/app_theme.dart';
-import 'package:haenaedda/my_calendar_page.dart';
-import 'package:haenaedda/record_provider.dart';
+import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/ui/goal_calendar/my_calendar_page.dart';
+import 'package:haenaedda/provider/record_provider.dart';
 
 void main() {
   runApp(
@@ -24,7 +25,7 @@ class Haenaedda extends StatefulWidget {
 }
 
 class _HaenaeddaState extends State<Haenaedda> {
-  String? goalId;
+  Goal? firstDisplayedGoal;
 
   @override
   void initState() {
@@ -34,17 +35,17 @@ class _HaenaeddaState extends State<Haenaedda> {
           Provider.of<RecordProvider>(context, listen: false);
       final goal = await recordProvider.initializeAndGetFirstGoal();
       setState(() {
-        goalId = goal.id;
+        firstDisplayedGoal = goal;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (goalId == null) {
+    if (firstDisplayedGoal == null) {
       return const Center(child: CircularProgressIndicator());
     }
-    final String nonNullableGoalId = goalId!;
+    final Goal nonNullableGoal = firstDisplayedGoal!;
 
     return MaterialApp(
       builder: (context, child) {
@@ -60,7 +61,7 @@ class _HaenaeddaState extends State<Haenaedda> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
-      home: MyCalendarPage(goalId: nonNullableGoalId),
+      home: MyCalendarPage(goal: nonNullableGoal),
     );
   }
 }

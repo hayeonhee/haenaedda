@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:haenaedda/calendar_day_cell.dart';
 import 'package:haenaedda/empty_cell.dart';
 import 'package:haenaedda/model/calendar_grid_layout.dart';
+import 'package:haenaedda/ui/goal_calendar/calendar_day_cell.dart';
 
 class CalendarScreen extends StatefulWidget {
   final CalendarGridLayout dateLayout;
