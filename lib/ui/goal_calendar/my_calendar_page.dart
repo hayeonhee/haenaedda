@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:haenaedda/calendar_header_section.dart';
-import 'package:haenaedda/calendar_screen.dart';
 import 'package:haenaedda/model/calendar_grid_layout.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/ui/goal_calendar/calendar_screen.dart';
+import 'package:haenaedda/ui/goal_calendar/header_section/calendar_header_section.dart';
 
 class MyCalendarPage extends StatefulWidget {
   final Goal goal;

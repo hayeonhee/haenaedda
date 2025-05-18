@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:haenaedda/constants/app_theme.dart';
 import 'package:haenaedda/model/goal.dart';
-import 'package:haenaedda/my_calendar_page.dart';
+import 'package:haenaedda/ui/goal_calendar/my_calendar_page.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 
 void main() {
