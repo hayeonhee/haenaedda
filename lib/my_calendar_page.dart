@@ -30,7 +30,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             children: [
               const SizedBox(height: 80),
@@ -38,7 +38,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
                 '${focusedDate.year}년 ${focusedDate.month}월',
                 style: const TextStyle(fontSize: 20),
               ),
-              const SizedBox(height: 20),
+              const Divider(thickness: 1, height: 64),
               Row(
                 children: List.generate(daysOfWeek.length, (index) {
                   return Expanded(
@@ -54,7 +54,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
                   );
                 }),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 24),
               CalendarScreen(
                 dateLayout: dateLayout,
                 selectedDates: selectedDates,
