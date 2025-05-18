@@ -4,12 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:haenaedda/calendar_header_section.dart';
 import 'package:haenaedda/calendar_screen.dart';
 import 'package:haenaedda/model/calendar_grid_layout.dart';
-import 'package:haenaedda/record_provider.dart';
+import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/provider/record_provider.dart';
 
 class MyCalendarPage extends StatefulWidget {
-  final String goalId;
+  final Goal goal;
 
-  const MyCalendarPage({super.key, required this.goalId});
+  const MyCalendarPage({super.key, required this.goal});
 
   @override
   State<MyCalendarPage> createState() => _MyCalendarPageState();
@@ -25,7 +26,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
   @override
   Widget build(BuildContext context) {
     final recordProvider = context.watch<RecordProvider>();
-    final selectedDates = recordProvider.getRecords(widget.goalId);
+    final selectedDates = recordProvider.getRecords(widget.goal.id);
     final dateLayout = CalendarGridLayout(focusedDate);
 
     return Scaffold(
@@ -64,7 +65,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
                 dateLayout: dateLayout,
                 selectedDates: selectedDates,
                 onCellTap: (selectedDate) =>
-                    recordProvider.toggleRecord(widget.goalId, selectedDate),
+                    recordProvider.toggleRecord(widget.goal.id, selectedDate),
               ),
             ],
           ),
