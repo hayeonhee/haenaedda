@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:haenaedda/calendar_header_section.dart';
 import 'package:haenaedda/calendar_screen.dart';
 import 'package:haenaedda/model/calendar_grid_layout.dart';
 import 'package:haenaedda/record_provider.dart';
@@ -33,12 +34,16 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             children: [
-              const SizedBox(height: 80),
-              Text(
-                '${focusedDate.year}년 ${focusedDate.month}월',
-                style: const TextStyle(fontSize: 20),
+              const SizedBox(height: 30),
+              CalendarHeaderSection(
+                goal: widget.goal,
+                date: focusedDate,
+                // TODO: Implement the save functionality
+                onGoalEditSubmitted: (String value) {},
               ),
-              const Divider(thickness: 1, height: 64),
+              const SizedBox(height: 24),
+              const Divider(thickness: 1),
+              const SizedBox(height: 32),
               Row(
                 children: List.generate(daysOfWeek.length, (index) {
                   return Expanded(
