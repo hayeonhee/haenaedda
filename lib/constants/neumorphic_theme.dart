@@ -6,7 +6,7 @@ class NeumorphicTheme {
   static const Offset bottomRightShadowOffset = Offset(4, 4);
   static BorderRadius defaultBorderRadius = BorderRadius.circular(12);
 
-  BoxDecoration goalBoxDecoration(BuildContext context) {
+  static BoxDecoration goalBoxDecoration(BuildContext context) {
     return BoxDecoration(
       color: Theme.of(context).colorScheme.background,
       borderRadius: defaultBorderRadius,
