@@ -56,10 +56,7 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
                 controller: _controller,
                 goalTextStyle: _goalTextStyle,
                 onSave: () {
-                  final trimmedValue = _controller.text.trim();
-                  if (trimmedValue.isNotEmpty) {
-                    widget.onGoalEditSubmitted(trimmedValue);
-                  }
+                  widget.onGoalEditSubmitted(_controller.text);
                   setState(() => _isEditing = false);
                 },
               )

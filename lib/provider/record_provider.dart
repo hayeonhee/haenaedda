@@ -1,13 +1,32 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/utils/extensions/iterable_extensions.dart';
 import 'package:haenaedda/utils/record_serializer.dart';
 
-enum AddGoalResult { success, emptyInput, duplicate }
+class StorageKeys {
+  static const String goals = 'goals';
+}
+
+enum AddGoalResult {
+  success,
+  emptyInput,
+  duplicate,
+}
+
+enum RenameGoalResult {
+  success,
+  emptyInput,
+  notFound,
+  duplicate,
+  saveFailed,
+}
 
 class RecordProvider extends ChangeNotifier {
-  final List<Goal> _goals = [];
+  List<Goal> _goals = [];
   final Map<String, Set<DateTime>> _recordsByGoalId = {};
   final String _firstDisplayedGoalId = '1';
 
@@ -43,8 +62,8 @@ class RecordProvider extends ChangeNotifier {
     return nextId.toString();
   }
 
-  bool isDuplicateGoal(String newTitle) {
-    return _goals.any((goal) => goal.name == newTitle);
+  bool isDuplicateGoal(String newGoalName) {
+    return _goals.any((goal) => goal.name == newGoalName);
   }
 
   AddGoalResult addGoal(String input) {
@@ -55,12 +74,48 @@ class RecordProvider extends ChangeNotifier {
     return AddGoalResult.success;
   }
 
-  void renameGoal(String goalId, String newTitle) {
-    final goal = _goals.firstWhere((goal) => goal.id == goalId);
-    if (goal != null) {
-      goal.name = newTitle;
-      notifyListeners();
+  Future<RenameGoalResult> renameGoal(String goalId, String newGoalName) async {
+    if (newGoalName.trim().isEmpty) {
+      return RenameGoalResult.emptyInput;
     }
+    if (isDuplicateGoal(newGoalName)) {
+      return RenameGoalResult.duplicate;
+    }
+    final goal = _goals.firstWhereOrNull((goal) => goal.id == goalId);
+    if (goal == null) {
+      return RenameGoalResult.notFound;
+    }
+    goal.name = newGoalName;
+    notifyListeners();
+    return RenameGoalResult.success;
+  }
+
+  Future<bool> saveGoals() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final encodedGoalsJson =
+          jsonEncode(_goals.map((g) => g.toJson()).toList());
+      final isSaved =
+          await prefs.setString(StorageKeys.goals, encodedGoalsJson);
+      if (isSaved) notifyListeners();
+      return isSaved;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  Future<bool> loadGoal() async {
+    final prefs = await SharedPreferences.getInstance();
+    final loadedGoalsJson = prefs.getString(StorageKeys.goals);
+
+    if (loadedGoalsJson == null) return false;
+
+    final decodedGoalsJson = jsonDecode(loadedGoalsJson);
+    final restoredGoals =
+        decodedGoalsJson.map((e) => Goal.fromJson(e)).toList();
+    _goals = restoredGoals;
+    notifyListeners();
+    return true;
   }
 
   DateTime getFirstRecordedDate() {
