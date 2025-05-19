@@ -1,5 +1,7 @@
 class Goal {
   final String id;
+  // TODO: Add order property
+  // int order;
   String name;
 
   Goal(this.id, this.name);

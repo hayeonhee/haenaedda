@@ -9,7 +9,7 @@ enum AddGoalResult { success, emptyInput, duplicate }
 class RecordProvider extends ChangeNotifier {
   final List<Goal> _goals = [];
   final Map<String, Set<DateTime>> _recordsByGoalId = {};
-  final String _firstDisplayedRecordId = '1';
+  final String _firstDisplayedGoalId = '1';
 
   Map<String, Set<DateTime>> get recordsByGoal => _recordsByGoalId;
 
@@ -17,22 +17,27 @@ class RecordProvider extends ChangeNotifier {
 
   bool isGoalsEmpty() => _goals.isEmpty;
 
+// TODO: Currently displayed in ID order, but will switch to order field later.
   Future<Goal> initializeAndGetFirstGoal() async {
     await loadRecords();
 
     final existingGoal = _goals.firstWhere(
-      (goal) => goal.id == _firstDisplayedRecordId,
+      (goal) => goal.id == _firstDisplayedGoalId,
       orElse: () {
-        final newGoal = Goal(_firstDisplayedRecordId, '');
-        addGoal(newGoal.name);
+        final newGoal = _createDefaultGoal();
+        _goals.add(newGoal);
         return newGoal;
       },
     );
     return existingGoal;
   }
 
+  Goal _createDefaultGoal() {
+    return Goal(_firstDisplayedGoalId, "");
+  }
+
   String getNextGoalId() {
-    if (_goals.isEmpty) return _firstDisplayedRecordId;
+    if (_goals.isEmpty) return _firstDisplayedGoalId;
     final lastGoal = _goals.last;
     final nextId = int.parse(lastGoal.id) + 1;
     return nextId.toString();
