@@ -15,6 +15,8 @@ class AppColors {
   static const Color error = Color(0xFFB00020); // Error Red
   static const Color onError = Color(0xFFFFFFFF); // White on Error
 
+  static const Color hint = Color(0xFF8E8E93); // Hint or Guide Text
+
   // Dark Theme Colors
   static const Color darkPrimary = Color(0xFF4A90E2); // Sky Blue
   static const Color darkOnPrimary = Color(0xFF000000); // Black on Primary
