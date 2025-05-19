@@ -17,6 +17,7 @@ final ThemeData lightTheme = ThemeData(
     onSurface: AppColors.onSurface,
     error: AppColors.error,
     onError: AppColors.onError,
+    outline: AppColors.hint,
   ),
   fontFamily: 'Pretendard',
 );

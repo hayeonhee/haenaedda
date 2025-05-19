@@ -36,7 +36,9 @@ class GoalDisplayText extends StatelessWidget {
                   ? '눌러서 목표를 설정해보세요'
                   : controller.text,
               style: goalTextStyle.copyWith(
-                color: controller.text.isEmpty ? Colors.grey : Colors.black,
+                color: controller.text.isEmpty
+                    ? Theme.of(context).colorScheme.outline
+                    : null,
               ),
             ),
           ),

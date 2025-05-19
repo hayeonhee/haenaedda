@@ -38,6 +38,7 @@ class _GoalEditFieldState extends State<GoalEditField> {
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
               ),
+              cursorColor: Theme.of(context).colorScheme.onBackground,
             ),
           ),
         ),

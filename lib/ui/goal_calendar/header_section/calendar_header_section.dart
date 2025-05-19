@@ -26,12 +26,12 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
   late final TextEditingController _controller;
   final int maxLength = 20;
   final double buttonHeight = 48;
-  final goalTextStyle = const TextStyle(
-    fontSize: 18,
-    height: 1.3,
-    color: Colors.white,
-    fontWeight: FontWeight.bold,
-  );
+
+  TextStyle get _goalTextStyle => TextStyle(
+        fontSize: 16,
+        color: Theme.of(context).colorScheme.onBackground,
+        fontWeight: FontWeight.bold,
+      );
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
             ? GoalEditField(
                 buttonHeight: buttonHeight,
                 controller: _controller,
-                goalTextStyle: goalTextStyle,
+                goalTextStyle: _goalTextStyle,
                 onSave: () {
                   final trimmedValue = _controller.text.trim();
                   if (trimmedValue.isNotEmpty) {
@@ -66,7 +66,7 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
             : GoalDisplayText(
                 buttonHeight: buttonHeight,
                 controller: _controller,
-                goalTextStyle: goalTextStyle,
+                goalTextStyle: _goalTextStyle,
                 onStartEditing: () {
                   setState(() => _isEditing = true);
                 },
