@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:haenaedda/provider/record_provider.dart';
 
 class MonthNavigationBar extends StatefulWidget {
-  final DateTime date;
+  final DateTime referenceDate;
 
   const MonthNavigationBar({
     super.key,
-    required this.date,
+    required this.referenceDate,
   });
 
   @override
@@ -13,6 +16,52 @@ class MonthNavigationBar extends StatefulWidget {
 }
 
 class _MonthNavigationBarState extends State<MonthNavigationBar> {
+  late DateTime _focusedDate;
+  DateTime? _firstRecordedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusedDate = widget.referenceDate;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initFirstRecordedDateIfNeeded();
+  }
+
+  void _initFirstRecordedDateIfNeeded() {
+    _firstRecordedDate ??=
+        context.read<RecordProvider>().getFirstRecordedDate();
+  }
+
+  bool get isAtFirstRecordedMonth {
+    _initFirstRecordedDateIfNeeded();
+    return _focusedDate.year == _firstRecordedDate!.year &&
+        _focusedDate.month == _firstRecordedDate!.month;
+  }
+
+  bool get isAtReferenceMonth =>
+      _focusedDate.year == widget.referenceDate.year &&
+      _focusedDate.month == widget.referenceDate.month;
+
+  void _goToPreviousMonth() {
+    if (!isAtFirstRecordedMonth) {
+      setState(() {
+        _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1);
+      });
+    }
+  }
+
+  void _goToNextMonth() {
+    if (!isAtReferenceMonth) {
+      setState(() {
+        _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(

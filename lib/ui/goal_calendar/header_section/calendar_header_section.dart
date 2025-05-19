@@ -72,7 +72,7 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
                 },
               ),
         const SizedBox(height: 24),
-        MonthNavigationBar(date: widget.date),
+        MonthNavigationBar(referenceDate: widget.date),
       ],
     );
   }
