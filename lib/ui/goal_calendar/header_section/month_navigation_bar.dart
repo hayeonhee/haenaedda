@@ -64,36 +64,51 @@ class _MonthNavigationBarState extends State<MonthNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          // TODO: implement navigation to previous and next months
-          onPressed: () {},
-          icon: const Icon(Icons.chevron_left),
-          color: Theme.of(context).colorScheme.onBackground,
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
-        ),
-        Text(
-          '${widget.date.year}.${widget.date.month}',
-          style: TextStyle(
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: 48,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (!isAtFirstRecordedMonth)
+            IconButton(
+              onPressed: _goToPreviousMonth,
+              icon: const Icon(Icons.chevron_left),
               color: Theme.of(context).colorScheme.onBackground,
-              fontWeight: FontWeight.bold),
-        ),
-        IconButton(
-          // TODO: implement navigation to previous and next months
-          onPressed: () {},
-          icon: const Icon(Icons.chevron_right),
-          color: Theme.of(context).colorScheme.onBackground,
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          focusColor: Colors.transparent,
-        ),
-      ],
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
+            ),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.3,
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '${_focusedDate.year}.${_focusedDate.month.toString().padLeft(2, '0')}',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onBackground,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
+          if (!isAtReferenceMonth)
+            IconButton(
+              onPressed: _goToNextMonth,
+              icon: const Icon(Icons.chevron_right),
+              color: Theme.of(context).colorScheme.onBackground,
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
+            ),
+        ],
+      ),
     );
   }
 }
