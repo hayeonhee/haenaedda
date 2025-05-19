@@ -62,8 +62,8 @@ class RecordProvider extends ChangeNotifier {
     return nextId.toString();
   }
 
-  bool isDuplicateGoal(String newGoalName) {
-    return _goals.any((goal) => goal.name == newGoalName);
+  bool isDuplicateGoal(String newGoalTitle) {
+    return _goals.any((goal) => goal.title == newGoalTitle);
   }
 
   AddGoalResult addGoal(String input) {
@@ -74,18 +74,19 @@ class RecordProvider extends ChangeNotifier {
     return AddGoalResult.success;
   }
 
-  Future<RenameGoalResult> renameGoal(String goalId, String newGoalName) async {
-    if (newGoalName.trim().isEmpty) {
+  Future<RenameGoalResult> renameGoal(
+      String goalId, String newGoalTitle) async {
+    if (newGoalTitle.trim().isEmpty) {
       return RenameGoalResult.emptyInput;
     }
-    if (isDuplicateGoal(newGoalName)) {
+    if (isDuplicateGoal(newGoalTitle)) {
       return RenameGoalResult.duplicate;
     }
     final goal = _goals.firstWhereOrNull((goal) => goal.id == goalId);
     if (goal == null) {
       return RenameGoalResult.notFound;
     }
-    goal.name = newGoalName;
+    goal.title = newGoalTitle;
     notifyListeners();
     return RenameGoalResult.success;
   }

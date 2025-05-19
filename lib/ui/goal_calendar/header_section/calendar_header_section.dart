@@ -36,7 +36,7 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.goal.name);
+    _controller = TextEditingController(text: widget.goal.title);
   }
 
   @override
