@@ -42,7 +42,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
                 // TODO: Implement the save functionality
                 onGoalEditSubmitted: (String value) {},
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               const Divider(thickness: 1),
               const SizedBox(height: 32),
               Row(
