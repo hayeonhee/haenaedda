@@ -58,6 +58,15 @@ class RecordProvider extends ChangeNotifier {
     }
   }
 
+  DateTime getFirstRecordedDate() {
+    if (_recordsByGoalId.isEmpty) {
+      return DateTime.now();
+    }
+    final allDates = _recordsByGoalId.values.expand((dates) => dates).toList();
+    allDates.sort((a, b) => a.compareTo(b));
+    return allDates.first;
+  }
+
   void toggleRecord(String goalId, DateTime date) {
     final goalRecords = _recordsByGoalId[goalId] ?? <DateTime>{};
     if (goalRecords.contains(date)) {
