@@ -39,8 +39,9 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
               CalendarHeaderSection(
                 goal: widget.goal,
                 date: focusedDate,
-                // TODO: Implement the save functionality
-                onGoalEditSubmitted: (String value) {},
+                onGoalEditSubmitted: (String newGoal) {
+                  recordProvider.renameGoal(widget.goal.id, newGoal);
+                },
               ),
               const SizedBox(height: 16),
               const Divider(thickness: 1),
