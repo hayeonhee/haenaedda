@@ -11,6 +11,23 @@
 
 ---
 
+## 기능
+
+- [성공 경험 기록](#성공-경험-기록)
+- [목표 설정 및 수정](#목표-설정-및-수정)
+
+
+### 성공 경험 기록
+
+<img src="https://github.com/user-attachments/assets/2eb38664-5edf-492c-890d-1669eeeeeea8" width="500"/>
+
+
+### 목표 설정 및 수정
+
+ <img src="https://github.com/user-attachments/assets/b954fe69-0b75-4ed9-b66d-803d63395435" width="500"/>
+
+---
+
 ## 설계 및 구현
 
 ### 데이터 구조 설계 - List + Map 
