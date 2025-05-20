@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:haenaedda/ui/settings/settings_page.dart';
 
 class SettingButton extends StatelessWidget {
   const SettingButton({super.key});
@@ -6,8 +8,14 @@ class SettingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      // TODO: implement settings page
-      onPressed: () {},
+      onPressed: () {
+        Navigator.of(context).push(
+          CupertinoPageRoute(
+            fullscreenDialog: true,
+            builder: (_) => const SettingsPage(),
+          ),
+        );
+      },
       icon: const Icon(Icons.settings),
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
