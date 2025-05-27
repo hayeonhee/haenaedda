@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/ui/settings/settings_bottom_modal.dart';
 
 class SettingButton extends StatelessWidget {
@@ -11,8 +12,7 @@ class SettingButton extends StatelessWidget {
         showGeneralDialog(
           context: context,
           barrierDismissible: true,
-          // TODO: Extract this string for localization
-          barrierLabel: 'Dismiss',
+          barrierLabel: AppLocalizations.of(context)!.dismiss,
           barrierColor: Colors.black54,
           transitionDuration: const Duration(milliseconds: 300),
           pageBuilder: (context, _, __) {

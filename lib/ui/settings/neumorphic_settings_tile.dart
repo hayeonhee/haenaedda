@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/constants/neumorphic_theme.dart';
+import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 
 class NeumorphicSettingsTile extends StatelessWidget {
   final String title;
@@ -27,7 +27,7 @@ class NeumorphicSettingsTile extends StatelessWidget {
         child: DefaultTextStyle(
           style: TextStyle(
             fontSize: 16,
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
           child: Text(title),

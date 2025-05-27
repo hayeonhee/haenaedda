@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/model/calendar_grid_layout.dart';
@@ -18,9 +19,6 @@ class MyCalendarPage extends StatefulWidget {
 }
 
 class _MyCalendarPageState extends State<MyCalendarPage> {
-  // TODO: Change app language based on user's device settings
-  final daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
   // TODO: Always display the current month in this version
   DateTime focusedDate = DateTime.now();
 
@@ -29,6 +27,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
     final recordProvider = context.watch<RecordProvider>();
     final selectedDates = recordProvider.getRecords(widget.goal.id);
     final dateLayout = CalendarGridLayout(focusedDate);
+    final daysOfWeek = AppLocalizations.of(context)!.shortWeekdays.split(',');
 
     return Scaffold(
       body: SafeArea(

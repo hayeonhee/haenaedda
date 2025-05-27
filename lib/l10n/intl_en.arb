@@ -1,0 +1,28 @@
+{
+    "@@locale": "en",
+    "dismiss": "Dismiss",
+    "reset": "Reset",
+    "settings": "Settings",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "@dismiss": {
+        "description": "Label for dismissing a modal",
+        "type": "text"
+    },
+    "@reset": {
+        "description": "Tile label for resetting settings",
+        "type": "text"
+    },
+    "goalSetupHint": "Tap here to set your goal",
+    "@goalSetupHint": {
+        "description": "Hint shown when no goal is set. Encourages the user to tap to create one."
+    },
+    "resetSavedGoals": "Reset Saved Goals",
+    "@resetSavedGoals": {
+        "description": "Resets saved goals."
+    },
+    "shortWeekdays": "S,M,T,W,T,F,S",
+    "@shortWeekdays": {
+        "description": "Comma-separated list of abbreviated weekdays, starting from Sunday"
+    }
+}
