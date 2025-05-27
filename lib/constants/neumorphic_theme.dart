@@ -48,6 +48,25 @@ class NeumorphicTheme {
     );
   }
 
+  static BoxDecoration raisedTileBoxDecoration(BuildContext context) {
+    return BoxDecoration(
+      color: Theme.of(context).colorScheme.background,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.07),
+          offset: const Offset(2, 2),
+          blurRadius: 4,
+        ),
+        BoxShadow(
+          color: Colors.white.withOpacity(0.6),
+          offset: const Offset(-2, -2),
+          blurRadius: 6,
+        ),
+      ],
+    );
+  }
+
   /// Light mode decoration for recorded (completed) cells
   static BoxDecoration recordedCellDecoration(BuildContext context) {
     return BoxDecoration(
