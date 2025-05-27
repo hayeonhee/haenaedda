@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haenaedda/ui/settings/settings_page.dart';
+import 'package:haenaedda/ui/settings/settings_bottom_modal.dart';
 
 class SettingButton extends StatelessWidget {
   const SettingButton({super.key});
@@ -9,11 +8,25 @@ class SettingButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        Navigator.of(context).push(
-          CupertinoPageRoute(
-            fullscreenDialog: true,
-            builder: (_) => const SettingsPage(),
-          ),
+        showGeneralDialog(
+          context: context,
+          barrierDismissible: true,
+          // TODO: Extract this string for localization
+          barrierLabel: 'Dismiss',
+          barrierColor: Colors.black54,
+          transitionDuration: const Duration(milliseconds: 300),
+          pageBuilder: (context, _, __) {
+            return const SettingsBottomModal();
+          },
+          transitionBuilder: (context, animation, _, child) {
+            final offset = Tween<Offset>(
+              begin: const Offset(0, 1),
+              end: const Offset(0, 0),
+            ).animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOut),
+            );
+            return SlideTransition(position: offset, child: child);
+          },
         );
       },
       icon: const Icon(Icons.settings),
