@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:haenaedda/constants/neumorphic_theme.dart';
-import 'package:haenaedda/ui/goal_calendar/header_section/setting_button.dart';
+import 'package:haenaedda/ui/settings/settings_button.dart';
 
 class GoalDisplayText extends StatelessWidget {
   final double buttonHeight;
