@@ -1,0 +1,20 @@
+{
+    "@@locale": "ko",
+    "dismiss": "닫기",
+    "reset": "초기화",
+    "settings": "설정",
+    "confirm": "확인",
+    "cancel": "취소",
+    "goalSetupHint": "눌러서 목표를 설정해보세요",
+    "@goalSetupHint": {
+        "description": "Hint shown when no goal is set. Encourages the user to tap to create one."
+    },
+    "resetSavedGoals": "저장된 목표 초기화",
+    "@resetSavedGoals": {
+        "description": "Resets saved goals."
+    },
+    "shortWeekdays": "월,화,수,목,금,토,일",
+    "@shortWeekdays": {
+        "description": "Comma-separated list of abbreviated weekdays, starting from Sunday"
+    }
+}
