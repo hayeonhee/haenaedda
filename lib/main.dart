@@ -32,10 +32,12 @@ class _HaenaeddaState extends State<Haenaedda> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final recordProvider =
           Provider.of<RecordProvider>(context, listen: false);
+
       final goal = await recordProvider.initializeAndGetFirstGoal();
+      if (!mounted) return;
       setState(() {
         firstDisplayedGoal = goal;
       });
