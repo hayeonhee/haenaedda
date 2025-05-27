@@ -6,6 +6,7 @@ import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/calendar_screen.dart';
 import 'package:haenaedda/ui/goal_calendar/header_section/calendar_header_section.dart';
+import 'package:haenaedda/ui/widgets/section_divider.dart';
 
 class MyCalendarPage extends StatefulWidget {
   final Goal goal;
@@ -43,9 +44,9 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
                   recordProvider.renameGoal(widget.goal.id, newGoal);
                 },
               ),
-              const SizedBox(height: 16),
-              const Divider(thickness: 1),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
+              const SectionDivider(),
+              const SizedBox(height: 40),
               Row(
                 children: List.generate(daysOfWeek.length, (index) {
                   return Expanded(
