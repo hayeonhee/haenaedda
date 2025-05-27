@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/constants/neumorphic_theme.dart';
+import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 
 class GoalEditField extends StatefulWidget {
   final double buttonHeight;
@@ -38,7 +38,7 @@ class _GoalEditFieldState extends State<GoalEditField> {
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
               ),
-              cursorColor: Theme.of(context).colorScheme.onBackground,
+              cursorColor: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),

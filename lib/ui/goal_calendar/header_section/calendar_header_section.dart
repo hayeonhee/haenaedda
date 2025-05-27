@@ -29,7 +29,7 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
 
   TextStyle get _goalTextStyle => TextStyle(
         fontSize: 16,
-        color: Theme.of(context).colorScheme.onBackground,
+        color: Theme.of(context).colorScheme.onSurface,
         fontWeight: FontWeight.bold,
       );
 

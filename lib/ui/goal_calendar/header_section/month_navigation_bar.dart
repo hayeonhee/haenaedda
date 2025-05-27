@@ -75,7 +75,7 @@ class _MonthNavigationBarState extends State<MonthNavigationBar> {
             IconButton(
               onPressed: _goToPreviousMonth,
               icon: const Icon(Icons.chevron_left),
-              color: Theme.of(context).colorScheme.onBackground,
+              color: Theme.of(context).colorScheme.onSurface,
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               hoverColor: Colors.transparent,
@@ -90,7 +90,7 @@ class _MonthNavigationBarState extends State<MonthNavigationBar> {
               child: Text(
                 '${_focusedDate.year}.${_focusedDate.month.toString().padLeft(2, '0')}',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onBackground,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -101,7 +101,7 @@ class _MonthNavigationBarState extends State<MonthNavigationBar> {
             IconButton(
               onPressed: _goToNextMonth,
               icon: const Icon(Icons.chevron_right),
-              color: Theme.of(context).colorScheme.onBackground,
+              color: Theme.of(context).colorScheme.onSurface,
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               hoverColor: Colors.transparent,

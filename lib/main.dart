@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'package:haenaedda/constants/app_theme.dart';
+import 'package:haenaedda/theme/app_theme.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
@@ -32,10 +32,12 @@ class _HaenaeddaState extends State<Haenaedda> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final recordProvider =
           Provider.of<RecordProvider>(context, listen: false);
+
       final goal = await recordProvider.initializeAndGetFirstGoal();
+      if (!mounted) return;
       setState(() {
         firstDisplayedGoal = goal;
       });
@@ -53,16 +55,14 @@ class _HaenaeddaState extends State<Haenaedda> {
       builder: (context, child) {
         final mediaQuery = MediaQuery.of(context);
         return MediaQuery(
-          data: mediaQuery.copyWith(
-            textScaleFactor: mediaQuery.textScaleFactor,
-          ),
+          data: mediaQuery.copyWith(textScaler: mediaQuery.textScaler),
           child: child!,
         );
       },
       title: 'HAENAEDDA — I did it',
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: ThemeMode.system,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: AppTheme.defaultMode,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

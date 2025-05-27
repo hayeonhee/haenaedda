@@ -10,16 +10,16 @@ class NeumorphicTheme {
   /// - Looks pressed inward in light mode
   static BoxDecoration pressedBoxDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: BorderRadius.circular(12),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.05),
+          color: Colors.black.withValues(alpha: 0.05),
           offset: topLeftShadowOffset,
           blurRadius: blurRadius,
         ),
         BoxShadow(
-          color: Colors.white.withOpacity(0.7),
+          color: Colors.white.withValues(alpha: 0.7),
           offset: bottomRightShadowOffset,
           blurRadius: blurRadius,
         ),
@@ -31,16 +31,16 @@ class NeumorphicTheme {
   /// - Looks raised outward in light mode
   static BoxDecoration raisedBoxDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: defaultBorderRadius,
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.05),
+          color: Colors.black.withValues(alpha: 0.05),
           offset: bottomRightShadowOffset,
           blurRadius: blurRadius,
         ),
         BoxShadow(
-          color: Colors.white.withOpacity(0.7),
+          color: Colors.white.withValues(alpha: 0.7),
           offset: topLeftShadowOffset,
           blurRadius: blurRadius,
         ),
@@ -50,16 +50,16 @@ class NeumorphicTheme {
 
   static BoxDecoration raisedTileBoxDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.07),
+          color: Colors.black.withValues(alpha: 0.07),
           offset: const Offset(2, 2),
           blurRadius: 4,
         ),
         BoxShadow(
-          color: Colors.white.withOpacity(0.6),
+          color: Colors.white.withValues(alpha: 0.6),
           offset: const Offset(-2, -2),
           blurRadius: 6,
         ),
@@ -75,12 +75,12 @@ class NeumorphicTheme {
       borderRadius: defaultBorderRadius,
       boxShadow: [
         BoxShadow(
-          color: Colors.white.withOpacity(0.7),
+          color: Colors.white.withValues(alpha: 0.7),
           offset: topLeftShadowOffset,
           blurRadius: blurRadius,
         ),
         BoxShadow(
-          color: Colors.black.withOpacity(0.1),
+          color: Colors.black.withValues(alpha: 0.1),
           offset: bottomRightShadowOffset,
           blurRadius: blurRadius,
         ),
@@ -91,16 +91,16 @@ class NeumorphicTheme {
   /// Light mode decoration for unrecorded cells
   static BoxDecoration unrecordedCellDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: defaultBorderRadius,
       boxShadow: [
         BoxShadow(
-          color: Colors.white.withOpacity(0.7),
+          color: Colors.white.withValues(alpha: 0.7),
           offset: const Offset(2, 2),
           blurRadius: blurRadius,
         ),
         BoxShadow(
-          color: Colors.black.withOpacity(0.1),
+          color: Colors.black.withValues(alpha: 0.1),
           offset: const Offset(-2, -2),
           blurRadius: blurRadius,
         ),
