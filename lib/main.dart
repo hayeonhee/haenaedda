@@ -53,9 +53,7 @@ class _HaenaeddaState extends State<Haenaedda> {
       builder: (context, child) {
         final mediaQuery = MediaQuery.of(context);
         return MediaQuery(
-          data: mediaQuery.copyWith(
-            textScaleFactor: mediaQuery.textScaleFactor,
-          ),
+          data: mediaQuery.copyWith(textScaler: mediaQuery.textScaler),
           child: child!,
         );
       },
