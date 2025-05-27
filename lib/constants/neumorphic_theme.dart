@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 class NeumorphicTheme {
+  static const Offset topLeftOffset = Offset(-2, -2);
+  static const Offset deepTopLeftOffset = Offset(-4, -4);
+  static const Offset bottomRightOffset = Offset(2, 2);
+  static const Offset deepBottomRightOffset = Offset(4, 4);
+
   static const double blurRadius = 8;
-  static const Offset topLeftShadowOffset = Offset(-4, -4);
-  static const Offset bottomRightShadowOffset = Offset(4, 4);
   static BorderRadius defaultBorderRadius = BorderRadius.circular(12);
 
   /// Pressed (Concave) Effect - Light Mode Only
@@ -11,16 +14,16 @@ class NeumorphicTheme {
   static BoxDecoration pressedBoxDecoration(BuildContext context) {
     return BoxDecoration(
       color: Theme.of(context).colorScheme.background,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: defaultBorderRadius,
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.05),
-          offset: topLeftShadowOffset,
+          offset: deepTopLeftOffset,
           blurRadius: blurRadius,
         ),
         BoxShadow(
           color: Colors.white.withOpacity(0.7),
-          offset: bottomRightShadowOffset,
+          offset: deepBottomRightOffset,
           blurRadius: blurRadius,
         ),
       ],
@@ -36,31 +39,31 @@ class NeumorphicTheme {
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.05),
-          offset: bottomRightShadowOffset,
+          offset: deepBottomRightOffset,
           blurRadius: blurRadius,
         ),
         BoxShadow(
           color: Colors.white.withOpacity(0.7),
-          offset: topLeftShadowOffset,
+          offset: deepTopLeftOffset,
           blurRadius: blurRadius,
         ),
       ],
     );
   }
 
-  static BoxDecoration raisedTileBoxDecoration(BuildContext context) {
+  static BoxDecoration raisedSettingTileBoxDecoration(BuildContext context) {
     return BoxDecoration(
       color: Theme.of(context).colorScheme.background,
       borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.07),
-          offset: const Offset(2, 2),
+          offset: bottomRightOffset,
           blurRadius: 4,
         ),
         BoxShadow(
           color: Colors.white.withOpacity(0.6),
-          offset: const Offset(-2, -2),
+          offset: topLeftOffset,
           blurRadius: 6,
         ),
       ],
@@ -76,12 +79,12 @@ class NeumorphicTheme {
       boxShadow: [
         BoxShadow(
           color: Colors.white.withOpacity(0.7),
-          offset: topLeftShadowOffset,
+          offset: deepTopLeftOffset,
           blurRadius: blurRadius,
         ),
         BoxShadow(
           color: Colors.black.withOpacity(0.1),
-          offset: bottomRightShadowOffset,
+          offset: deepBottomRightOffset,
           blurRadius: blurRadius,
         ),
       ],
@@ -96,12 +99,12 @@ class NeumorphicTheme {
       boxShadow: [
         BoxShadow(
           color: Colors.white.withOpacity(0.7),
-          offset: const Offset(2, 2),
+          offset: bottomRightOffset,
           blurRadius: blurRadius,
         ),
         BoxShadow(
           color: Colors.black.withOpacity(0.1),
-          offset: const Offset(-2, -2),
+          offset: topLeftOffset,
           blurRadius: blurRadius,
         ),
       ],
