@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/ui/settings/neumorphic_settings_tile.dart';
 import 'package:haenaedda/ui/widgets/modal_action_icon_buttons.dart';
 import 'package:haenaedda/ui/widgets/section_divider.dart';
@@ -61,8 +62,7 @@ class SettingsBottomModal extends StatelessWidget {
                   const SizedBox(height: 8.0),
                   // TODO: Implement actual action
                   NeumorphicSettingsTile(
-                    // TODO: Replace string with a localized string
-                    title: '초기화',
+                    title: AppLocalizations.of(context)!.resetSavedGoals,
                     onTap: () {},
                   ),
                 ],

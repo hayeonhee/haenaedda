@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/constants/app_theme.dart';
+import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
-import 'package:haenaedda/ui/goal_calendar/my_calendar_page.dart';
 import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/ui/goal_calendar/my_calendar_page.dart';
 
 void main() {
   runApp(
@@ -61,6 +63,16 @@ class _HaenaeddaState extends State<Haenaedda> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ko'),
+      ],
       home: MyCalendarPage(goal: nonNullableGoal),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:haenaedda/constants/neumorphic_theme.dart';
+import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/ui/settings/settings_button.dart';
 
 class GoalDisplayText extends StatelessWidget {
@@ -31,9 +32,7 @@ class GoalDisplayText extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text(
               controller.text.isEmpty
-                  // TODO: replace magic strings with constants
-                  // TODO: add “Tap here to set your goal” with localization support
-                  ? '눌러서 목표를 설정해보세요'
+                  ? AppLocalizations.of(context)!.goalSetupHint
                   : controller.text,
               style: goalTextStyle.copyWith(
                 color: controller.text.isEmpty
