@@ -9,7 +9,7 @@ class SettingsBottomModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = Theme.of(context).colorScheme.background;
+    final backgroundColor = Theme.of(context).colorScheme.surface;
 
     return Stack(
       children: [

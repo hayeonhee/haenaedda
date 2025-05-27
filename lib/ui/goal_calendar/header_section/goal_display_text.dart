@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:haenaedda/constants/neumorphic_theme.dart';
+import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/ui/settings/settings_button.dart';
 

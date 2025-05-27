@@ -10,7 +10,7 @@ class NeumorphicTheme {
   /// - Looks pressed inward in light mode
   static BoxDecoration pressedBoxDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: BorderRadius.circular(12),
       boxShadow: [
         BoxShadow(
@@ -31,7 +31,7 @@ class NeumorphicTheme {
   /// - Looks raised outward in light mode
   static BoxDecoration raisedBoxDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: defaultBorderRadius,
       boxShadow: [
         BoxShadow(
@@ -50,7 +50,7 @@ class NeumorphicTheme {
 
   static BoxDecoration raisedTileBoxDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
@@ -91,7 +91,7 @@ class NeumorphicTheme {
   /// Light mode decoration for unrecorded cells
   static BoxDecoration unrecordedCellDecoration(BuildContext context) {
     return BoxDecoration(
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: defaultBorderRadius,
       boxShadow: [
         BoxShadow(
