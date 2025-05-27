@@ -22,7 +22,7 @@ class NeumorphicSettingsTile extends StatelessWidget {
         constraints: const BoxConstraints(minHeight: 48),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: NeumorphicTheme.raisedTileBoxDecoration(context),
+        decoration: NeumorphicTheme.raisedSettingTileBoxDecoration(context),
         alignment: Alignment.centerLeft,
         child: DefaultTextStyle(
           style: TextStyle(
