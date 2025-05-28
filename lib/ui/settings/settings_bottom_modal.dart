@@ -7,6 +7,45 @@ import 'package:haenaedda/ui/widgets/section_divider.dart';
 class SettingsBottomModal extends StatelessWidget {
   const SettingsBottomModal({super.key});
 
+  void _onResetTap(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          actionsPadding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          content: Text(
+            AppLocalizations.of(context)!.resetRecordsMessage,
+            style: const TextStyle(fontSize: 16, height: 1.5),
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: const TextStyle(fontSize: 16.0),
+              ),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: Text(
+                AppLocalizations.of(context)!.reset,
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+            ),
+          ],
+          actionsAlignment: MainAxisAlignment.center,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).colorScheme.surface;
@@ -60,10 +99,9 @@ class SettingsBottomModal extends StatelessWidget {
                   ),
                   const SectionDivider(),
                   const SizedBox(height: 8.0),
-                  // TODO: Implement actual action
                   NeumorphicSettingsTile(
                     title: AppLocalizations.of(context)!.resetSavedGoals,
-                    onTap: () {},
+                    onTap: () => _onResetTap(context),
                   ),
                 ],
               ),

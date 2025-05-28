@@ -16,5 +16,9 @@
     "shortWeekdays": "월,화,수,목,금,토,일",
     "@shortWeekdays": {
         "description": "Comma-separated list of abbreviated weekdays, starting from Sunday"
+    },
+    "resetRecordsMessage": "초기화하면 모든 기록이 삭제됩니다.\n이 작업은 되돌릴 수 없습니다.",
+    "@resetRecordsMessage": {
+        "description": "Body text of the confirmation dialog warning the user that all records will be deleted and that this action is irreversible."
     }
 }

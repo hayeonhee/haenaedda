@@ -24,5 +24,9 @@
     "shortWeekdays": "S,M,T,W,T,F,S",
     "@shortWeekdays": {
         "description": "Comma-separated list of abbreviated weekdays, starting from Sunday"
+    },
+    "resetRecordsMessage": "Resetting will delete all your records.\nThis action can’t be undone.",
+    "@resetRecordsMessage": {
+        "description": "Body text of the confirmation dialog warning the user that all records will be deleted and that this action is irreversible."
     }
 }
