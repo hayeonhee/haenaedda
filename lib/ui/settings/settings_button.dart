@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
+import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/ui/settings/settings_bottom_modal.dart';
 
 class SettingButton extends StatelessWidget {
-  const SettingButton({super.key});
+  final Goal goal;
+
+  const SettingButton({super.key, required this.goal});
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +18,7 @@ class SettingButton extends StatelessWidget {
           barrierLabel: AppLocalizations.of(context)!.dismiss,
           barrierColor: Colors.black54,
           transitionDuration: const Duration(milliseconds: 300),
-          pageBuilder: (context, _, __) {
-            return const SettingsBottomModal();
-          },
+          pageBuilder: (context, _, __) => SettingsBottomModal(goal: goal),
           transitionBuilder: (context, animation, _, child) {
             final offset = Tween<Offset>(
               begin: const Offset(0, 1),
