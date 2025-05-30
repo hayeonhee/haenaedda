@@ -1,51 +1,22 @@
 import 'package:flutter/material.dart';
+
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
+import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/ui/settings/handlers/reset_goal_handler.dart';
 import 'package:haenaedda/ui/settings/neumorphic_settings_tile.dart';
 import 'package:haenaedda/ui/widgets/modal_action_icon_buttons.dart';
 import 'package:haenaedda/ui/widgets/section_divider.dart';
 
-class SettingsBottomModal extends StatelessWidget {
-  const SettingsBottomModal({super.key});
+class SettingsBottomModal extends StatefulWidget {
+  final Goal goal;
 
-  void _onResetTap(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-          actionsPadding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          content: Text(
-            AppLocalizations.of(context)!.resetRecordsMessage,
-            style: const TextStyle(fontSize: 16, height: 1.5),
-            textAlign: TextAlign.center,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                AppLocalizations.of(context)!.cancel,
-                style: const TextStyle(fontSize: 16.0),
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                AppLocalizations.of(context)!.reset,
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
-            ),
-          ],
-          actionsAlignment: MainAxisAlignment.center,
-        );
-      },
-    );
-  }
+  const SettingsBottomModal({super.key, required this.goal});
 
+  @override
+  State<SettingsBottomModal> createState() => _SettingsBottomModalState();
+}
+
+class _SettingsBottomModalState extends State<SettingsBottomModal> {
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).colorScheme.surface;
@@ -101,7 +72,7 @@ class SettingsBottomModal extends StatelessWidget {
                   const SizedBox(height: 8.0),
                   NeumorphicSettingsTile(
                     title: AppLocalizations.of(context)!.resetSavedGoals,
-                    onTap: () => _onResetTap(context),
+                    onTap: () => onResetButtonTap(context, widget.goal),
                   ),
                 ],
               ),
