@@ -159,4 +159,18 @@ class RecordProvider extends ChangeNotifier {
       await prefs.setString(entry.key, dates);
     }
   }
+
+  Future<bool> clearGoalRecords(String goalId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final success = await prefs.remove(goalId);
+      if (!success) return false;
+      _recordsByGoalId.remove(goalId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      debugPrint('Failed to delete records. id: $goalId');
+      return false;
+    }
+  }
 }

@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
+
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
+import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/ui/settings/handlers/reset_goal_handler.dart';
 import 'package:haenaedda/ui/settings/neumorphic_settings_tile.dart';
 import 'package:haenaedda/ui/widgets/modal_action_icon_buttons.dart';
 import 'package:haenaedda/ui/widgets/section_divider.dart';
 
-class SettingsBottomModal extends StatelessWidget {
-  const SettingsBottomModal({super.key});
+class SettingsBottomModal extends StatefulWidget {
+  final Goal goal;
 
+  const SettingsBottomModal({super.key, required this.goal});
+
+  @override
+  State<SettingsBottomModal> createState() => _SettingsBottomModalState();
+}
+
+class _SettingsBottomModalState extends State<SettingsBottomModal> {
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).colorScheme.surface;
@@ -60,10 +70,9 @@ class SettingsBottomModal extends StatelessWidget {
                   ),
                   const SectionDivider(),
                   const SizedBox(height: 8.0),
-                  // TODO: Implement actual action
                   NeumorphicSettingsTile(
                     title: AppLocalizations.of(context)!.resetSavedGoals,
-                    onTap: () {},
+                    onTap: () => onResetButtonTap(context, widget.goal),
                   ),
                 ],
               ),

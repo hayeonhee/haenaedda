@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:haenaedda/model/goal.dart';
 
 import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/ui/settings/settings_button.dart';
 
 class GoalDisplayText extends StatelessWidget {
+  final Goal goal;
   final double buttonHeight;
   final TextStyle goalTextStyle;
   final VoidCallback onStartEditing;
@@ -12,6 +14,7 @@ class GoalDisplayText extends StatelessWidget {
 
   const GoalDisplayText({
     super.key,
+    required this.goal,
     required this.buttonHeight,
     required this.goalTextStyle,
     required this.onStartEditing,
@@ -42,7 +45,7 @@ class GoalDisplayText extends StatelessWidget {
             ),
           ),
         ),
-        const SettingButton(),
+        SettingButton(goal: goal),
       ],
     );
   }

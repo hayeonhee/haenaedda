@@ -61,6 +61,7 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
                 },
               )
             : GoalDisplayText(
+                goal: widget.goal,
                 buttonHeight: buttonHeight,
                 controller: _controller,
                 goalTextStyle: _goalTextStyle,
