@@ -28,5 +28,13 @@
     "resetRecordsMessage": "Resetting will delete all your records.\nThis action can’t be undone.",
     "@resetRecordsMessage": {
         "description": "Body text of the confirmation dialog warning the user that all records will be deleted and that this action is irreversible."
+    },
+    "resetSuccess": "Records deleted.",
+    "@resetSuccess": {
+        "description": "Message shown after user successfully deletes goal records."
+    },
+    "resetFailure": "Couldn't delete records.",
+    "@resetFailure": {
+        "description": "Error message shown when goal record deletion fails."
     }
 }
