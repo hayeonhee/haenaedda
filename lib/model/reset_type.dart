@@ -1,0 +1,4 @@
+enum ResetType {
+  recordsOnly,
+  entireGoal,
+}
