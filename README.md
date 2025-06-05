@@ -21,22 +21,22 @@
 
 ### 성공 경험 기록
 
-<img src="https://github.com/user-attachments/assets/79c7e5db-2064-449b-bd4c-27a36811c6d5" width="400"/>
+<img src="https://github.com/user-attachments/assets/79c7e5db-2064-449b-bd4c-27a36811c6d5" width="300"/>
 
 
 ### 목표 설정 및 수정
 
- <img src="https://github.com/user-attachments/assets/6eeabad9-9587-4fc6-9209-65936f881d6d" width="400"/>
+ <img src="https://github.com/user-attachments/assets/6eeabad9-9587-4fc6-9209-65936f881d6d" width="300"/>
 
 
 ### 기록 초기화
 
- <img src="https://github.com/user-attachments/assets/a12f8610-33a9-4820-afd7-ac15e963857f" width="400"/>
+ <img src="https://github.com/user-attachments/assets/a12f8610-33a9-4820-afd7-ac15e963857f" width="300"/>
 
 
 ### 목표 및 기록 초기화
 
- <img src="https://github.com/user-attachments/assets/1d021682-8eea-4e41-96bc-6bdbc8005427" width="400"/>
+ <img src="https://github.com/user-attachments/assets/1d021682-8eea-4e41-96bc-6bdbc8005427" width="300"/>
 
  
 ---
