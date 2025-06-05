@@ -9,24 +9,36 @@
     "@goalSetupHint": {
         "description": "Hint shown when no goal is set. Encourages the user to tap to create one."
     },
-    "resetSavedGoals": "저장된 목표 초기화",
-    "@resetSavedGoals": {
-        "description": "Resets saved goals."
-    },
-    "shortWeekdays": "월,화,수,목,금,토,일",
+    "shortWeekdays": "일,월,화,수,목,금,토",
     "@shortWeekdays": {
         "description": "Comma-separated list of abbreviated weekdays, starting from Sunday"
     },
-    "resetRecordsMessage": "초기화하면 모든 기록이 삭제됩니다.\n이 작업은 되돌릴 수 없습니다.",
-    "@resetRecordsMessage": {
-        "description": "Body text of the confirmation dialog warning the user that all records will be deleted and that this action is irreversible."
-    },
-    "resetSuccess": "기록이 삭제되었습니다.",
+    "resetSuccess": "초기화가 완료되었습니다.",
     "@resetSuccess": {
-        "description": "Message shown after user successfully deletes goal records."
+        "description": "Message shown after goal or records are successfully reset."
     },
-    "resetFailure": "기록 삭제에 실패했습니다.",
+    "resetFailure": "초기화에 실패했습니다.",
     "@resetFailure": {
-        "description": "Error message shown when goal record deletion fails."
+        "description": "General error message shown when reset operation fails."
+    },
+    "resetPartialFailureGoal": "기록은 삭제되었지만 목표 삭제에는 실패했어요.",
+    "@resetPartialFailureGoal": {
+        "description": "Message shown when records are deleted but goal deletion fails."
+    },
+    "resetRecordsOnly": "기록만 초기화",
+    "@resetRecordsOnly": {
+        "description": "Resets only the saved records, keeping the goal settings."
+    },
+    "resetEntireGoal": "전체 초기화",
+    "@resetEntireGoal": {
+        "description": "Resets the goal completely including its title and saved records."
+    },
+    "resetEntireGoalMessage": "목표와 기록이 모두 삭제됩니다. 계속하시겠어요?",
+    "@resetEntireGoalMessage": {
+        "description": "Confirmation message for full reset."
+    },
+    "resetRecordsOnlyMessage": "기록만 삭제되며, 목표는 그대로 유지됩니다.",
+    "@resetRecordsOnlyMessage": {
+        "description": "Confirmation message for record-only reset."
     }
 }

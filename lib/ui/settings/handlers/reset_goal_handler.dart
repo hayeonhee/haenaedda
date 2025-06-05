@@ -1,26 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/model/reset_type.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 
-Future<void> showResetFailureDialog(BuildContext context) {
+Future<void> showResetFailureDialog(BuildContext context, ResetType type) {
+  final l10n = AppLocalizations.of(context)!;
+  final message = switch (type) {
+    ResetType.recordsOnly => l10n.resetFailure,
+    ResetType.entireGoal => l10n.resetPartialFailureGoal,
+  };
+
   return showDialog<void>(
     context: context,
     builder: (_) => AlertDialog(
-      title: Text(AppLocalizations.of(context)!.cancel),
-      content: Text(AppLocalizations.of(context)!.resetFailure),
+      content: Text(message),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(AppLocalizations.of(context)!.confirm),
+          child: Text(l10n.dismiss),
         ),
       ],
     ),
   );
 }
 
-Future<bool?> showResetConfirmDialog(BuildContext context, Goal goal) async {
+Future<bool?> showResetConfirmDialog(
+  BuildContext context,
+  Goal goal,
+  ResetType type,
+) async {
+  final l10n = AppLocalizations.of(context)!;
+  final message = switch (type) {
+    ResetType.recordsOnly => l10n.resetRecordsOnlyMessage,
+    ResetType.entireGoal => l10n.resetEntireGoalMessage,
+  };
+
   return await showDialog<bool?>(
     context: context,
     builder: (context) => AlertDialog(
@@ -28,7 +45,7 @@ Future<bool?> showResetConfirmDialog(BuildContext context, Goal goal) async {
       actionsPadding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       content: Text(
-        AppLocalizations.of(context)!.resetRecordsMessage,
+        message,
         style: const TextStyle(fontSize: 16, height: 1.5),
         textAlign: TextAlign.center,
       ),
@@ -41,14 +58,7 @@ Future<bool?> showResetConfirmDialog(BuildContext context, Goal goal) async {
           ),
         ),
         TextButton(
-          onPressed: () async {
-            final provider = context.read<RecordProvider>();
-            final succeeded = await provider.clearGoalRecords(goal.id);
-            if (!context.mounted) return;
-            if (succeeded) {
-              Navigator.of(context).pop(true);
-            }
-          },
+          onPressed: () => Navigator.of(context).pop(true),
           child: Text(
             AppLocalizations.of(context)!.reset,
             style: TextStyle(
@@ -63,21 +73,55 @@ Future<bool?> showResetConfirmDialog(BuildContext context, Goal goal) async {
   );
 }
 
-Future<void> onResetButtonTap(BuildContext context, Goal goal) async {
-  // Step 1: Ask user to confirm reset
+Future<void> onResetButtonTap(
+  BuildContext context,
+  Goal goal,
+  ResetType type,
+) async {
   if (!context.mounted) return;
-  final confirmed = await showResetConfirmDialog(context, goal);
+  final confirmed = await showResetConfirmDialog(context, goal, type);
+
   if (!context.mounted || confirmed != true) return;
+  switch (type) {
+    case ResetType.recordsOnly:
+      await _handleRecordOnlyReset(context, goal);
+      break;
+    case ResetType.entireGoal:
+      await _handleEntireGoalReset(context, goal);
+      break;
+  }
+}
 
-  // Step 2: Try to clear goal records
-  final succeeded =
-      await context.read<RecordProvider>().clearGoalRecords(goal.id);
+Future<void> _handleRecordOnlyReset(BuildContext context, Goal goal) async {
+  final provider = context.read<RecordProvider>();
+  final success = await provider.removeRecordsOnly(goal.id);
+
   if (!context.mounted) return;
-
-  // Step 3: Handle result
-  if (succeeded) {
+  if (success) {
     Navigator.of(context).pop();
   } else {
-    await showResetFailureDialog(context);
+    await showResetFailureDialog(
+      context,
+      ResetType.recordsOnly,
+    );
+  }
+}
+
+Future<void> _handleEntireGoalReset(BuildContext context, Goal goal) async {
+  final provider = context.read<RecordProvider>();
+  final result = await provider.resetEntireGoal(goal.id);
+  if (!context.mounted) return;
+
+  switch (result) {
+    case ResetEntireGoalResult.success:
+      await provider.createTemporaryGoalIfAbsent();
+      if (context.mounted) Navigator.of(context).pop();
+      break;
+    case ResetEntireGoalResult.recordFailed:
+      await showResetFailureDialog(context, ResetType.recordsOnly);
+      break;
+    case ResetEntireGoalResult.goalFailed:
+      await showResetFailureDialog(context, ResetType.entireGoal);
+      break;
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/header_section/goal_display_text.dart';
 import 'package:haenaedda/ui/goal_calendar/header_section/goal_edit_field.dart';
 import 'package:haenaedda/ui/goal_calendar/header_section/month_navigation_bar.dart';
@@ -37,6 +39,13 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.goal.title);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final goal = context.watch<RecordProvider>().currentGoal;
+    _controller.text = goal?.title ?? '';
   }
 
   @override

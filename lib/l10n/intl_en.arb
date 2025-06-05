@@ -17,24 +17,36 @@
     "@goalSetupHint": {
         "description": "Hint shown when no goal is set. Encourages the user to tap to create one."
     },
-    "resetSavedGoals": "Reset Saved Goals",
-    "@resetSavedGoals": {
-        "description": "Resets saved goals."
-    },
     "shortWeekdays": "S,M,T,W,T,F,S",
     "@shortWeekdays": {
         "description": "Comma-separated list of abbreviated weekdays, starting from Sunday"
     },
-    "resetRecordsMessage": "Resetting will delete all your records.\nThis action can’t be undone.",
-    "@resetRecordsMessage": {
-        "description": "Body text of the confirmation dialog warning the user that all records will be deleted and that this action is irreversible."
-    },
-    "resetSuccess": "Records deleted.",
+    "resetSuccess": "Reset completed successfully.",
     "@resetSuccess": {
-        "description": "Message shown after user successfully deletes goal records."
+        "description": "Message shown when the reset operation succeeds (regardless of goal count or type)."
     },
-    "resetFailure": "Couldn't delete records.",
+    "resetFailure": "Reset failed. Please try again.",
     "@resetFailure": {
-        "description": "Error message shown when goal record deletion fails."
+        "description": "Message shown when the reset operation fails completely."
+    },
+    "resetPartialFailureGoal": "Records were deleted, but the goal could not be removed.",
+    "@resetPartialFailureGoal": {
+        "description": "Message shown when records are deleted but the goal deletion fails."
+    },
+    "resetRecordsOnly": "Reset Records Only",
+    "@resetRecordsOnly": {
+        "description": "Resets only the saved records, keeping the goal settings."
+    },
+    "resetEntireGoal": "Reset Entire Goal",
+    "@resetEntireGoal": {
+        "description": "Resets the goal completely including its title and saved records."
+    },
+    "resetEntireGoalMessage": "This will reset both the goal and its records. Do you want to continue?",
+    "@resetEntireGoalMessage": {
+        "description": "Confirmation message for full reset."
+    },
+    "resetRecordsOnlyMessage": "Only the records will be deleted. The goal itself will remain unchanged.",
+    "@resetRecordsOnlyMessage": {
+        "description": "Confirmation message for record-only reset."
     }
 }

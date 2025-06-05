@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/model/reset_type.dart';
 import 'package:haenaedda/ui/settings/handlers/reset_goal_handler.dart';
 import 'package:haenaedda/ui/settings/neumorphic_settings_tile.dart';
 import 'package:haenaedda/ui/widgets/modal_action_icon_buttons.dart';
@@ -71,8 +72,14 @@ class _SettingsBottomModalState extends State<SettingsBottomModal> {
                   const SectionDivider(),
                   const SizedBox(height: 8.0),
                   NeumorphicSettingsTile(
-                    title: AppLocalizations.of(context)!.resetSavedGoals,
-                    onTap: () => onResetButtonTap(context, widget.goal),
+                    title: AppLocalizations.of(context)!.resetRecordsOnly,
+                    onTap: () => onResetButtonTap(
+                        context, widget.goal, ResetType.recordsOnly),
+                  ),
+                  NeumorphicSettingsTile(
+                    title: AppLocalizations.of(context)!.resetEntireGoal,
+                    onTap: () => onResetButtonTap(
+                        context, widget.goal, ResetType.entireGoal),
                   ),
                 ],
               ),

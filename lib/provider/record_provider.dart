@@ -25,6 +25,12 @@ enum RenameGoalResult {
   saveFailed,
 }
 
+enum ResetEntireGoalResult {
+  success,
+  recordFailed,
+  goalFailed,
+}
+
 class RecordProvider extends ChangeNotifier {
   List<Goal> _goals = [];
   final Map<String, Set<DateTime>> _recordsByGoalId = {};
@@ -33,6 +39,11 @@ class RecordProvider extends ChangeNotifier {
   Map<String, Set<DateTime>> get recordsByGoal => _recordsByGoalId;
 
   Set<DateTime> getRecords(String goal) => _recordsByGoalId[goal] ?? {};
+
+  Goal? get currentGoal {
+    if (_goals.isEmpty) return null;
+    return _goals.firstWhereOrNull((g) => g.id == _firstDisplayedGoalId);
+  }
 
   bool isGoalsEmpty() => _goals.isEmpty;
 
@@ -160,17 +171,57 @@ class RecordProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> clearGoalRecords(String goalId) async {
+  Future<bool> removeRecordsOnly(String goalId) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final success = await prefs.remove(goalId);
-      if (!success) return false;
-      _recordsByGoalId.remove(goalId);
-      notifyListeners();
-      return true;
+      if (success) {
+        _recordsByGoalId.remove(goalId);
+        notifyListeners();
+      }
+      return success;
     } catch (e) {
-      debugPrint('Failed to delete records. id: $goalId');
+      debugPrint('Failed to remove records for goal $goalId: $e');
       return false;
+    }
+  }
+
+  Future<bool> removeGoal(String goalId) async {
+    try {
+      final goalCountBefore = _goals.length;
+      _goals.removeWhere((goal) => goal.id == goalId);
+      final goalRemoved = _goals.length < goalCountBefore;
+      if (goalRemoved) {
+        final prefs = await SharedPreferences.getInstance();
+        final updatedGoalsJson =
+            jsonEncode(_goals.map((g) => g.toJson()).toList());
+        final saved = await prefs.setString('goals', updatedGoalsJson);
+        notifyListeners();
+        return saved;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Failed to remove goal $goalId: $e');
+      return false;
+    }
+  }
+
+  Future<ResetEntireGoalResult> resetEntireGoal(String goalId) async {
+    final recordsCleared = await removeRecordsOnly(goalId);
+    if (!recordsCleared) return ResetEntireGoalResult.recordFailed;
+
+    final goalCleared = await removeGoal(goalId);
+    if (!goalCleared) return ResetEntireGoalResult.goalFailed;
+
+    return ResetEntireGoalResult.success;
+  }
+
+  // TODO:
+  Future<void> createTemporaryGoalIfAbsent() async {
+    if (_goals.isEmpty) {
+      final newGoal = Goal(getNextGoalId(), '');
+      _goals.add(newGoal);
+      await saveGoals();
     }
   }
 }
