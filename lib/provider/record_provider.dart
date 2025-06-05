@@ -34,6 +34,11 @@ class RecordProvider extends ChangeNotifier {
 
   Set<DateTime> getRecords(String goal) => _recordsByGoalId[goal] ?? {};
 
+  Goal? get currentGoal {
+    if (_goals.isEmpty) return null;
+    return _goals.firstWhereOrNull((g) => g.id == _firstDisplayedGoalId);
+  }
+
   bool isGoalsEmpty() => _goals.isEmpty;
 
 // TODO: Currently displayed in ID order, but will switch to order field later.
