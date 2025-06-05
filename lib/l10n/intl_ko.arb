@@ -13,13 +13,17 @@
     "@shortWeekdays": {
         "description": "Comma-separated list of abbreviated weekdays, starting from Sunday"
     },
-    "resetSuccess": "기록이 삭제되었습니다.",
+    "resetSuccess": "초기화가 완료되었습니다.",
     "@resetSuccess": {
-        "description": "Message shown after user successfully deletes goal records."
+        "description": "Message shown after goal or records are successfully reset."
     },
-    "resetFailure": "기록 삭제에 실패했습니다.",
+    "resetFailure": "초기화에 실패했습니다.",
     "@resetFailure": {
-        "description": "Error message shown when goal record deletion fails."
+        "description": "General error message shown when reset operation fails."
+    },
+    "resetPartialFailureGoal": "기록은 삭제되었지만 목표 삭제에는 실패했어요.",
+    "@resetPartialFailureGoal": {
+        "description": "Message shown when records are deleted but goal deletion fails."
     },
     "resetRecordsOnly": "기록만 초기화",
     "@resetRecordsOnly": {
@@ -29,11 +33,11 @@
     "@resetEntireGoal": {
         "description": "Resets the goal completely including its title and saved records."
     },
-    "resetEntireGoalMessage": "목표와 기록이 모두 초기화됩니다.\n계속하시겠어요?",
+    "resetEntireGoalMessage": "목표와 기록이 모두 삭제됩니다. 계속하시겠어요?",
     "@resetEntireGoalMessage": {
         "description": "Confirmation message for full reset."
     },
-    "resetRecordsOnlyMessage": "기록만 삭제되며, 목표는 유지됩니다.",
+    "resetRecordsOnlyMessage": "기록만 삭제되며, 목표는 그대로 유지됩니다.",
     "@resetRecordsOnlyMessage": {
         "description": "Confirmation message for record-only reset."
     }

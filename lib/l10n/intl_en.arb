@@ -21,13 +21,17 @@
     "@shortWeekdays": {
         "description": "Comma-separated list of abbreviated weekdays, starting from Sunday"
     },
-    "resetSuccess": "Records deleted.",
+    "resetSuccess": "Reset completed successfully.",
     "@resetSuccess": {
-        "description": "Message shown after user successfully deletes goal records."
+        "description": "Message shown when the reset operation succeeds (regardless of goal count or type)."
     },
-    "resetFailure": "Couldn't delete records.",
+    "resetFailure": "Reset failed. Please try again.",
     "@resetFailure": {
-        "description": "Error message shown when goal record deletion fails."
+        "description": "Message shown when the reset operation fails completely."
+    },
+    "resetPartialFailureGoal": "Records were deleted, but the goal could not be removed.",
+    "@resetPartialFailureGoal": {
+        "description": "Message shown when records are deleted but the goal deletion fails."
     },
     "resetRecordsOnly": "Reset Records Only",
     "@resetRecordsOnly": {
@@ -37,11 +41,11 @@
     "@resetEntireGoal": {
         "description": "Resets the goal completely including its title and saved records."
     },
-    "resetEntireGoalMessage": "This will reset both the goal and its records.\nDo you want to continue?",
+    "resetEntireGoalMessage": "This will reset both the goal and its records. Do you want to continue?",
     "@resetEntireGoalMessage": {
         "description": "Confirmation message for full reset."
     },
-    "resetRecordsOnlyMessage": "Only the records will be deleted.\nThe goal itself will remain unchanged.",
+    "resetRecordsOnlyMessage": "Only the records will be deleted. The goal itself will remain unchanged.",
     "@resetRecordsOnlyMessage": {
         "description": "Confirmation message for record-only reset."
     }
