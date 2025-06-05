@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/model/reset_type.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 
-Future<void> showResetFailureDialog(BuildContext context) {
+Future<void> showResetFailureDialog(BuildContext context, ResetType type) {
   return showDialog<void>(
     context: context,
     builder: (_) => AlertDialog(
@@ -20,7 +22,17 @@ Future<void> showResetFailureDialog(BuildContext context) {
   );
 }
 
-Future<bool?> showResetConfirmDialog(BuildContext context, Goal goal) async {
+Future<bool?> showResetConfirmDialog(
+  BuildContext context,
+  Goal goal,
+  ResetType type,
+) async {
+  final l10n = AppLocalizations.of(context)!;
+  final message = switch (type) {
+    ResetType.recordsOnly => l10n.resetRecordsOnlyMessage,
+    ResetType.entireGoal => l10n.resetEntireGoalMessage,
+  };
+
   return await showDialog<bool?>(
     context: context,
     builder: (context) => AlertDialog(
@@ -28,7 +40,7 @@ Future<bool?> showResetConfirmDialog(BuildContext context, Goal goal) async {
       actionsPadding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       content: Text(
-        AppLocalizations.of(context)!.resetRecordsMessage,
+        message,
         style: const TextStyle(fontSize: 16, height: 1.5),
         textAlign: TextAlign.center,
       ),
@@ -43,7 +55,12 @@ Future<bool?> showResetConfirmDialog(BuildContext context, Goal goal) async {
         TextButton(
           onPressed: () async {
             final provider = context.read<RecordProvider>();
-            final succeeded = await provider.clearGoalRecords(goal.id);
+            final succeeded = switch (type) {
+              ResetType.recordsOnly =>
+                await provider.removeRecordsOnly(goal.id),
+              ResetType.entireGoal => await provider.resetEntireGoal(goal.id),
+            };
+
             if (!context.mounted) return;
             if (succeeded) {
               Navigator.of(context).pop(true);
@@ -63,21 +80,25 @@ Future<bool?> showResetConfirmDialog(BuildContext context, Goal goal) async {
   );
 }
 
-Future<void> onResetButtonTap(BuildContext context, Goal goal) async {
-  // Step 1: Ask user to confirm reset
+Future<void> onResetButtonTap(
+  BuildContext context,
+  Goal goal,
+  ResetType type,
+) async {
   if (!context.mounted) return;
-  final confirmed = await showResetConfirmDialog(context, goal);
+  final confirmed = await showResetConfirmDialog(context, goal, type);
+
   if (!context.mounted || confirmed != true) return;
+  final provider = context.read<RecordProvider>();
+  final succeeded = switch (type) {
+    ResetType.recordsOnly => await provider.removeRecordsOnly(goal.id),
+    ResetType.entireGoal => await provider.resetEntireGoal(goal.id),
+  };
 
-  // Step 2: Try to clear goal records
-  final succeeded =
-      await context.read<RecordProvider>().clearGoalRecords(goal.id);
   if (!context.mounted) return;
-
-  // Step 3: Handle result
   if (succeeded) {
     Navigator.of(context).pop();
   } else {
-    await showResetFailureDialog(context);
+    await showResetFailureDialog(context, type);
   }
 }
