@@ -25,6 +25,12 @@ enum RenameGoalResult {
   saveFailed,
 }
 
+enum ResetEntireGoalResult {
+  success,
+  recordFailed,
+  goalFailed,
+}
+
 class RecordProvider extends ChangeNotifier {
   List<Goal> _goals = [];
   final Map<String, Set<DateTime>> _recordsByGoalId = {};
@@ -200,9 +206,22 @@ class RecordProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> resetEntireGoal(String goalId) async {
+  Future<ResetEntireGoalResult> resetEntireGoal(String goalId) async {
     final recordsCleared = await removeRecordsOnly(goalId);
+    if (!recordsCleared) return ResetEntireGoalResult.recordFailed;
+
     final goalCleared = await removeGoal(goalId);
-    return recordsCleared && goalCleared;
+    if (!goalCleared) return ResetEntireGoalResult.goalFailed;
+
+    return ResetEntireGoalResult.success;
+  }
+
+  // TODO:
+  Future<void> createTemporaryGoalIfAbsent() async {
+    if (_goals.isEmpty) {
+      final newGoal = Goal(getNextGoalId(), '');
+      _goals.add(newGoal);
+      await saveGoals();
+    }
   }
 }
