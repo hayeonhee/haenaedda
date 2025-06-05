@@ -9,7 +9,7 @@
     "@goalSetupHint": {
         "description": "Hint shown when no goal is set. Encourages the user to tap to create one."
     },
-    "shortWeekdays": "월,화,수,목,금,토,일",
+    "shortWeekdays": "일,월,화,수,목,금,토",
     "@shortWeekdays": {
         "description": "Comma-separated list of abbreviated weekdays, starting from Sunday"
     },
