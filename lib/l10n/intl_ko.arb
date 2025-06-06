@@ -1,44 +1,73 @@
 {
     "@@locale": "ko",
-    "dismiss": "닫기",
-    "reset": "초기화",
     "settings": "설정",
+    "@settings": {
+        "description": "Label for settings page or button",
+        "type": "text"
+    },
     "confirm": "확인",
+    "@confirm": {
+        "description": "Label for confirming an action",
+        "type": "text"
+    },
     "cancel": "취소",
+    "@cancel": {
+        "description": "Label for canceling an action",
+        "type": "text"
+    },
+    "dismiss": "닫기",
+    "@dismiss": {
+        "description": "Label for dismissing a modal",
+        "type": "text"
+    },
+    "reset": "초기화",
+    "@reset": {
+        "description": "Tile label for resetting settings",
+        "type": "text"
+    },
     "goalSetupHint": "눌러서 목표를 설정해보세요",
     "@goalSetupHint": {
-        "description": "Hint shown when no goal is set. Encourages the user to tap to create one."
+        "description": "Hint shown when no goal is set. Encourages the user to tap to create one.",
+        "type": "text"
     },
     "shortWeekdays": "일,월,화,수,목,금,토",
     "@shortWeekdays": {
-        "description": "Comma-separated list of abbreviated weekdays, starting from Sunday"
+        "description": "Comma-separated list of abbreviated weekdays, starting from Sunday",
+        "type": "text"
     },
     "resetSuccess": "초기화가 완료되었습니다.",
     "@resetSuccess": {
-        "description": "Message shown after goal or records are successfully reset."
+        "description": "Message shown after goal or records are successfully reset.",
+        "type": "text"
     },
     "resetFailure": "초기화에 실패했습니다.",
     "@resetFailure": {
-        "description": "General error message shown when reset operation fails."
+        "description": "General error message shown when reset operation fails.",
+        "type": "text"
     },
     "resetPartialFailureGoal": "기록은 삭제되었지만 목표 삭제에는 실패했어요.",
     "@resetPartialFailureGoal": {
-        "description": "Message shown when records are deleted but goal deletion fails."
+        "description": "Message shown when records are deleted but goal deletion fails.",
+        "type": "text"
     },
     "resetRecordsOnly": "기록만 초기화",
     "@resetRecordsOnly": {
-        "description": "Resets only the saved records, keeping the goal settings."
+        "description": "Resets only the saved records, keeping the goal settings.",
+        "type": "text"
     },
     "resetEntireGoal": "전체 초기화",
     "@resetEntireGoal": {
-        "description": "Resets the goal completely including its title and saved records."
+        "description": "Resets the goal completely including its title and saved records.",
+        "type": "text"
     },
     "resetEntireGoalMessage": "목표와 기록이 모두 삭제됩니다. 계속하시겠어요?",
     "@resetEntireGoalMessage": {
-        "description": "Confirmation message for full reset."
+        "description": "Confirmation message for full reset.",
+        "type": "text"
     },
     "resetRecordsOnlyMessage": "기록만 삭제되며, 목표는 그대로 유지됩니다.",
     "@resetRecordsOnlyMessage": {
-        "description": "Confirmation message for record-only reset."
+        "description": "Confirmation message for record-only reset.",
+        "type": "text"
     }
 }
