@@ -1,52 +1,73 @@
 {
     "@@locale": "en",
-    "dismiss": "Dismiss",
-    "reset": "Reset",
     "settings": "Settings",
+    "@settings": {
+        "description": "Label for settings page or button",
+        "type": "text"
+    },
     "confirm": "Confirm",
+    "@confirm": {
+        "description": "Label for confirming an action",
+        "type": "text"
+    },
     "cancel": "Cancel",
+    "@cancel": {
+        "description": "Label for canceling an action",
+        "type": "text"
+    },
+    "dismiss": "Dismiss",
     "@dismiss": {
         "description": "Label for dismissing a modal",
         "type": "text"
     },
+    "reset": "Reset",
     "@reset": {
         "description": "Tile label for resetting settings",
         "type": "text"
     },
     "goalSetupHint": "Tap here to set your goal",
     "@goalSetupHint": {
-        "description": "Hint shown when no goal is set. Encourages the user to tap to create one."
+        "description": "Hint shown when no goal is set. Encourages the user to tap to create one.",
+        "type": "text"
     },
     "shortWeekdays": "S,M,T,W,T,F,S",
     "@shortWeekdays": {
-        "description": "Comma-separated list of abbreviated weekdays, starting from Sunday"
+        "description": "Comma-separated list of abbreviated weekdays, starting from Sunday",
+        "type": "text"
     },
     "resetSuccess": "Reset completed successfully.",
     "@resetSuccess": {
-        "description": "Message shown when the reset operation succeeds (regardless of goal count or type)."
+        "description": "Message shown when the reset operation succeeds (regardless of goal count or type).",
+        "type": "text"
     },
     "resetFailure": "Reset failed. Please try again.",
     "@resetFailure": {
-        "description": "Message shown when the reset operation fails completely."
+        "description": "Message shown when the reset operation fails completely.",
+        "type": "text"
     },
     "resetPartialFailureGoal": "Records were deleted, but the goal could not be removed.",
     "@resetPartialFailureGoal": {
-        "description": "Message shown when records are deleted but the goal deletion fails."
+        "description": "Message shown when records are deleted but the goal deletion fails.",
+        "type": "text"
     },
     "resetRecordsOnly": "Reset Records Only",
     "@resetRecordsOnly": {
-        "description": "Resets only the saved records, keeping the goal settings."
+        "description": "Resets only the saved records, keeping the goal settings.",
+        "type": "text"
     },
     "resetEntireGoal": "Reset Entire Goal",
     "@resetEntireGoal": {
-        "description": "Resets the goal completely including its title and saved records."
+        "description": "Resets the goal completely including its title and saved records.",
+        "type": "text"
     },
     "resetEntireGoalMessage": "This will reset both the goal and its records. Do you want to continue?",
     "@resetEntireGoalMessage": {
-        "description": "Confirmation message for full reset."
+        "description": "Confirmation message for full reset.",
+        "type": "text"
     },
     "resetRecordsOnlyMessage": "Only the records will be deleted. The goal itself will remain unchanged.",
     "@resetRecordsOnlyMessage": {
-        "description": "Confirmation message for record-only reset."
+        "description": "Confirmation message for record-only reset.",
+        "type": "text"
     }
 }
