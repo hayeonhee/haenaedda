@@ -77,7 +77,7 @@
                     TextButton(
                     onPressed: () => Navigator.of(context).pop(true), // 확인 
                     child: Text(l10n.confirm),
-                    )다
+                    )
                 ],
             ),
         ),
