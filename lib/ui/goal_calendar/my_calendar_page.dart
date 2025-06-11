@@ -19,14 +19,13 @@ class MyCalendarPage extends StatefulWidget {
 }
 
 class _MyCalendarPageState extends State<MyCalendarPage> {
-  // TODO: Always display the current month in this version
-  DateTime focusedDate = DateTime.now();
+  final DateTime _focusedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     final recordProvider = context.watch<RecordProvider>();
     final selectedDates = recordProvider.getRecords(widget.goal.id);
-    final dateLayout = CalendarGridLayout(focusedDate);
+    final dateLayout = CalendarGridLayout(_focusedDate);
     final daysOfWeek = AppLocalizations.of(context)!.shortWeekdays.split(',');
 
     return Scaffold(
@@ -38,7 +37,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
               const SizedBox(height: 30),
               CalendarHeaderSection(
                 goal: widget.goal,
-                date: focusedDate,
+                date: _focusedDate,
                 onGoalEditSubmitted: (String newGoal) {
                   recordProvider.renameGoal(widget.goal.id, newGoal);
                 },

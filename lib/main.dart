@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'package:haenaedda/theme/app_theme.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/theme/app_theme.dart';
 import 'package:haenaedda/ui/goal_calendar/my_calendar_page.dart';
 
 void main() {
@@ -73,6 +73,7 @@ class _HaenaeddaState extends State<Haenaedda> {
         Locale('en'),
         Locale('ko'),
       ],
+      // TODO: Support multi-goal selection and routing later
       home: MyCalendarPage(goal: nonNullableGoal),
     );
   }
