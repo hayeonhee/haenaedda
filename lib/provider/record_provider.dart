@@ -57,20 +57,14 @@ class RecordProvider extends ChangeNotifier {
     _sortedGoals = [..._goals]..sort((a, b) => a.order.compareTo(b.order));
   }
 
-// TODO: Currently displayed in ID order, but will switch to order field later.
   Future<Goal> initializeAndGetFirstGoal() async {
     await loadRecords();
-
-    final existingGoal = _goals.firstWhere(
-      (goal) => goal.id == _firstGoalId,
-      orElse: () {
-        // TODO: Create a screen to input goal title during goal creation
-        final newGoal = _createGoal("");
-        _goals.add(newGoal);
-        return newGoal;
-      },
-    );
-    return existingGoal;
+    if (_sortedGoals.isNotEmpty) return _sortedGoals.first;
+    // TODO: Create a screen to input goal title during goal creation
+    final newGoal = _createGoal("");
+    _goals.add(newGoal);
+    _syncSortedGoals();
+    return newGoal;
   }
 
   Goal _createGoal(String title) {
