@@ -257,11 +257,12 @@ class RecordProvider extends ChangeNotifier {
     return ResetEntireGoalResult.success;
   }
 
-  // TODO:
-  Future<void> createTemporaryGoalIfAbsent() async {
+  /// Creates a fallback goal if the goal list is empty.
+  /// This prevents the app from crashing after full reset.
+  Future<void> ensureAtLeastOneGoalExists() async {
     if (_goals.isEmpty) {
-      final newGoal = Goal(getNextGoalId(), '');
-      _goals.add(newGoal);
+      final fallbackGoal = _createGoal("");
+      _goals.add(fallbackGoal);
       await saveGoals();
     }
   }
