@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +16,7 @@ enum AddGoalResult {
   success,
   emptyInput,
   duplicate,
+  saveFailed,
 }
 
 enum RenameGoalResult {
@@ -33,44 +35,69 @@ enum ResetEntireGoalResult {
 
 class RecordProvider extends ChangeNotifier {
   List<Goal> _goals = [];
+  List<Goal> _sortedGoals = [];
   final Map<String, Set<DateTime>> _recordsByGoalId = {};
-  final String _firstDisplayedGoalId = '1';
+  static const String _firstGoalId = '10';
+  static const int _orderStep = 10;
 
   Map<String, Set<DateTime>> get recordsByGoal => _recordsByGoalId;
 
   Set<DateTime> getRecords(String goal) => _recordsByGoalId[goal] ?? {};
 
+  List<Goal> get sortedGoals => _sortedGoals;
+
   Goal? get currentGoal {
     if (_goals.isEmpty) return null;
-    return _goals.firstWhereOrNull((g) => g.id == _firstDisplayedGoalId);
+    return _goals.firstWhereOrNull((g) => g.id == _firstGoalId);
   }
 
   bool isGoalsEmpty() => _goals.isEmpty;
 
-// TODO: Currently displayed in ID order, but will switch to order field later.
-  Future<Goal> initializeAndGetFirstGoal() async {
-    await loadRecords();
-
-    final existingGoal = _goals.firstWhere(
-      (goal) => goal.id == _firstDisplayedGoalId,
-      orElse: () {
-        final newGoal = _createDefaultGoal();
-        _goals.add(newGoal);
-        return newGoal;
-      },
-    );
-    return existingGoal;
+  void _syncSortedGoals() {
+    _sortedGoals = [..._goals]..sort((a, b) => a.order.compareTo(b.order));
   }
 
-  Goal _createDefaultGoal() {
-    return Goal(_firstDisplayedGoalId, "");
+  Future<Goal> initializeAndGetFirstGoal() async {
+    await loadRecords();
+    if (_sortedGoals.isNotEmpty) return _sortedGoals.first;
+    // TODO: Create a screen to input goal title during goal creation
+    final newGoal = _createGoal("");
+    _goals.add(newGoal);
+    _syncSortedGoals();
+    return newGoal;
+  }
+
+  Goal _createGoal(String title) {
+    final String id = getNextGoalId();
+    final int order = getNextOrder();
+    return Goal(id, order, title);
   }
 
   String getNextGoalId() {
-    if (_goals.isEmpty) return _firstDisplayedGoalId;
+    if (_goals.isEmpty) return _firstGoalId;
     final lastGoal = _goals.last;
     final nextId = int.parse(lastGoal.id) + 1;
     return nextId.toString();
+  }
+
+  /// Returns the next order value with a fixed step (default: 10).
+  /// This keeps enough space between items for future insertions.
+  int getNextOrder() {
+    if (_goals.isEmpty) return _orderStep;
+    final maxOrder = _goals.map((g) => g.order).reduce(max);
+    return maxOrder + _orderStep;
+  }
+
+  /// Reassigns order values with equal spacing (e.g. 10, 20, 30...).
+  /// Call this when there isn't enough space between items
+  void rebalanceOrders() {
+    _goals.sort((a, b) => a.order.compareTo(b.order));
+    for (int i = 0; i < _goals.length; i++) {
+      _goals[i].order = (i + 1) * _orderStep;
+    }
+    _syncSortedGoals();
+    saveGoals();
+    notifyListeners();
   }
 
   bool isDuplicateGoal(String newGoalTitle) {
@@ -80,8 +107,15 @@ class RecordProvider extends ChangeNotifier {
   AddGoalResult addGoal(String input) {
     if (input.trim().isEmpty) return AddGoalResult.emptyInput;
     if (isDuplicateGoal(input)) return AddGoalResult.duplicate;
-    final id = getNextGoalId();
-    _goals.add(Goal(id, input));
+    final goal = _createGoal(input);
+    _goals.add(goal);
+    _syncSortedGoals();
+    try {
+      saveGoals();
+    } catch (e) {
+      return AddGoalResult.saveFailed;
+    }
+    notifyListeners();
     return AddGoalResult.success;
   }
 
@@ -126,6 +160,7 @@ class RecordProvider extends ChangeNotifier {
     final restoredGoals =
         decodedGoalsJson.map((e) => Goal.fromJson(e)).toList();
     _goals = restoredGoals;
+    _syncSortedGoals();
     notifyListeners();
     return true;
   }
@@ -216,11 +251,12 @@ class RecordProvider extends ChangeNotifier {
     return ResetEntireGoalResult.success;
   }
 
-  // TODO:
-  Future<void> createTemporaryGoalIfAbsent() async {
+  /// Creates a fallback goal if the goal list is empty.
+  /// This prevents the app from crashing after full reset.
+  Future<void> ensureAtLeastOneGoalExists() async {
     if (_goals.isEmpty) {
-      final newGoal = Goal(getNextGoalId(), '');
-      _goals.add(newGoal);
+      final fallbackGoal = _createGoal("");
+      _goals.add(fallbackGoal);
       await saveGoals();
     }
   }

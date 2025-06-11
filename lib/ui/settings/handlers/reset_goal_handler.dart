@@ -114,7 +114,7 @@ Future<void> _handleEntireGoalReset(BuildContext context, Goal goal) async {
 
   switch (result) {
     case ResetEntireGoalResult.success:
-      await provider.createTemporaryGoalIfAbsent();
+      await provider.ensureAtLeastOneGoalExists();
       if (context.mounted) Navigator.of(context).pop();
       break;
     case ResetEntireGoalResult.recordFailed:
