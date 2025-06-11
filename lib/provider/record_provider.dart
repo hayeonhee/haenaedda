@@ -15,6 +15,7 @@ enum AddGoalResult {
   success,
   emptyInput,
   duplicate,
+  saveFailed,
 }
 
 enum RenameGoalResult {
@@ -33,6 +34,9 @@ enum ResetEntireGoalResult {
 
 class RecordProvider extends ChangeNotifier {
   List<Goal> _goals = [];
+  List<Goal> _sortedGoals = [];
+
+  List<Goal> get sortedGoals => _sortedGoals;
   final Map<String, Set<DateTime>> _recordsByGoalId = {};
   final String _firstDisplayedGoalId = '1';
 
@@ -47,6 +51,10 @@ class RecordProvider extends ChangeNotifier {
 
   bool isGoalsEmpty() => _goals.isEmpty;
 
+  void _applySort() {
+    _sortedGoals = [..._goals]..sort((a, b) => a.order.compareTo(b.order));
+  }
+
 // TODO: Currently displayed in ID order, but will switch to order field later.
   Future<Goal> initializeAndGetFirstGoal() async {
     await loadRecords();
@@ -60,6 +68,12 @@ class RecordProvider extends ChangeNotifier {
       },
     );
     return existingGoal;
+  }
+
+  Goal _createGoal(String title) {
+    final id = getNextGoalId();
+    final order = getNextOrder();
+    return Goal(id, order, title);
   }
 
   Goal _createDefaultGoal() {
@@ -80,8 +94,15 @@ class RecordProvider extends ChangeNotifier {
   AddGoalResult addGoal(String input) {
     if (input.trim().isEmpty) return AddGoalResult.emptyInput;
     if (isDuplicateGoal(input)) return AddGoalResult.duplicate;
-    final id = getNextGoalId();
-    _goals.add(Goal(id, input));
+    final goal = _createGoal(input);
+    _goals.add(goal);
+    _applySort();
+    try {
+      saveGoals();
+    } catch (e) {
+      return AddGoalResult.saveFailed;
+    }
+    notifyListeners();
     return AddGoalResult.success;
   }
 
@@ -126,6 +147,7 @@ class RecordProvider extends ChangeNotifier {
     final restoredGoals =
         decodedGoalsJson.map((e) => Goal.fromJson(e)).toList();
     _goals = restoredGoals;
+    _applySort();
     notifyListeners();
     return true;
   }
