@@ -53,7 +53,7 @@ class RecordProvider extends ChangeNotifier {
 
   bool isGoalsEmpty() => _goals.isEmpty;
 
-  void _applySort() {
+  void _syncSortedGoals() {
     _sortedGoals = [..._goals]..sort((a, b) => a.order.compareTo(b.order));
   }
 
@@ -101,7 +101,7 @@ class RecordProvider extends ChangeNotifier {
     for (int i = 0; i < _goals.length; i++) {
       _goals[i].order = (i + 1) * _orderStep;
     }
-    _applySort();
+    _syncSortedGoals();
     saveGoals();
     notifyListeners();
   }
@@ -115,7 +115,7 @@ class RecordProvider extends ChangeNotifier {
     if (isDuplicateGoal(input)) return AddGoalResult.duplicate;
     final goal = _createGoal(input);
     _goals.add(goal);
-    _applySort();
+    _syncSortedGoals();
     try {
       saveGoals();
     } catch (e) {
@@ -166,7 +166,7 @@ class RecordProvider extends ChangeNotifier {
     final restoredGoals =
         decodedGoalsJson.map((e) => Goal.fromJson(e)).toList();
     _goals = restoredGoals;
-    _applySort();
+    _syncSortedGoals();
     notifyListeners();
     return true;
   }
