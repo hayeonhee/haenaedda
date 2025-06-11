@@ -36,18 +36,19 @@ enum ResetEntireGoalResult {
 class RecordProvider extends ChangeNotifier {
   List<Goal> _goals = [];
   List<Goal> _sortedGoals = [];
-
-  List<Goal> get sortedGoals => _sortedGoals;
   final Map<String, Set<DateTime>> _recordsByGoalId = {};
-  final String _firstDisplayedGoalId = '1';
+  static const String _firstGoalId = '10';
+  static const int _orderStep = 10;
 
   Map<String, Set<DateTime>> get recordsByGoal => _recordsByGoalId;
 
   Set<DateTime> getRecords(String goal) => _recordsByGoalId[goal] ?? {};
 
+  List<Goal> get sortedGoals => _sortedGoals;
+
   Goal? get currentGoal {
     if (_goals.isEmpty) return null;
-    return _goals.firstWhereOrNull((g) => g.id == _firstDisplayedGoalId);
+    return _goals.firstWhereOrNull((g) => g.id == _firstGoalId);
   }
 
   bool isGoalsEmpty() => _goals.isEmpty;
@@ -61,9 +62,10 @@ class RecordProvider extends ChangeNotifier {
     await loadRecords();
 
     final existingGoal = _goals.firstWhere(
-      (goal) => goal.id == _firstDisplayedGoalId,
+      (goal) => goal.id == _firstGoalId,
       orElse: () {
-        final newGoal = _createDefaultGoal();
+        // TODO: Create a screen to input goal title during goal creation
+        final newGoal = _createGoal("");
         _goals.add(newGoal);
         return newGoal;
       },
@@ -72,17 +74,13 @@ class RecordProvider extends ChangeNotifier {
   }
 
   Goal _createGoal(String title) {
-    final id = getNextGoalId();
-    final order = getNextOrder();
+    final String id = getNextGoalId();
+    final int order = getNextOrder();
     return Goal(id, order, title);
   }
 
-  Goal _createDefaultGoal() {
-    return Goal(_firstDisplayedGoalId, "");
-  }
-
   String getNextGoalId() {
-    if (_goals.isEmpty) return _firstDisplayedGoalId;
+    if (_goals.isEmpty) return _firstGoalId;
     final lastGoal = _goals.last;
     final nextId = int.parse(lastGoal.id) + 1;
     return nextId.toString();
@@ -91,17 +89,17 @@ class RecordProvider extends ChangeNotifier {
   /// Returns the next order value with a fixed step (default: 10).
   /// This keeps enough space between items for future insertions.
   int getNextOrder() {
-    if (_goals.isEmpty) return 10;
+    if (_goals.isEmpty) return _orderStep;
     final maxOrder = _goals.map((g) => g.order).reduce(max);
-    return maxOrder + 10;
+    return maxOrder + _orderStep;
   }
 
   /// Reassigns order values with equal spacing (e.g. 10, 20, 30...).
   /// Call this when there isn't enough space between items
-  void rebalanceOrders({int step = 10}) {
+  void rebalanceOrders() {
     _goals.sort((a, b) => a.order.compareTo(b.order));
     for (int i = 0; i < _goals.length; i++) {
-      _goals[i].order = (i + 1) * step;
+      _goals[i].order = (i + 1) * _orderStep;
     }
     _applySort();
     saveGoals();
