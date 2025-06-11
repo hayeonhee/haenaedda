@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -85,6 +86,26 @@ class RecordProvider extends ChangeNotifier {
     final lastGoal = _goals.last;
     final nextId = int.parse(lastGoal.id) + 1;
     return nextId.toString();
+  }
+
+  /// Returns the next order value with a fixed step (default: 10).
+  /// This keeps enough space between items for future insertions.
+  int getNextOrder() {
+    if (_goals.isEmpty) return 10;
+    final maxOrder = _goals.map((g) => g.order).reduce(max);
+    return maxOrder + 10;
+  }
+
+  /// Reassigns order values with equal spacing (e.g. 10, 20, 30...).
+  /// Call this when there isn't enough space between items
+  void rebalanceOrders({int step = 10}) {
+    _goals.sort((a, b) => a.order.compareTo(b.order));
+    for (int i = 0; i < _goals.length; i++) {
+      _goals[i].order = (i + 1) * step;
+    }
+    _applySort();
+    saveGoals();
+    notifyListeners();
   }
 
   bool isDuplicateGoal(String newGoalTitle) {
