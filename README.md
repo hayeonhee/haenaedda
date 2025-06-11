@@ -143,3 +143,12 @@
   - createTemporaryGoalIfAbsent() 메서드를 도입해 목표가 없을 시 자동으로 비어있는 목표를 생성해 앱이 정상 동작하도록 처리함
   - 추후 목표를 입력받는 초기 화면을 추가하여 빈 객체를 임의 생성하는 대신 사용자가 의도를 가지고 생성한 객체를 사용하도록 수정할 예정
 
+### SharedPreferences에서 데이터를 불러올 때, 값이 없을 경우 역직렬화에 실패하는 문제 
+- 문제상황
+  - DateTime Set이 비어 있을 때 (아무 날짜도 선택되지 않았을 때) 발생하는 역직렬화 오류 
+    > flutter: Error parsing DateTime set: type '_Map<String, dynamic>' is not a subtype of type 'String' in type cast
+- 해결 방법
+  - jsonString == null || jsonString.trim().isEmpty일 경우 DateRecordSet() 반환하는 방어 로직 추가
+  - 날짜 비교의 안정성과 직렬화/역직렬화 코드 중복 방지를 위해 사용자 정의 타입 DateRecordSet 도입
+    - 날짜 정규화(DateTime → year, month, day만 유지)
+    - 내부적으로 Set<DateTime>을 은닉하고 메서드 기반으로 제어
