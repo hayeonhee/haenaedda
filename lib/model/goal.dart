@@ -1,14 +1,14 @@
 class Goal {
   final String id;
-  // TODO: Add order property
-  // int order;
+  int order;
   String title;
 
-  Goal(this.id, this.title);
+  Goal(this.id, this.order, this.title);
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'order': order,
       'title': title,
     };
   }
@@ -16,6 +16,7 @@ class Goal {
   factory Goal.fromJson(Map<String, dynamic> json) {
     return Goal(
       json['id'] as String,
+      json['order'] as int,
       json['title'] as String,
     );
   }
