@@ -44,10 +44,10 @@
 
 ### 데이터 구조 설계
 
-#### 기록 저장 구조: `Map<String, Set<DateTime>>` 
+### 기록 저장 구조: `Map<String, DateRecordSet>` 
 
 - `String`: Goal의 고유 ID
-- `Set<DateTime>`: 사용자가 해당 목표를 완료한 날짜들의 집합
+- `DateRecordSet`: 사용자가 해당 목표를 완료한 날짜들의 집합
 
 예시:
 ```dart
@@ -57,7 +57,7 @@
 }
 ```
 
-#### 사용자 정의 타입: Goal
+### 사용자 정의 타입: Goal
 
 | 필드명 | 타입 | 설명 |
 |--------|------|------|
@@ -66,8 +66,13 @@
 | `title` | `String` | 목표 제목 |
 
 
+### 사용자 정의 타입: DateRecordSet
+- 날짜 비교 시 시간 정보로 인해 오류가 발생할 수 있어 시간 정보를 제거하고, 날짜만 남김 (정규화)
+- Set<DateTime>은 SharedPreferences에 직접 저장할 수 없어 별도의 변환 로직 필요
+- 날짜 정규화 및 직렬화/역직렬화 로직을 캡슐화해 코드 중복을 줄이고 안정성 향상
 
-#### 해시 기반 Map-Set 단일 구조 → List 추가한 이유
+
+### 해시 기반 Map-Set 단일 구조 → List 추가한 이유
 - 장기 운영을 전제로 목표가 많아지거나 다양한 커스텀 설정 지원할 수 있도록 구조를 확장
 - Goal ID를 키로 사용해 title이 변경되어도 기록과의 연결이 유지됨
 
@@ -75,7 +80,7 @@
   - 현재 id가 자주 사용되는 작업이 SharedPreferences에 저장/불러오기이기 때문에, 불필요한 변환을 줄이고 데이터 일관성을 유지하기 위해 String 타입으로 선언
 - 목표 노출 순서를 제어하기 위해 order 필드를 도입하고, sparse ordering 방식을 적용하여 유연한 순서 변경 및 중간 삽입이 가능하도록 설계
 
-#### Goal 정렬 방식: Sparse Ordering
+### Goal 정렬 방식: Sparse Ordering
 > 이 설계는 Notion, Trello 등에서 사용하는 방식에서 착안했습니다.
 
 - 각 Goal은 `order` int 필드를 갖고, 숫자가 작을수록 먼저 노출됨
@@ -138,3 +143,12 @@
   - createTemporaryGoalIfAbsent() 메서드를 도입해 목표가 없을 시 자동으로 비어있는 목표를 생성해 앱이 정상 동작하도록 처리함
   - 추후 목표를 입력받는 초기 화면을 추가하여 빈 객체를 임의 생성하는 대신 사용자가 의도를 가지고 생성한 객체를 사용하도록 수정할 예정
 
+### SharedPreferences에서 데이터를 불러올 때, 값이 없을 경우 역직렬화에 실패하는 문제 
+- 문제상황
+  - DateTime Set이 비어 있을 때 (아무 날짜도 선택되지 않았을 때) 발생하는 역직렬화 오류 
+    > flutter: Error parsing DateTime set: type '_Map<String, dynamic>' is not a subtype of type 'String' in type cast
+- 해결 방법
+  - jsonString == null || jsonString.trim().isEmpty일 경우 DateRecordSet() 반환하는 방어 로직 추가
+  - 날짜 비교의 안정성과 직렬화/역직렬화 코드 중복 방지를 위해 사용자 정의 타입 DateRecordSet 도입
+    - 날짜 정규화(DateTime → year, month, day만 유지)
+    - 내부적으로 Set<DateTime>을 은닉하고 메서드 기반으로 제어
