@@ -4,9 +4,9 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:haenaedda/model/date_record_set.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/utils/extensions/iterable_extensions.dart';
-import 'package:haenaedda/utils/record_serializer.dart';
 
 class StorageKeys {
   static const String goals = 'goals';
@@ -36,13 +36,14 @@ enum ResetEntireGoalResult {
 class RecordProvider extends ChangeNotifier {
   List<Goal> _goals = [];
   List<Goal> _sortedGoals = [];
-  final Map<String, Set<DateTime>> _recordsByGoalId = {};
+  final Map<String, DateRecordSet> _recordsByGoalId = {};
   static const String _firstGoalId = '10';
   static const int _orderStep = 10;
 
-  Map<String, Set<DateTime>> get recordsByGoal => _recordsByGoalId;
+  Map<String, DateRecordSet> get recordsByGoal => _recordsByGoalId;
 
-  Set<DateTime> getRecords(String goal) => _recordsByGoalId[goal] ?? {};
+  DateRecordSet getRecords(String goal) =>
+      _recordsByGoalId[goal] ?? DateRecordSet();
 
   List<Goal> get sortedGoals => _sortedGoals;
 
@@ -169,19 +170,16 @@ class RecordProvider extends ChangeNotifier {
     if (_recordsByGoalId.isEmpty) {
       return DateTime.now();
     }
-    final allDates = _recordsByGoalId.values.expand((dates) => dates).toList();
-    allDates.sort((a, b) => a.compareTo(b));
+    final allDates =
+        _recordsByGoalId.values.expand((recordSet) => recordSet.raw).toList();
+    allDates.sort();
     return allDates.first;
   }
 
   void toggleRecord(String goalId, DateTime date) {
-    final goalRecords = _recordsByGoalId[goalId] ?? <DateTime>{};
-    if (goalRecords.contains(date)) {
-      goalRecords.remove(date);
-    } else {
-      goalRecords.add(date);
-    }
-    _recordsByGoalId[goalId] = goalRecords;
+    final currentSet = _recordsByGoalId[goalId] ?? DateRecordSet();
+    final updated = currentSet.toggle(date);
+    _recordsByGoalId[goalId] = updated;
     saveRecords();
     notifyListeners();
   }
@@ -192,7 +190,7 @@ class RecordProvider extends ChangeNotifier {
     for (String key in keys) {
       final dates = prefs.getString(key);
       if (dates != null) {
-        _recordsByGoalId[key] = jsonToDateTimeSet(dates);
+        _recordsByGoalId[key] = DateRecordSet.fromJson(dates);
       }
     }
     notifyListeners();
@@ -201,7 +199,7 @@ class RecordProvider extends ChangeNotifier {
   Future<void> saveRecords() async {
     final prefs = await SharedPreferences.getInstance();
     for (final entry in _recordsByGoalId.entries) {
-      final dates = dateTimeSetToJson(entry.value);
+      final dates = entry.value.toJson();
       await prefs.setString(entry.key, dates);
     }
   }

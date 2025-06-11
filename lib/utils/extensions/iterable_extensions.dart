@@ -6,4 +6,6 @@ extension IterableExtensions<T> on Iterable<T> {
     }
     return null;
   }
+
+  T? get firstOrNull => isEmpty ? null : first;
 }

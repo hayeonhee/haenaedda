@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
+import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/calendar_grid_layout.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:haenaedda/model/calendar_grid_layout.dart';
+import 'package:haenaedda/model/date_record_set.dart';
 import 'package:haenaedda/ui/goal_calendar/calendar_day_cell.dart';
 import 'package:haenaedda/ui/goal_calendar/empty_cell.dart';
 
 class CalendarScreen extends StatefulWidget {
   final CalendarGridLayout dateLayout;
-  final Set<DateTime> selectedDates;
+  final DateRecordSet selectedDates;
   final void Function(DateTime) onCellTap;
 
   const CalendarScreen({
