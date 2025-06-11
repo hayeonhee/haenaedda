@@ -41,7 +41,11 @@ class DateRecordSet {
     return jsonEncode(dateStrings);
   }
 
-  static DateRecordSet fromJson(String jsonString) {
+  static DateRecordSet fromJson(String? jsonString) {
+    if (jsonString == null || jsonString.trim().isEmpty) {
+      return DateRecordSet();
+    }
+
     try {
       final decoded = jsonDecode(jsonString);
       final dates = (decoded as List)
