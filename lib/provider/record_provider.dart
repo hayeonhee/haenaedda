@@ -61,17 +61,22 @@ class RecordProvider extends ChangeNotifier {
   Future<List<Goal>?> initializeAndGetGoals() async {
     final success = await loadData();
     if (!success) return null;
-    if (_sortedGoals.isNotEmpty) return _sortedGoals;
-    // TODO: Create a screen to input goal title during goal creation
-    final newGoal = _createGoal("");
-    _goals.add(newGoal);
-    _syncSortedGoals();
+    if (_sortedGoals.isEmpty) {
+      // TODO: Create a screen to input goal title during goal creation
+      final newGoal = _createGoal("");
+      _goals.add(newGoal);
+      _syncSortedGoals();
+    }
     return _sortedGoals;
   }
 
   Future<bool> loadData() async {
     final goalsLoaded = await loadGoals();
+    if (!goalsLoaded) return false;
+
     final recordsLoaded = await loadRecords();
+    if (!recordsLoaded) return false;
+
     return goalsLoaded && recordsLoaded;
   }
 
@@ -163,7 +168,11 @@ class RecordProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final loadedGoalsJson = prefs.getString(StorageKeys.goals);
 
-      if (loadedGoalsJson == null) return false;
+      if (loadedGoalsJson == null) {
+        _clearGoals();
+        debugPrint('No saved goals found. Clearing internal goal state.');
+        return true;
+      }
 
       final decodedGoalsJson = jsonDecode(loadedGoalsJson);
       final restoredGoals =
@@ -176,6 +185,12 @@ class RecordProvider extends ChangeNotifier {
       debugPrint('Failed to load goals: $e');
       return false;
     }
+  }
+
+  void _clearGoals() {
+    _goals = [];
+    _sortedGoals = [];
+    notifyListeners();
   }
 
   DateTime getFirstRecordedDate() {
@@ -200,12 +215,18 @@ class RecordProvider extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       final keys = prefs.getKeys();
+      _recordsByGoalId.clear();
 
       for (String key in keys) {
         final dates = prefs.getString(key);
-        if (dates == null) return false;
+        if (dates == null) continue;
 
-        _recordsByGoalId[key] = DateRecordSet.fromJson(dates);
+        try {
+          _recordsByGoalId[key] = DateRecordSet.fromJson(dates);
+        } catch (e) {
+          debugPrint('Record parsing failed for $key: $e');
+          return false;
+        }
       }
       notifyListeners();
       return true;
