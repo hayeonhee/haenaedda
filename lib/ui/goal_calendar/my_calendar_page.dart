@@ -28,49 +28,46 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
     final dateLayout = CalendarGridLayout(_focusedDate);
     final daysOfWeek = AppLocalizations.of(context)!.shortWeekdays.split(',');
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: Column(
-              children: [
-                const SizedBox(height: 30),
-                CalendarHeaderSection(
-                  goal: widget.goal,
-                  date: _focusedDate,
-                  onGoalEditSubmitted: (String newGoal) {
-                    recordProvider.renameGoal(widget.goal.id, newGoal);
-                  },
-                ),
-                const SizedBox(height: 24),
-                const SectionDivider(),
-                const SizedBox(height: 40),
-                Row(
-                  children: List.generate(daysOfWeek.length, (index) {
-                    return Expanded(
-                      child: Text(
-                        daysOfWeek[index],
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  }),
-                ),
-                const SizedBox(height: 24),
-                CalendarScreen(
-                  dateLayout: dateLayout,
-                  selectedDates: selectedDates,
-                  onCellTap: (selectedDate) =>
-                      recordProvider.toggleRecord(widget.goal.id, selectedDate),
-                ),
-              ],
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: Column(
+          children: [
+            const SizedBox(height: 30),
+            CalendarHeaderSection(
+              goal: widget.goal,
+              date: _focusedDate,
+              onGoalEditSubmitted: (String newGoal) {
+                recordProvider.renameGoal(widget.goal.id, newGoal);
+              },
             ),
-          ),
+            const SizedBox(height: 24),
+            const SectionDivider(),
+            const SizedBox(height: 40),
+            Row(
+              children: List.generate(daysOfWeek.length, (index) {
+                return Expanded(
+                  child: Text(
+                    daysOfWeek[index],
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(height: 24),
+            CalendarScreen(
+              dateLayout: dateLayout,
+              selectedDates: selectedDates,
+              onCellTap: (selectedDate) =>
+                  recordProvider.toggleRecord(widget.goal.id, selectedDate),
+            ),
+          ],
         ),
       ),
     );
