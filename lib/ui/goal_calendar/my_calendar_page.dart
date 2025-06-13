@@ -19,7 +19,7 @@ class MyCalendarPage extends StatefulWidget {
 }
 
 class _MyCalendarPageState extends State<MyCalendarPage> {
-  final DateTime _focusedDate = DateTime.now();
+  DateTime _focusedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +40,11 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
               date: _focusedDate,
               onGoalEditSubmitted: (String newGoal) {
                 recordProvider.renameGoal(widget.goal.id, newGoal);
+              },
+              onMonthChanged: (DateTime newMonth) {
+                setState(() {
+                  _focusedDate = newMonth;
+                });
               },
             ),
             const SizedBox(height: 24),
