@@ -5,12 +5,12 @@ import 'package:haenaedda/model/date_record_set.dart';
 import 'package:haenaedda/ui/goal_calendar/calendar_day_cell.dart';
 import 'package:haenaedda/ui/goal_calendar/empty_cell.dart';
 
-class CalendarScreen extends StatefulWidget {
+class CalendarGrid extends StatefulWidget {
   final CalendarGridLayout dateLayout;
   final DateRecordSet selectedDates;
   final void Function(DateTime) onCellTap;
 
-  const CalendarScreen({
+  const CalendarGrid({
     super.key,
     required this.dateLayout,
     required this.selectedDates,
@@ -18,15 +18,16 @@ class CalendarScreen extends StatefulWidget {
   });
 
   @override
-  State<CalendarScreen> createState() => _CalendarScreenState();
+  State<CalendarGrid> createState() => _CalendarGridState();
 }
 
-class _CalendarScreenState extends State<CalendarScreen> {
+class _CalendarGridState extends State<CalendarGrid> {
   @override
   Widget build(BuildContext context) {
     final dateLayout = widget.dateLayout;
 
     return GridView.count(
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       crossAxisCount: 7,
       childAspectRatio: 1,

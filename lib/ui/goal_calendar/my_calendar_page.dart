@@ -5,7 +5,7 @@ import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/calendar_grid_layout.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
-import 'package:haenaedda/ui/goal_calendar/calendar_screen.dart';
+import 'package:haenaedda/ui/goal_calendar/calendar_grid.dart';
 import 'package:haenaedda/ui/goal_calendar/header_section/calendar_header_section.dart';
 import 'package:haenaedda/ui/widgets/section_divider.dart';
 
@@ -66,7 +66,7 @@ class _MyCalendarPageState extends State<MyCalendarPage> {
               }),
             ),
             const SizedBox(height: 24),
-            CalendarScreen(
+            CalendarGrid(
               dateLayout: dateLayout,
               selectedDates: selectedDates,
               onCellTap: (selectedDate) =>
