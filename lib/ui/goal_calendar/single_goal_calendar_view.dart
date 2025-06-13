@@ -9,16 +9,16 @@ import 'package:haenaedda/ui/goal_calendar/calendar_grid.dart';
 import 'package:haenaedda/ui/goal_calendar/header_section/calendar_header_section.dart';
 import 'package:haenaedda/ui/widgets/section_divider.dart';
 
-class MyCalendarPage extends StatefulWidget {
+class SingleGoalCalendarView extends StatefulWidget {
   final Goal goal;
 
-  const MyCalendarPage({super.key, required this.goal});
+  const SingleGoalCalendarView({super.key, required this.goal});
 
   @override
-  State<MyCalendarPage> createState() => _MyCalendarPageState();
+  State<SingleGoalCalendarView> createState() => _SingleGoalCalendarViewState();
 }
 
-class _MyCalendarPageState extends State<MyCalendarPage> {
+class _SingleGoalCalendarViewState extends State<SingleGoalCalendarView> {
   DateTime _focusedDate = DateTime.now();
 
   @override
