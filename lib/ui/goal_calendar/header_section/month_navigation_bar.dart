@@ -5,10 +5,12 @@ import 'package:haenaedda/provider/record_provider.dart';
 
 class MonthNavigationBar extends StatefulWidget {
   final DateTime referenceDate;
+  final void Function(DateTime)? onMonthChanged;
 
   const MonthNavigationBar({
     super.key,
     required this.referenceDate,
+    this.onMonthChanged,
   });
 
   @override
@@ -51,6 +53,7 @@ class _MonthNavigationBarState extends State<MonthNavigationBar> {
       setState(() {
         _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1);
       });
+      widget.onMonthChanged?.call(_focusedDate);
     }
   }
 
@@ -59,6 +62,7 @@ class _MonthNavigationBarState extends State<MonthNavigationBar> {
       setState(() {
         _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1);
       });
+      widget.onMonthChanged?.call(_focusedDate);
     }
   }
 

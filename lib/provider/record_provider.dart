@@ -58,14 +58,26 @@ class RecordProvider extends ChangeNotifier {
     _sortedGoals = [..._goals]..sort((a, b) => a.order.compareTo(b.order));
   }
 
-  Future<Goal> initializeAndGetFirstGoal() async {
-    await loadRecords();
-    if (_sortedGoals.isNotEmpty) return _sortedGoals.first;
-    // TODO: Create a screen to input goal title during goal creation
-    final newGoal = _createGoal("");
-    _goals.add(newGoal);
-    _syncSortedGoals();
-    return newGoal;
+  Future<List<Goal>?> initializeAndGetGoals() async {
+    final success = await loadData();
+    if (!success) return null;
+    if (_sortedGoals.isEmpty) {
+      // TODO: Create a screen to input goal title during goal creation
+      final newGoal = _createGoal("");
+      _goals.add(newGoal);
+      _syncSortedGoals();
+    }
+    return _sortedGoals;
+  }
+
+  Future<bool> loadData() async {
+    final goalsLoaded = await loadGoals();
+    if (!goalsLoaded) return false;
+
+    final recordsLoaded = await loadRecords();
+    if (!recordsLoaded) return false;
+
+    return goalsLoaded && recordsLoaded;
   }
 
   Goal _createGoal(String title) {
@@ -133,6 +145,7 @@ class RecordProvider extends ChangeNotifier {
       return RenameGoalResult.notFound;
     }
     goal.title = newGoalTitle;
+    saveGoals();
     notifyListeners();
     return RenameGoalResult.success;
   }
@@ -151,19 +164,35 @@ class RecordProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> loadGoal() async {
-    final prefs = await SharedPreferences.getInstance();
-    final loadedGoalsJson = prefs.getString(StorageKeys.goals);
+  Future<bool> loadGoals() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final loadedGoalsJson = prefs.getString(StorageKeys.goals);
 
-    if (loadedGoalsJson == null) return false;
+      if (loadedGoalsJson == null) {
+        _clearGoals();
+        debugPrint('No saved goals found. Clearing internal goal state.');
+        return true;
+      }
 
-    final decodedGoalsJson = jsonDecode(loadedGoalsJson);
-    final restoredGoals =
-        decodedGoalsJson.map((e) => Goal.fromJson(e)).toList();
-    _goals = restoredGoals;
-    _syncSortedGoals();
+      final decodedGoalsJson = jsonDecode(loadedGoalsJson);
+      final List<Goal> restoredGoals = (decodedGoalsJson as List)
+          .map((e) => Goal.fromJson((e as Map<String, dynamic>)))
+          .toList();
+      _goals = restoredGoals;
+      _syncSortedGoals();
+      notifyListeners();
+      return true;
+    } catch (e) {
+      debugPrint('Failed to load goals: $e');
+      return false;
+    }
+  }
+
+  void _clearGoals() {
+    _goals = [];
+    _sortedGoals = [];
     notifyListeners();
-    return true;
   }
 
   DateTime getFirstRecordedDate() {
@@ -184,16 +213,29 @@ class RecordProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadRecords() async {
-    final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys();
-    for (String key in keys) {
-      final dates = prefs.getString(key);
-      if (dates != null) {
-        _recordsByGoalId[key] = DateRecordSet.fromJson(dates);
+  Future<bool> loadRecords() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final keys = prefs.getKeys();
+      _recordsByGoalId.clear();
+
+      for (String key in keys) {
+        final dates = prefs.getString(key);
+        if (dates == null) continue;
+
+        try {
+          _recordsByGoalId[key] = DateRecordSet.fromJson(dates);
+        } catch (e) {
+          debugPrint('Record parsing failed for $key: $e');
+          return false;
+        }
       }
+      notifyListeners();
+      return true;
+    } catch (e) {
+      debugPrint('Failed to load records: $e');
+      return false;
     }
-    notifyListeners();
   }
 
   Future<void> saveRecords() async {

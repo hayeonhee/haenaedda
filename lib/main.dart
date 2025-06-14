@@ -6,7 +6,7 @@ import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/theme/app_theme.dart';
-import 'package:haenaedda/ui/goal_calendar/my_calendar_page.dart';
+import 'package:haenaedda/ui/goal_calendar/goal_calendar_page.dart';
 
 void main() {
   runApp(
@@ -27,7 +27,7 @@ class Haenaedda extends StatefulWidget {
 }
 
 class _HaenaeddaState extends State<Haenaedda> {
-  Goal? firstDisplayedGoal;
+  List<Goal>? goals;
 
   @override
   void initState() {
@@ -36,20 +36,21 @@ class _HaenaeddaState extends State<Haenaedda> {
       final recordProvider =
           Provider.of<RecordProvider>(context, listen: false);
 
-      final goal = await recordProvider.initializeAndGetFirstGoal();
+      final sortedGoals = await recordProvider.initializeAndGetGoals();
       if (!mounted) return;
       setState(() {
-        firstDisplayedGoal = goal;
+        goals = sortedGoals;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (firstDisplayedGoal == null) {
+    if (goals == null) {
       return const Center(child: CircularProgressIndicator());
     }
-    final Goal nonNullableGoal = firstDisplayedGoal!;
+    // TODO: Handle null, empty, and valid goal states appropriately after loading.
+    final List<Goal> nonNullableGoals = goals!;
 
     return MaterialApp(
       builder: (context, child) {
@@ -73,8 +74,7 @@ class _HaenaeddaState extends State<Haenaedda> {
         Locale('en'),
         Locale('ko'),
       ],
-      // TODO: Support multi-goal selection and routing later
-      home: MyCalendarPage(goal: nonNullableGoal),
+      home: GoalCalendarPage(goals: nonNullableGoals),
     );
   }
 }

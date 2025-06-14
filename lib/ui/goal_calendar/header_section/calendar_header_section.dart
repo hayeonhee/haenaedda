@@ -11,12 +11,14 @@ class CalendarHeaderSection extends StatefulWidget {
   final Goal goal;
   final DateTime date;
   final ValueChanged<String> onGoalEditSubmitted;
+  final void Function(DateTime)? onMonthChanged;
 
   const CalendarHeaderSection({
     super.key,
     required this.goal,
     required this.date,
     required this.onGoalEditSubmitted,
+    this.onMonthChanged,
   });
 
   @override
@@ -26,6 +28,7 @@ class CalendarHeaderSection extends StatefulWidget {
 class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
   bool _isEditing = false;
   late final TextEditingController _controller;
+  late DateTime _currentMonth;
   final int maxLength = 20;
   final double buttonHeight = 48;
 
@@ -39,6 +42,7 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.goal.title);
+    _currentMonth = widget.date;
   }
 
   @override
@@ -79,7 +83,15 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
                 },
               ),
         const SizedBox(height: 24),
-        MonthNavigationBar(referenceDate: widget.date),
+        MonthNavigationBar(
+          referenceDate: _currentMonth,
+          onMonthChanged: (newMonth) {
+            setState(() {
+              _currentMonth = newMonth;
+            });
+            widget.onMonthChanged?.call(newMonth);
+          },
+        ),
       ],
     );
   }
