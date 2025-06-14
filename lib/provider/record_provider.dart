@@ -145,6 +145,7 @@ class RecordProvider extends ChangeNotifier {
       return RenameGoalResult.notFound;
     }
     goal.title = newGoalTitle;
+    saveGoals();
     notifyListeners();
     return RenameGoalResult.success;
   }
@@ -175,8 +176,9 @@ class RecordProvider extends ChangeNotifier {
       }
 
       final decodedGoalsJson = jsonDecode(loadedGoalsJson);
-      final restoredGoals =
-          decodedGoalsJson.map((e) => Goal.fromJson(e)).toList();
+      final List<Goal> restoredGoals = (decodedGoalsJson as List)
+          .map((e) => Goal.fromJson((e as Map<String, dynamic>)))
+          .toList();
       _goals = restoredGoals;
       _syncSortedGoals();
       notifyListeners();
