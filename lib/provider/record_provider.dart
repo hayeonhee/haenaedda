@@ -133,18 +133,19 @@ class RecordProvider extends ChangeNotifier {
   }
 
   Future<RenameGoalResult> renameGoal(
-      String goalId, String newGoalTitle) async {
-    if (newGoalTitle.trim().isEmpty) {
+      Goal selectedGoal, String newTitle) async {
+    if (newTitle.trim().isEmpty) {
       return RenameGoalResult.emptyInput;
     }
-    if (isDuplicateGoal(newGoalTitle)) {
+    if (isDuplicateGoal(newTitle)) {
       return RenameGoalResult.duplicate;
     }
-    final goal = _goals.firstWhereOrNull((goal) => goal.id == goalId);
-    if (goal == null) {
+    final newGoal =
+        _goals.firstWhereOrNull((goal) => goal.id == selectedGoal.id);
+    if (newGoal == null) {
       return RenameGoalResult.notFound;
     }
-    goal.title = newGoalTitle;
+    newGoal.title = newTitle;
     saveGoals();
     notifyListeners();
     return RenameGoalResult.success;
