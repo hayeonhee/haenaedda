@@ -69,5 +69,40 @@
     "@resetRecordsOnlyMessage": {
         "description": "Confirmation message for record-only reset.",
         "type": "text"
+    },
+    "addGoal": "새로운 목표 추가",
+    "@addGoal": {
+        "description": "Label for a button that adds a new goal",
+        "type": "text"
+    },
+    "add": "추가",
+    "@add": {
+        "description": "Label for a button that adds a new goal or item",
+        "type": "text"
+    },
+    "unsavedChanges": "작성 중인 내용이 있어요",
+    "@unsavedChanges": {
+        "description": "Alert dialog title shown when the user tries to leave a form without saving",
+        "type": "text"
+    },
+    "unsavedChangesMessage": "이대로 닫으면 입력한 내용은 저장되지 않아요.",
+    "@unsavedChangesMessage": {
+        "description": "Alert dialog content shown when user is about to discard unsaved input",
+        "type": "text"
+    },
+    "keepEditing": "계속 작성",
+    "@keepEditing": {
+        "description": "Button label to continue editing and stay on the current screen",
+        "type": "text"
+    },
+    "leave": "나가기",
+    "@leave": {
+        "description": "Button label to leave the screen without saving or completing input",
+        "type": "text"
+    },
+    "editGoalPrompt": "이번에 해내고 싶은 건 뭔가요?",
+    "@editGoalPrompt": {
+        "description": "A prompt shown when the user is asked to enter a new or edited goal",
+        "type": "text"
     }
 }
