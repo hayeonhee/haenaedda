@@ -1,0 +1,114 @@
+import 'package:flutter/material.dart';
+import 'package:haenaedda/gen_l10n/app_localizations.dart';
+
+class EditGoalPage extends StatefulWidget {
+  final String? initialText;
+
+  const EditGoalPage({super.key, this.initialText});
+
+  @override
+  State<EditGoalPage> createState() => _EditGoalPageState();
+}
+
+class _EditGoalPageState extends State<EditGoalPage> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialText ?? '');
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onSave() {
+    final trimmed = _controller.text.trim();
+    if (trimmed.isNotEmpty) {
+      Navigator.of(context).pop(trimmed);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Scaffold(
+        backgroundColor: colorScheme.surface,
+        appBar: AppBar(
+          backgroundColor: colorScheme.surface,
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: _onSave,
+              child: Text(
+                AppLocalizations.of(context)!.add,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+          elevation: 0,
+        ),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: EdgeInsets.only(
+                top: constraints.maxHeight * 0.25,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+              ),
+              child: Center(
+                child: Column(
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.editGoalPrompt,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: colorScheme.onSurface.withValues(alpha: 0.4),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: TextField(
+                        controller: _controller,
+                        maxLines: 2,
+                        maxLength: 40,
+                        autofocus: true,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: colorScheme.onSurface,
+                        ),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.zero,
+                          counterText: '',
+                        ),
+                        cursorColor: colorScheme.onSurface,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
