@@ -133,7 +133,9 @@ class RecordProvider extends ChangeNotifier {
   }
 
   Future<RenameGoalResult> renameGoal(
-      Goal selectedGoal, String newTitle) async {
+    Goal selectedGoal,
+    String newTitle,
+  ) async {
     if (newTitle.trim().isEmpty) {
       return RenameGoalResult.emptyInput;
     }
