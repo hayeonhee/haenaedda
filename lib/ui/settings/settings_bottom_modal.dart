@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/goal_setting_action.dart';
 import 'package:haenaedda/model/reset_type.dart';
-import 'package:haenaedda/provider/record_provider.dart';
-import 'package:haenaedda/ui/goal_calendar/edit_goal_page.dart';
 import 'package:haenaedda/ui/settings/handlers/reset_goal_handler.dart';
 import 'package:haenaedda/ui/settings/neumorphic_settings_tile.dart';
-import 'package:haenaedda/ui/widgets/modal_action_icon_buttons.dart';
 import 'package:haenaedda/ui/widgets/section_divider.dart';
 
 class SettingsBottomModal extends StatefulWidget {
@@ -49,24 +45,14 @@ class _SettingsBottomModalState extends State<SettingsBottomModal> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(height: 4.0),
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ModalCancelIconButton(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        ModalDoneIconButton(
-                          onTap: () {
-                            // TODO: Implement save action - For now, just close the modal
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    ),
+                  Row(
+                    children: [
+                      const SizedBox(width: 2),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4.0),
                   const SectionDivider(),
@@ -78,12 +64,12 @@ class _SettingsBottomModalState extends State<SettingsBottomModal> {
                   ),
                   const SizedBox(height: 16.0),
                   NeumorphicSettingsTile(
-                    title: AppLocalizations.of(context)!.resetRecordsOnly,
+                    title: AppLocalizations.of(context)!.menuResetRecordsOnly,
                     onTap: () => onResetButtonTap(
                         context, widget.goal, ResetType.recordsOnly),
                   ),
                   NeumorphicSettingsTile(
-                    title: AppLocalizations.of(context)!.resetEntireGoal,
+                    title: AppLocalizations.of(context)!.menuResetEntireGoal,
                     onTap: () => onResetButtonTap(
                         context, widget.goal, ResetType.entireGoal),
                   ),
