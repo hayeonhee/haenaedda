@@ -10,6 +10,7 @@ import 'package:haenaedda/utils/extensions/iterable_extensions.dart';
 
 class StorageKeys {
   static const String goals = 'goals';
+  static const String record = 'record:';
 }
 
 enum AddGoalResult {
@@ -56,6 +57,10 @@ class RecordProvider extends ChangeNotifier {
 
   void _syncSortedGoals() {
     _sortedGoals = [..._goals]..sort((a, b) => a.order.compareTo(b.order));
+  }
+
+  Goal? getGoalById(String id) {
+    return _goals.firstWhereOrNull((g) => g.id == id);
   }
 
   Future<List<Goal>?> initializeAndGetGoals() async {
@@ -219,12 +224,15 @@ class RecordProvider extends ChangeNotifier {
       final keys = prefs.getKeys();
       _recordsByGoalId.clear();
 
-      for (String key in keys) {
+      final recordKeys =
+          keys.where((key) => key.startsWith(StorageKeys.record));
+      for (String key in recordKeys) {
         final dates = prefs.getString(key);
         if (dates == null) continue;
 
         try {
-          _recordsByGoalId[key] = DateRecordSet.fromJson(dates);
+          final goalId = key.substring({StorageKeys.record}.length);
+          _recordsByGoalId[goalId] = DateRecordSet.fromJson(dates);
         } catch (e) {
           debugPrint('Record parsing failed for $key: $e');
           return false;
