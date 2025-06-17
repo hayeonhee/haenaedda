@@ -26,13 +26,6 @@ class _EditGoalPageState extends State<EditGoalPage> {
     super.dispose();
   }
 
-  void _onSave() {
-    final trimmed = _controller.text.trim();
-    if (trimmed.isNotEmpty) {
-      Navigator.of(context).pop(trimmed);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -56,7 +49,12 @@ class _EditGoalPageState extends State<EditGoalPage> {
             ),
             actions: [
               TextButton(
-                onPressed: _onSave,
+                onPressed: () {
+                  final trimmed = _controller.text.trim();
+                  if (trimmed.isNotEmpty) {
+                    Navigator.of(context).pop(trimmed);
+                  }
+                },
                 child: Text(
                   AppLocalizations.of(context)!.add,
                   style: TextStyle(
