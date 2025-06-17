@@ -115,7 +115,7 @@ class RecordProvider extends ChangeNotifier {
         if (dates == null) continue;
 
         try {
-          final goalId = key.substring({StorageKeys.record}.length);
+          final goalId = key.substring(StorageKeys.record.length);
           _recordsByGoalId[goalId] = DateRecordSet.fromJson(dates);
         } catch (e) {
           debugPrint('Record parsing failed for $key: $e');
