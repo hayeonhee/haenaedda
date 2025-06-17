@@ -4,15 +4,15 @@ import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 class GoalEditField extends StatefulWidget {
   final double buttonHeight;
   final TextStyle goalTextStyle;
-  final VoidCallback onSave;
-  final TextEditingController controller;
+  final ValueChanged<String> onSave;
+  final String initialText;
 
   const GoalEditField({
     super.key,
     required this.buttonHeight,
     required this.goalTextStyle,
     required this.onSave,
-    required this.controller,
+    required this.initialText,
   });
 
   @override
@@ -20,6 +20,20 @@ class GoalEditField extends StatefulWidget {
 }
 
 class _GoalEditFieldState extends State<GoalEditField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialText);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -31,7 +45,7 @@ class _GoalEditFieldState extends State<GoalEditField> {
             decoration: NeumorphicTheme.pressedBoxDecoration(context),
             alignment: Alignment.centerLeft,
             child: TextField(
-              controller: widget.controller,
+              controller: _controller,
               style: widget.goalTextStyle,
               autofocus: true,
               decoration: const InputDecoration(
@@ -44,7 +58,7 @@ class _GoalEditFieldState extends State<GoalEditField> {
         ),
         const SizedBox(width: 8),
         GestureDetector(
-          onTap: widget.onSave,
+          onTap: () => widget.onSave(_controller.text),
           child: Container(
             height: widget.buttonHeight,
             width: widget.buttonHeight,

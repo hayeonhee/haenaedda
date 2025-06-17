@@ -46,13 +46,6 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final goal = context.watch<RecordProvider>().currentGoal;
-    _controller.text = goal?.title ?? '';
-  }
-
-  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
@@ -60,39 +53,44 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _isEditing
-            ? GoalEditField(
-                buttonHeight: buttonHeight,
-                controller: _controller,
-                goalTextStyle: _goalTextStyle,
-                onSave: () {
-                  widget.onGoalEditSubmitted(_controller.text);
-                  setState(() => _isEditing = false);
-                },
-              )
-            : GoalDisplayText(
-                goal: widget.goal,
-                buttonHeight: buttonHeight,
-                controller: _controller,
-                goalTextStyle: _goalTextStyle,
-                onStartEditing: () {
-                  setState(() => _isEditing = true);
+    return Selector<RecordProvider, Goal?>(
+        selector: (_, provider) => provider.getGoalById(widget.goal.id),
+        builder: (context, goal, child) {
+          if (goal == null) return const SizedBox.shrink();
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _isEditing
+                  ? GoalEditField(
+                      buttonHeight: buttonHeight,
+                      goalTextStyle: _goalTextStyle,
+                      initialText: goal.title,
+                      onSave: (newTitle) {
+                        widget.onGoalEditSubmitted(newTitle);
+                        setState(() => _isEditing = false);
+                      },
+                    )
+                  : GoalDisplayText(
+                      goal: goal,
+                      buttonHeight: buttonHeight,
+                      controller: _controller,
+                      goalTextStyle: _goalTextStyle,
+                      onStartEditing: () {
+                        setState(() => _isEditing = true);
+                      },
+                    ),
+              const SizedBox(height: 24),
+              MonthNavigationBar(
+                referenceDate: _currentMonth,
+                onMonthChanged: (newMonth) {
+                  setState(() {
+                    _currentMonth = newMonth;
+                  });
+                  widget.onMonthChanged?.call(newMonth);
                 },
               ),
-        const SizedBox(height: 24),
-        MonthNavigationBar(
-          referenceDate: _currentMonth,
-          onMonthChanged: (newMonth) {
-            setState(() {
-              _currentMonth = newMonth;
-            });
-            widget.onMonthChanged?.call(newMonth);
-          },
-        ),
-      ],
-    );
+            ],
+          );
+        });
   }
 }
