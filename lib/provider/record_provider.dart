@@ -308,4 +308,25 @@ class RecordProvider extends ChangeNotifier {
       await saveGoals();
     }
   }
+
+// 📌 Scroll Focus Management for Newly Added Goal
+// Used to scroll to the newly added goal once, immediately after creation.
+// Cleared in GoalPager after being consumed.
+
+  Goal? _focusedGoalForScroll;
+  bool _shouldScrollToFocusedPage = false;
+
+  Goal? get focusedGoalForScroll => _focusedGoalForScroll;
+  bool get shouldScrollToFocusedPage => _shouldScrollToFocusedPage;
+
+  void setFocusedGoalForScroll(Goal goal) {
+    _focusedGoalForScroll = goal;
+    _shouldScrollToFocusedPage = true;
+    notifyListeners();
+  }
+
+  void clearFocusedGoalForScroll() {
+    _focusedGoalForScroll = null;
+    _shouldScrollToFocusedPage = false;
+  }
 }
