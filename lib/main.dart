@@ -12,7 +12,11 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => RecordProvider()),
+        ChangeNotifierProvider(create: (_) {
+          final recordProvider = RecordProvider();
+          recordProvider.loadGoals();
+          return recordProvider;
+        }),
       ],
       child: const Haenaedda(),
     ),
@@ -46,11 +50,10 @@ class _HaenaeddaState extends State<Haenaedda> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Review loading logic — distinguish between null, empty, and valid goals
     if (goals == null) {
       return const Center(child: CircularProgressIndicator());
     }
-    // TODO: Handle null, empty, and valid goal states appropriately after loading.
-    final List<Goal> nonNullableGoals = goals!;
 
     return MaterialApp(
       builder: (context, child) {
@@ -74,7 +77,7 @@ class _HaenaeddaState extends State<Haenaedda> {
         Locale('en'),
         Locale('ko'),
       ],
-      home: GoalCalendarPage(goals: nonNullableGoals),
+      home: const GoalCalendarPage(),
     );
   }
 }
