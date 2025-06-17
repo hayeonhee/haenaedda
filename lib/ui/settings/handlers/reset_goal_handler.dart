@@ -5,6 +5,7 @@ import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/reset_type.dart';
 import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/ui/goal_calendar/goal_calendar_page.dart';
 
 Future<void> showResetFailureDialog(BuildContext context, ResetType type) {
   final l10n = AppLocalizations.of(context)!;
@@ -114,8 +115,10 @@ Future<void> _handleEntireGoalReset(BuildContext context, Goal goal) async {
 
   switch (result) {
     case ResetEntireGoalResult.success:
-      await provider.ensureAtLeastOneGoalExists();
-      if (context.mounted) Navigator.of(context).pop();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const GoalCalendarPage()),
+      );
       break;
     case ResetEntireGoalResult.recordFailed:
       await showResetFailureDialog(context, ResetType.recordsOnly);
