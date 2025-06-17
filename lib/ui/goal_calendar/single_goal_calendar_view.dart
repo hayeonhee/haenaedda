@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/calendar_grid_layout.dart';
+import 'package:haenaedda/model/date_record_set.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/calendar_grid.dart';
@@ -22,11 +23,21 @@ class _SingleGoalCalendarViewState extends State<SingleGoalCalendarView> {
   DateTime _focusedDate = DateTime.now();
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final recordProvider = context.watch<RecordProvider>();
-    final selectedDates = recordProvider.getRecords(widget.goal.id);
     final dateLayout = CalendarGridLayout(_focusedDate);
     final daysOfWeek = AppLocalizations.of(context)!.shortWeekdays.split(',');
+    final goal = context.select<RecordProvider, Goal?>(
+      (provider) => provider.getGoalById(widget.goal.id),
+    );
+    if (goal == null) return const SizedBox.shrink();
 
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
@@ -36,15 +47,12 @@ class _SingleGoalCalendarViewState extends State<SingleGoalCalendarView> {
           children: [
             const SizedBox(height: 30),
             CalendarHeaderSection(
-              goal: widget.goal,
+              goal: goal,
               date: _focusedDate,
-              onGoalEditSubmitted: (String newGoal) {
-                recordProvider.renameGoal(widget.goal.id, newGoal);
-              },
+              onGoalEditSubmitted: (String newTitle) =>
+                  context.read<RecordProvider>().renameGoal(goal, newTitle),
               onMonthChanged: (DateTime newMonth) {
-                setState(() {
-                  _focusedDate = newMonth;
-                });
+                setState(() => _focusedDate = newMonth);
               },
             ),
             const SizedBox(height: 24),
@@ -66,12 +74,15 @@ class _SingleGoalCalendarViewState extends State<SingleGoalCalendarView> {
               }),
             ),
             const SizedBox(height: 24),
-            CalendarGrid(
-              dateLayout: dateLayout,
-              selectedDates: selectedDates,
-              onCellTap: (selectedDate) =>
-                  recordProvider.toggleRecord(widget.goal.id, selectedDate),
-            ),
+            Selector<RecordProvider, DateRecordSet>(
+                selector: (_, provider) => provider.getRecords(goal.id),
+                builder: (_, selectedDates, __) => CalendarGrid(
+                      dateLayout: dateLayout,
+                      selectedDates: selectedDates,
+                      onCellTap: (selectedDate) => context
+                          .read<RecordProvider>()
+                          .toggleRecord(goal.id, selectedDate),
+                    )),
           ],
         ),
       ),

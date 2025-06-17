@@ -12,7 +12,11 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => RecordProvider()),
+        ChangeNotifierProvider(create: (_) {
+          final recordProvider = RecordProvider();
+          recordProvider.loadGoals();
+          return recordProvider;
+        }),
       ],
       child: const Haenaedda(),
     ),

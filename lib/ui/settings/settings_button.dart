@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/model/goal_setting_action.dart';
+import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/ui/settings/handlers/edit_goal_handler.dart';
 import 'package:haenaedda/ui/settings/settings_bottom_modal.dart';
 
 class SettingButton extends StatelessWidget {
@@ -11,8 +16,9 @@ class SettingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: () {
-        showGeneralDialog(
+      onPressed: () async {
+        final recordProvider = context.read<RecordProvider>();
+        final action = await showGeneralDialog<GoalSettingAction?>(
           context: context,
           barrierDismissible: true,
           barrierLabel: AppLocalizations.of(context)!.dismiss,
@@ -29,6 +35,16 @@ class SettingButton extends StatelessWidget {
             return SlideTransition(position: offset, child: child);
           },
         );
+        if (!context.mounted) return;
+        switch (action) {
+          case GoalSettingAction.addGoal:
+            await onAddGoalPressed(context);
+          case GoalSettingAction.resetRecordsOnly:
+            recordProvider.removeRecordsOnly(goal.id);
+          case GoalSettingAction.resetEntireGoal:
+            recordProvider.resetEntireGoal(goal.id);
+          case null:
+        }
       },
       icon: const Icon(Icons.settings),
       splashColor: Colors.transparent,

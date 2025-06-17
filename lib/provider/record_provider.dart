@@ -39,6 +39,7 @@ class RecordProvider extends ChangeNotifier {
   final Map<String, DateRecordSet> _recordsByGoalId = {};
   static const String _firstGoalId = '10';
   static const int _orderStep = 10;
+  bool _isLoaded = false;
 
   Map<String, DateRecordSet> get recordsByGoal => _recordsByGoalId;
 
@@ -51,6 +52,8 @@ class RecordProvider extends ChangeNotifier {
     if (_goals.isEmpty) return null;
     return _goals.firstWhereOrNull((g) => g.id == _firstGoalId);
   }
+
+  bool get isLoaded => _isLoaded;
 
   bool isGoalsEmpty() => _goals.isEmpty;
 
@@ -117,34 +120,41 @@ class RecordProvider extends ChangeNotifier {
     return _goals.any((goal) => goal.title == newGoalTitle);
   }
 
-  AddGoalResult addGoal(String input) {
-    if (input.trim().isEmpty) return AddGoalResult.emptyInput;
-    if (isDuplicateGoal(input)) return AddGoalResult.duplicate;
-    final goal = _createGoal(input);
+  Future<({AddGoalResult result, Goal? goal})> addGoal(String title) async {
+    final trimmedTitle = title.trim();
+    if (trimmedTitle.isEmpty) {
+      return (result: AddGoalResult.emptyInput, goal: null);
+    }
+    if (isDuplicateGoal(trimmedTitle)) {
+      return (result: AddGoalResult.duplicate, goal: null);
+    }
+    final goal = _createGoal(trimmedTitle);
     _goals.add(goal);
     _syncSortedGoals();
-    try {
-      saveGoals();
-    } catch (e) {
-      return AddGoalResult.saveFailed;
+    final isSaved = await saveGoals();
+    if (!isSaved) {
+      return (result: AddGoalResult.saveFailed, goal: null);
     }
     notifyListeners();
-    return AddGoalResult.success;
+    return (result: AddGoalResult.success, goal: goal);
   }
 
   Future<RenameGoalResult> renameGoal(
-      String goalId, String newGoalTitle) async {
-    if (newGoalTitle.trim().isEmpty) {
+    Goal selectedGoal,
+    String newTitle,
+  ) async {
+    if (newTitle.trim().isEmpty) {
       return RenameGoalResult.emptyInput;
     }
-    if (isDuplicateGoal(newGoalTitle)) {
+    if (isDuplicateGoal(newTitle)) {
       return RenameGoalResult.duplicate;
     }
-    final goal = _goals.firstWhereOrNull((goal) => goal.id == goalId);
-    if (goal == null) {
+    final newGoal =
+        _goals.firstWhereOrNull((goal) => goal.id == selectedGoal.id);
+    if (newGoal == null) {
       return RenameGoalResult.notFound;
     }
-    goal.title = newGoalTitle;
+    newGoal.title = newTitle;
     saveGoals();
     notifyListeners();
     return RenameGoalResult.success;
@@ -172,6 +182,7 @@ class RecordProvider extends ChangeNotifier {
       if (loadedGoalsJson == null) {
         _clearGoals();
         debugPrint('No saved goals found. Clearing internal goal state.');
+        _isLoaded = true;
         return true;
       }
 
@@ -179,8 +190,11 @@ class RecordProvider extends ChangeNotifier {
       final List<Goal> restoredGoals = (decodedGoalsJson as List)
           .map((e) => Goal.fromJson((e as Map<String, dynamic>)))
           .toList();
-      _goals = restoredGoals;
+      _goals
+        ..clear()
+        ..addAll(restoredGoals);
       _syncSortedGoals();
+      _isLoaded = true;
       notifyListeners();
       return true;
     } catch (e) {
@@ -271,6 +285,7 @@ class RecordProvider extends ChangeNotifier {
         final updatedGoalsJson =
             jsonEncode(_goals.map((g) => g.toJson()).toList());
         final saved = await prefs.setString('goals', updatedGoalsJson);
+        _syncSortedGoals();
         notifyListeners();
         return saved;
       }
@@ -299,5 +314,26 @@ class RecordProvider extends ChangeNotifier {
       _goals.add(fallbackGoal);
       await saveGoals();
     }
+  }
+
+// 📌 Scroll Focus Management for Newly Added Goal
+// Used to scroll to the newly added goal once, immediately after creation.
+// Cleared in GoalPager after being consumed.
+
+  Goal? _focusedGoalForScroll;
+  bool _shouldScrollToFocusedPage = false;
+
+  Goal? get focusedGoalForScroll => _focusedGoalForScroll;
+  bool get shouldScrollToFocusedPage => _shouldScrollToFocusedPage;
+
+  void setFocusedGoalForScroll(Goal goal) {
+    _focusedGoalForScroll = goal;
+    _shouldScrollToFocusedPage = true;
+    notifyListeners();
+  }
+
+  void clearFocusedGoalForScroll() {
+    _focusedGoalForScroll = null;
+    _shouldScrollToFocusedPage = false;
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/model/goal.dart';
+import 'package:provider/provider.dart';
 
-import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
+import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 import 'package:haenaedda/ui/settings/settings_button.dart';
 
 class GoalDisplayText extends StatelessWidget {
@@ -23,6 +25,9 @@ class GoalDisplayText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final updatedGoal = context.select<RecordProvider, Goal>(
+      (provider) => provider.getGoalById(goal.id) ?? goal,
+    );
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -34,11 +39,11 @@ class GoalDisplayText extends StatelessWidget {
             decoration: NeumorphicTheme.pressedBoxDecoration(context),
             alignment: Alignment.centerLeft,
             child: Text(
-              controller.text.isEmpty
+              updatedGoal.title.isEmpty
                   ? AppLocalizations.of(context)!.goalSetupHint
-                  : controller.text,
+                  : updatedGoal.title,
               style: goalTextStyle.copyWith(
-                color: controller.text.isEmpty
+                color: updatedGoal.title.isEmpty
                     ? Theme.of(context).colorScheme.outline
                     : null,
               ),
