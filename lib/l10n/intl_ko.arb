@@ -50,19 +50,29 @@
         "description": "Message shown when records are deleted but goal deletion fails.",
         "type": "text"
     },
-    "resetRecordsOnly": "기록만 초기화",
-    "@resetRecordsOnly": {
+    "menuResetRecordsOnly": "기록만 초기화",
+    "@menuResetRecordsOnly": {
         "description": "Resets only the saved records, keeping the goal settings.",
         "type": "text"
     },
-    "resetEntireGoal": "전체 초기화",
-    "@resetEntireGoal": {
+    "menuResetEntireGoal": "전체 초기화",
+    "@menuResetEntireGoal": {
         "description": "Resets the goal completely including its title and saved records.",
+        "type": "text"
+    },
+    "resetEntireGoal": "이 목표와 기록이 삭제돼요",
+    "@resetEntireGoal": {
+        "description": "Alert dialog title shown when user is about to delete a single goal and its records.",
         "type": "text"
     },
     "resetEntireGoalMessage": "목표와 기록이 모두 삭제됩니다. 계속하시겠어요?",
     "@resetEntireGoalMessage": {
-        "description": "Confirmation message for full reset.",
+        "description": "Alert dialog content explaining that one selected goal and all its records will be deleted",
+        "type": "text"
+    },
+    "resetRecordsOnly": "기록이 삭제돼요",
+    "@resetRecordsOnly": {
+        "description": "Alert dialog title shown when user is about to delete only the records, not the goal itself",
         "type": "text"
     },
     "resetRecordsOnlyMessage": "기록만 삭제되며, 목표는 그대로 유지됩니다.",

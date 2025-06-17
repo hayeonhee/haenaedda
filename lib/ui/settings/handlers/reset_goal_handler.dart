@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haenaedda/theme/buttons.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
@@ -33,43 +34,98 @@ Future<bool?> showResetConfirmDialog(
   Goal goal,
   ResetType type,
 ) async {
+  final colorScheme = Theme.of(context).colorScheme;
   final l10n = AppLocalizations.of(context)!;
-  final message = switch (type) {
-    ResetType.recordsOnly => l10n.resetRecordsOnlyMessage,
-    ResetType.entireGoal => l10n.resetEntireGoalMessage,
+  final (title, message) = switch (type) {
+    ResetType.recordsOnly => (
+        l10n.resetRecordsOnly,
+        l10n.resetRecordsOnlyMessage
+      ),
+    ResetType.entireGoal => (l10n.resetEntireGoal, l10n.resetEntireGoalMessage),
   };
 
-  return await showDialog<bool?>(
+  return await showGeneralDialog(
     context: context,
-    builder: (context) => AlertDialog(
-      contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-      actionsPadding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      content: Text(
-        message,
-        style: const TextStyle(fontSize: 16, height: 1.5),
-        textAlign: TextAlign.center,
+    barrierDismissible: true,
+    barrierLabel: l10n.dismiss,
+    barrierColor: Colors.black.withValues(alpha: 0.2),
+    transitionDuration: const Duration(milliseconds: 300),
+    pageBuilder: (context, _, __) => Material(
+      color: Colors.transparent,
+      child: Center(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: TextButton(
+                        style: getButtonStyle(
+                          background: colorScheme.outline,
+                          foreground: colorScheme.onSurfaceVariant,
+                        ),
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(
+                          l10n.cancel,
+                          style: getButtonTextStyle(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: TextButton(
+                        style: getButtonStyle(
+                          background: colorScheme.onError,
+                          foreground: colorScheme.error,
+                        ),
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text(
+                          l10n.reset,
+                          style: getButtonTextStyle(color: colorScheme.error),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(
-            AppLocalizations.of(context)!.cancel,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(true),
-          child: Text(
-            AppLocalizations.of(context)!.reset,
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.error,
-            ),
-          ),
-        ),
-      ],
-      actionsAlignment: MainAxisAlignment.center,
     ),
   );
 }

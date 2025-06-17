@@ -50,19 +50,29 @@
         "description": "Message shown when records are deleted but the goal deletion fails.",
         "type": "text"
     },
-    "resetRecordsOnly": "Reset Records Only",
-    "@resetRecordsOnly": {
+    "menuResetRecordsOnly": "Reset Records Only",
+    "@menuResetRecordsOnly": {
         "description": "Resets only the saved records, keeping the goal settings.",
         "type": "text"
     },
-    "resetEntireGoal": "Reset Entire Goal",
-    "@resetEntireGoal": {
+    "menuResetEntireGoal": "Reset Entire Goal",
+    "@menuResetEntireGoal": {
         "description": "Resets the goal completely including its title and saved records.",
+        "type": "text"
+    },
+    "resetEntireGoal": "This goal and its records will be deleted",
+    "@resetEntireGoal": {
+        "description": "Alert dialog title shown when user is about to delete a single goal and its records.",
         "type": "text"
     },
     "resetEntireGoalMessage": "This will reset both the goal and its records. Do you want to continue?",
     "@resetEntireGoalMessage": {
-        "description": "Confirmation message for full reset.",
+        "description": "Alert dialog content explaining that one selected goal and all its records will be deleted",
+        "type": "text"
+    },
+    "resetRecordsOnly": "Your records will be deleted",
+    "@resetRecordsOnly": {
+        "description": "Alert dialog title shown when user is about to delete only the records, not the goal itself",
         "type": "text"
     },
     "resetRecordsOnlyMessage": "Only the records will be deleted. The goal itself will remain unchanged.",

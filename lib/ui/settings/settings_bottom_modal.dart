@@ -72,12 +72,12 @@ class _SettingsBottomModalState extends State<SettingsBottomModal> {
                   ),
                   const SizedBox(height: 16.0),
                   NeumorphicSettingsTile(
-                    title: AppLocalizations.of(context)!.resetRecordsOnly,
+                    title: AppLocalizations.of(context)!.menuResetRecordsOnly,
                     onTap: () => onResetButtonTap(
                         context, widget.goal, ResetType.recordsOnly),
                   ),
                   NeumorphicSettingsTile(
-                    title: AppLocalizations.of(context)!.resetEntireGoal,
+                    title: AppLocalizations.of(context)!.menuResetEntireGoal,
                     onTap: () => onResetButtonTap(
                         context, widget.goal, ResetType.entireGoal),
                   ),
