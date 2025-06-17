@@ -78,8 +78,9 @@ Future<bool?> confirmDiscardChanges(BuildContext context) {
                           background: colorScheme.outline,
                           foreground: colorScheme.onSurfaceVariant,
                         ),
-                        onPressed: () => Navigator.of(context).pop(true),
-                        child: Text(l10n.leave, style: getButtonTextStyle()),
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child:
+                            Text(l10n.keepEditing, style: getButtonTextStyle()),
                       ),
                     ),
                   ),
@@ -91,9 +92,8 @@ Future<bool?> confirmDiscardChanges(BuildContext context) {
                           background: colorScheme.onError,
                           foreground: colorScheme.error,
                         ),
-                        onPressed: () => Navigator.of(context).pop(false),
-                        child:
-                            Text(l10n.keepEditing, style: getButtonTextStyle()),
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text(l10n.leave, style: getButtonTextStyle()),
                       ),
                     ),
                   ),
