@@ -120,19 +120,23 @@ class RecordProvider extends ChangeNotifier {
     return _goals.any((goal) => goal.title == newGoalTitle);
   }
 
-  AddGoalResult addGoal(String input) {
-    if (input.trim().isEmpty) return AddGoalResult.emptyInput;
-    if (isDuplicateGoal(input)) return AddGoalResult.duplicate;
-    final goal = _createGoal(input);
+  Future<({AddGoalResult result, Goal? goal})> addGoal(String title) async {
+    final trimmedTitle = title.trim();
+    if (trimmedTitle.isEmpty) {
+      return (result: AddGoalResult.emptyInput, goal: null);
+    }
+    if (isDuplicateGoal(trimmedTitle)) {
+      return (result: AddGoalResult.duplicate, goal: null);
+    }
+    final goal = _createGoal(trimmedTitle);
     _goals.add(goal);
     _syncSortedGoals();
-    try {
-      saveGoals();
-    } catch (e) {
-      return AddGoalResult.saveFailed;
+    final isSaved = await saveGoals();
+    if (!isSaved) {
+      return (result: AddGoalResult.saveFailed, goal: null);
     }
     notifyListeners();
-    return AddGoalResult.success;
+    return (result: AddGoalResult.success, goal: goal);
   }
 
   Future<RenameGoalResult> renameGoal(
