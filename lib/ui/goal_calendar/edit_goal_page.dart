@@ -29,7 +29,6 @@ class _EditGoalPageState extends State<EditGoalPage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
