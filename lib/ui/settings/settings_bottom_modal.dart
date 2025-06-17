@@ -46,21 +46,14 @@ class _SettingsBottomModalState extends State<SettingsBottomModal> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(height: 4.0),
-                  Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: iconButtonSize,
-                          height: iconButtonSize,
-                          child: IconButton(
-                            icon: const Icon(Icons.close),
-                            padding: EdgeInsets.zero,
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                        ),
-                      ],
-                    ),
+                  Row(
+                    children: [
+                      const SizedBox(width: 2),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4.0),
                   const SectionDivider(),
