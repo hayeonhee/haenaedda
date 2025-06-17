@@ -17,6 +17,27 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
   bool _hasRedirected = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final hasNoGoal = context.read<RecordProvider>().hasNoGoal;
+      if (hasNoGoal) {
+        _navigateToAddGoalPage();
+      }
+    });
+  }
+
+  Future<void> _navigateToAddGoalPage() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const EditGoalPage()),
+    );
+    if (mounted && result is String && result.trim().isNotEmpty) {
+      context.read<RecordProvider>().addGoal(result);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isLoaded =
         context.select<RecordProvider, bool>((provider) => provider.isLoaded);

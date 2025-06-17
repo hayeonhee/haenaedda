@@ -3,7 +3,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
-import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/theme/app_theme.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_calendar_page.dart';
@@ -14,7 +13,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) {
           final recordProvider = RecordProvider();
-          recordProvider.loadGoals();
+          recordProvider.loadData();
           return recordProvider;
         }),
       ],
@@ -31,30 +30,8 @@ class Haenaedda extends StatefulWidget {
 }
 
 class _HaenaeddaState extends State<Haenaedda> {
-  List<Goal>? goals;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final recordProvider =
-          Provider.of<RecordProvider>(context, listen: false);
-
-      final sortedGoals = await recordProvider.initializeAndGetGoals();
-      if (!mounted) return;
-      setState(() {
-        goals = sortedGoals;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    // TODO: Review loading logic — distinguish between null, empty, and valid goals
-    if (goals == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     return MaterialApp(
       builder: (context, child) {
         final mediaQuery = MediaQuery.of(context);

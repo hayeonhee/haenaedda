@@ -47,7 +47,7 @@ class _EditGoalPageState extends State<EditGoalPage> {
             leading: Builder(
               builder: (context) {
                 final hasNoGoal = context.select<RecordProvider, bool>(
-                  (provider) => provider.isGoalsEmpty(),
+                  (provider) => provider.hasNoGoal,
                 );
                 if (hasNoGoal) return const SizedBox.shrink();
                 return IconButton(
