@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:haenaedda/constants/dimensions.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/goal_setting_action.dart';
 import 'package:haenaedda/model/reset_type.dart';
 import 'package:haenaedda/ui/settings/handlers/reset_goal_handler.dart';
 import 'package:haenaedda/ui/settings/neumorphic_settings_tile.dart';
-import 'package:haenaedda/ui/widgets/modal_action_icon_buttons.dart';
 import 'package:haenaedda/ui/widgets/section_divider.dart';
 
 class SettingsBottomModal extends StatefulWidget {
@@ -49,18 +49,15 @@ class _SettingsBottomModalState extends State<SettingsBottomModal> {
                   Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ModalCancelIconButton(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        ModalDoneIconButton(
-                          onTap: () {
-                            // TODO: Implement save action - For now, just close the modal
-                            Navigator.of(context).pop();
-                          },
+                        SizedBox(
+                          width: iconButtonSize,
+                          height: iconButtonSize,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            padding: EdgeInsets.zero,
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
                         ),
                       ],
                     ),
