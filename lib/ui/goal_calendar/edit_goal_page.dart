@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
+import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/settings/handlers/edit_goal_handler.dart';
+import 'package:provider/provider.dart';
 
 class EditGoalPage extends StatefulWidget {
   final String? initialText;
@@ -42,9 +44,17 @@ class _EditGoalPageState extends State<EditGoalPage> {
           backgroundColor: colorScheme.surface,
           appBar: AppBar(
             backgroundColor: colorScheme.surface,
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => _handlePop(context),
+            leading: Builder(
+              builder: (context) {
+                final hasNoGoal = context.select<RecordProvider, bool>(
+                  (provider) => provider.isGoalsEmpty(),
+                );
+                if (hasNoGoal) return const SizedBox.shrink();
+                return IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => _handlePop(context),
+                );
+              },
             ),
             actions: [
               TextButton(
