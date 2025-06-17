@@ -39,6 +39,7 @@ class RecordProvider extends ChangeNotifier {
   final Map<String, DateRecordSet> _recordsByGoalId = {};
   static const String _firstGoalId = '10';
   static const int _orderStep = 10;
+  bool _isLoaded = false;
 
   Map<String, DateRecordSet> get recordsByGoal => _recordsByGoalId;
 
@@ -51,6 +52,8 @@ class RecordProvider extends ChangeNotifier {
     if (_goals.isEmpty) return null;
     return _goals.firstWhereOrNull((g) => g.id == _firstGoalId);
   }
+
+  bool get isLoaded => _isLoaded;
 
   bool isGoalsEmpty() => _goals.isEmpty;
 
@@ -175,6 +178,7 @@ class RecordProvider extends ChangeNotifier {
       if (loadedGoalsJson == null) {
         _clearGoals();
         debugPrint('No saved goals found. Clearing internal goal state.');
+        _isLoaded = true;
         return true;
       }
 
@@ -182,8 +186,11 @@ class RecordProvider extends ChangeNotifier {
       final List<Goal> restoredGoals = (decodedGoalsJson as List)
           .map((e) => Goal.fromJson((e as Map<String, dynamic>)))
           .toList();
-      _goals = restoredGoals;
+      _goals
+        ..clear()
+        ..addAll(restoredGoals);
       _syncSortedGoals();
+      _isLoaded = true;
       notifyListeners();
       return true;
     } catch (e) {
