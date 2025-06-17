@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:haenaedda/constants/dimensions.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/goal_setting_action.dart';
