@@ -215,11 +215,10 @@ class RecordProvider extends ChangeNotifier {
   }
 
   DateTime getFirstRecordedDate() {
-    if (_recordsByGoalId.isEmpty) {
-      return DateTime.now();
-    }
+    if (_recordsByGoalId.isEmpty) return DateTime.now();
     final allDates =
         _recordsByGoalId.values.expand((recordSet) => recordSet.raw).toList();
+    if (allDates.isEmpty) return DateTime.now();
     allDates.sort();
     return allDates.first;
   }
