@@ -281,6 +281,7 @@ class RecordProvider extends ChangeNotifier {
         final updatedGoalsJson =
             jsonEncode(_goals.map((g) => g.toJson()).toList());
         final saved = await prefs.setString('goals', updatedGoalsJson);
+        _syncSortedGoals();
         notifyListeners();
         return saved;
       }
