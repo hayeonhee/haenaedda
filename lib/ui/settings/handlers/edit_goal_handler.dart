@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
+import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/theme/buttons.dart';
 import 'package:haenaedda/ui/goal_calendar/edit_goal_page.dart';
@@ -136,4 +137,42 @@ Future<void> onAddGoalPressed(BuildContext context) async {
       }
       break;
   }
+}
+
+Future<String?> onEditGoalTitlePressed(BuildContext context, Goal goal) async {
+  final recordProvider = context.read<RecordProvider>();
+  final newTitle = await Navigator.of(context).push<String>(
+    MaterialPageRoute(
+      builder: (_) => EditGoalPage(initialText: goal.title),
+    ),
+  );
+
+  if (!context.mounted) return null;
+  final trimmed = newTitle?.trim();
+  if (trimmed != null && trimmed.isNotEmpty && trimmed != goal.title) {
+    final (result: editResult, goal: renamedGoal) =
+        await recordProvider.renameGoal(goal, trimmed);
+    switch (editResult) {
+      case RenameGoalResult.emptyInput:
+        break;
+      case RenameGoalResult.duplicate:
+        break;
+      case RenameGoalResult.saveFailed:
+        break;
+      case RenameGoalResult.notFound:
+        break;
+      case RenameGoalResult.success:
+        if (renamedGoal != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const GoalCalendarPage()),
+          );
+          return renamedGoal.title;
+        } else {
+          debugPrint('⚠️ Failed to rename Goal');
+        }
+        break;
+    }
+  }
+  return null;
 }
