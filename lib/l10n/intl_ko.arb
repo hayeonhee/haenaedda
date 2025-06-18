@@ -114,5 +114,10 @@
     "@editGoalPrompt": {
         "description": "A prompt shown when the user is asked to enter a new or edited goal",
         "type": "text"
+    },
+    "editCurrentGoal": "현재 목표 수정",
+    "@editCurrentGoal": {
+        "description": "Settings menu item for editing the current goal's title",
+        "type": "text"
     }
 }

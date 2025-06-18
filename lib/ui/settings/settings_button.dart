@@ -39,6 +39,8 @@ class SettingButton extends StatelessWidget {
         switch (action) {
           case GoalSettingAction.addGoal:
             await onAddGoalPressed(context);
+          case GoalSettingAction.editGoalTitle:
+            await onEditGoalTitlePressed(context, goal);
           case GoalSettingAction.resetRecordsOnly:
             recordProvider.removeRecordsOnly(goal.id);
           case GoalSettingAction.resetEntireGoal:

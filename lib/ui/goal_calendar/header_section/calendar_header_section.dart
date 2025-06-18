@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
-import 'package:haenaedda/ui/goal_calendar/header_section/goal_display_text.dart';
-import 'package:haenaedda/ui/goal_calendar/header_section/goal_edit_field.dart';
 import 'package:haenaedda/ui/goal_calendar/header_section/month_navigation_bar.dart';
+import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
+import 'package:haenaedda/ui/settings/settings_button.dart';
 
 class CalendarHeaderSection extends StatefulWidget {
   final Goal goal;
@@ -26,17 +26,12 @@ class CalendarHeaderSection extends StatefulWidget {
 }
 
 class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
-  bool _isEditing = false;
   late final TextEditingController _controller;
   late DateTime _currentMonth;
+  bool _isPressed = false;
+
   final int maxLength = 20;
   final double buttonHeight = 48;
-
-  TextStyle get _goalTextStyle => TextStyle(
-        fontSize: 16,
-        color: Theme.of(context).colorScheme.onSurface,
-        fontWeight: FontWeight.bold,
-      );
 
   @override
   void initState() {
@@ -60,25 +55,37 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _isEditing
-                  ? GoalEditField(
-                      buttonHeight: buttonHeight,
-                      goalTextStyle: _goalTextStyle,
-                      initialText: goal.title,
-                      onSave: (newTitle) {
-                        widget.onGoalEditSubmitted(newTitle);
-                        setState(() => _isEditing = false);
-                      },
-                    )
-                  : GoalDisplayText(
-                      goal: goal,
-                      buttonHeight: buttonHeight,
-                      controller: _controller,
-                      goalTextStyle: _goalTextStyle,
-                      onStartEditing: () {
-                        setState(() => _isEditing = true);
-                      },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() {
+                        _isPressed = !_isPressed;
+                      }),
+                      child: Container(
+                        height: buttonHeight,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: _isPressed
+                            ? NeumorphicTheme.pressedBoxDecoration(context)
+                            : NeumorphicTheme.raisedBoxDecoration(context),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          goal.title,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontWeight:
+                                _isPressed ? FontWeight.w500 : FontWeight.w700,
+                          ),
+                          maxLines: 2,
+                        ),
+                      ),
                     ),
+                  ),
+                  SettingButton(goal: goal),
+                ],
+              ),
               const SizedBox(height: 24),
               MonthNavigationBar(
                 referenceDate: _currentMonth,
