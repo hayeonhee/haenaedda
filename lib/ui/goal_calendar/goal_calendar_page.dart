@@ -34,7 +34,9 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
       MaterialPageRoute(builder: (_) => const EditGoalPage()),
     );
     if (mounted && result is String && result.trim().isNotEmpty) {
-      context.read<RecordProvider>().addGoal(result);
+      final provider = context.read<RecordProvider>();
+      final (result: addResult, goal: newGoal) = await provider.addGoal(result);
+      if (newGoal != null) provider.setFocusedGoalForScroll(newGoal);
     }
   }
 

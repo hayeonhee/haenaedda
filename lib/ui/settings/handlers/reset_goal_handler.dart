@@ -166,11 +166,18 @@ Future<void> _handleRecordOnlyReset(BuildContext context, Goal goal) async {
 
 Future<void> _handleEntireGoalReset(BuildContext context, Goal goal) async {
   final provider = context.read<RecordProvider>();
+  final removedGoalIndex = provider.getNextFocusGoalIndexAfterRemoval(goal.id);
   final result = await provider.resetEntireGoal(goal.id);
+
   if (!context.mounted) return;
 
   switch (result) {
     case ResetEntireGoalResult.success:
+      if (removedGoalIndex != null &&
+          removedGoalIndex < provider.sortedGoals.length) {
+        final nextGoal = provider.sortedGoals[removedGoalIndex];
+        provider.setFocusedGoalForScroll(nextGoal);
+      }
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const GoalCalendarPage()),

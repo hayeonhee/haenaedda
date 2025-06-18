@@ -22,7 +22,8 @@ class _GoalPagerState extends State<GoalPager> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<RecordProvider>();
       final focusedGoal = provider.focusedGoalForScroll;
-      if (focusedGoal != null) {
+      final shouldScroll = provider.shouldScrollToFocusedPage;
+      if (focusedGoal != null && shouldScroll) {
         final index = widget.goals.indexWhere((g) => g.id == focusedGoal.id);
         if (index != -1) widget.controller.jumpToPage(index);
         provider.clearFocusedGoalForScroll();

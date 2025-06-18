@@ -307,6 +307,13 @@ class RecordProvider extends ChangeNotifier {
     }
   }
 
+  int? getNextFocusGoalIndexAfterRemoval(String removedId) {
+    final index = _sortedGoals.indexWhere((g) => g.id == removedId);
+    if (index == -1) return null;
+    final nextIndex = (index - 1).clamp(0, _sortedGoals.length - 1);
+    return nextIndex;
+  }
+
 // 📌 Scroll Focus Management for Newly Added Goal
 // Used to scroll to the newly added goal once, immediately after creation.
 // Cleared in GoalPager after being consumed.
