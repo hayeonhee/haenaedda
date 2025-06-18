@@ -58,6 +58,11 @@ class _SettingsBottomModalState extends State<SettingsBottomModal> {
                   const SectionDivider(),
                   const SizedBox(height: 12.0),
                   NeumorphicSettingsTile(
+                    title: AppLocalizations.of(context)!.editCurrentGoal,
+                    onTap: () => Navigator.of(context)
+                        .pop(GoalSettingAction.editGoalTitle),
+                  ),
+                  NeumorphicSettingsTile(
                     title: AppLocalizations.of(context)!.addGoal,
                     onTap: () =>
                         Navigator.of(context).pop(GoalSettingAction.addGoal),
