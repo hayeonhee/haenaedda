@@ -41,49 +41,53 @@ class _SingleGoalCalendarViewState extends State<SingleGoalCalendarView> {
 
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Column(
-          children: [
-            const SizedBox(height: 30),
-            CalendarHeaderSection(
-              goal: goal,
-              date: _focusedDate,
-              onGoalEditSubmitted: (String newTitle) =>
-                  context.read<RecordProvider>().renameGoal(goal, newTitle),
-              onMonthChanged: (DateTime newMonth) {
-                setState(() => _focusedDate = newMonth);
-              },
-            ),
-            const SizedBox(height: 24),
-            const SectionDivider(),
-            const SizedBox(height: 40),
-            Row(
-              children: List.generate(daysOfWeek.length, (index) {
-                return Expanded(
-                  child: Text(
-                    daysOfWeek[index],
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      fontWeight: FontWeight.bold,
+      child: ConstrainedBox(
+        constraints:
+            BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: Column(
+            children: [
+              const SizedBox(height: 30),
+              CalendarHeaderSection(
+                goal: goal,
+                date: _focusedDate,
+                onGoalEditSubmitted: (String newTitle) =>
+                    context.read<RecordProvider>().renameGoal(goal, newTitle),
+                onMonthChanged: (DateTime newMonth) {
+                  setState(() => _focusedDate = newMonth);
+                },
+              ),
+              const SizedBox(height: 24),
+              const SectionDivider(),
+              const SizedBox(height: 40),
+              Row(
+                children: List.generate(daysOfWeek.length, (index) {
+                  return Expanded(
+                    child: Text(
+                      daysOfWeek[index],
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                );
-              }),
-            ),
-            const SizedBox(height: 24),
-            Selector<RecordProvider, DateRecordSet>(
-                selector: (_, provider) => provider.getRecords(goal.id),
-                builder: (_, selectedDates, __) => CalendarGrid(
-                      dateLayout: dateLayout,
-                      selectedDates: selectedDates,
-                      onCellTap: (selectedDate) => context
-                          .read<RecordProvider>()
-                          .toggleRecord(goal.id, selectedDate),
-                    )),
-          ],
+                  );
+                }),
+              ),
+              const SizedBox(height: 24),
+              Selector<RecordProvider, DateRecordSet>(
+                  selector: (_, provider) => provider.getRecords(goal.id),
+                  builder: (_, selectedDates, __) => CalendarGrid(
+                        dateLayout: dateLayout,
+                        selectedDates: selectedDates,
+                        onCellTap: (selectedDate) => context
+                            .read<RecordProvider>()
+                            .toggleRecord(goal.id, selectedDate),
+                      )),
+            ],
+          ),
         ),
       ),
     );
