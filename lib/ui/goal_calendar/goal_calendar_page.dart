@@ -20,8 +20,8 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final hasNoGoal = context.read<RecordProvider>().hasNoGoal;
-      if (hasNoGoal) {
+      final provider = context.read<RecordProvider>();
+      if (provider.isLoaded && provider.hasNoGoal) {
         _navigateToAddGoalPage();
       }
     });
