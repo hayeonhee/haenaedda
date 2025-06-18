@@ -14,6 +14,7 @@ class GoalCalendarPage extends StatefulWidget {
 }
 
 class _GoalCalendarPageState extends State<GoalCalendarPage> {
+  final PageController _pageController = PageController();
   bool _hasRedirected = false;
 
   @override
@@ -57,7 +58,11 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
       });
     }
     if (goals.isEmpty) return _buildLoadingIndicator();
-    return Scaffold(body: SafeArea(child: GoalPager(goals: goals)));
+    return Scaffold(
+      body: SafeArea(
+        child: GoalPager(goals: goals, controller: _pageController),
+      ),
+    );
   }
 
   Widget _buildLoadingIndicator() {
