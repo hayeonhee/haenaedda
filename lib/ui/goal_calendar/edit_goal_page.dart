@@ -14,17 +14,21 @@ class EditGoalPage extends StatefulWidget {
 }
 
 class _EditGoalPageState extends State<EditGoalPage> {
-  late final TextEditingController _controller;
+  final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  bool _isDiscardCheckInProgress = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.initialText ?? '');
+    _controller.text = widget.initialText ?? '';
+    _controller.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -34,12 +38,18 @@ class _EditGoalPageState extends State<EditGoalPage> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
-        if (didPop) return;
+        if (didPop || _isDiscardCheckInProgress) return;
+        _isDiscardCheckInProgress = true;
         await _handlePop(context);
+        _isDiscardCheckInProgress = false;
       },
       child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          _focusNode.hasFocus
+              ? FocusScope.of(context).unfocus()
+              : FocusScope.of(context).requestFocus(_focusNode);
+        },
+        behavior: HitTestBehavior.translucent,
         child: Scaffold(
           backgroundColor: colorScheme.surface,
           appBar: AppBar(
@@ -58,17 +68,27 @@ class _EditGoalPageState extends State<EditGoalPage> {
             ),
             actions: [
               TextButton(
-                onPressed: () {
-                  final trimmed = _controller.text.trim();
-                  if (trimmed.isNotEmpty) {
-                    Navigator.of(context).pop(trimmed);
-                  }
-                },
+                onPressed: _controller.text.isEmpty
+                    ? null
+                    : () {
+                        final trimmed = _controller.text.trim();
+                        if (trimmed.isNotEmpty) {
+                          Navigator.of(context).pop(trimmed);
+                        }
+                      },
+                style: ButtonStyle(
+                  splashFactory: NoSplash.splashFactory,
+                  overlayColor: WidgetStateProperty.all(Colors.transparent),
+                  foregroundColor:
+                      WidgetStateProperty.all(colorScheme.onSurface),
+                ),
                 child: Text(
                   AppLocalizations.of(context)!.add,
                   style: TextStyle(
                     fontSize: 18,
-                    color: colorScheme.onSurface,
+                    color: _controller.text.isEmpty
+                        ? colorScheme.outline
+                        : colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -114,6 +134,10 @@ class _EditGoalPageState extends State<EditGoalPage> {
                           ),
                           cursorColor: colorScheme.onSurface,
                           textAlign: TextAlign.center,
+                          textInputAction: TextInputAction.done,
+                          keyboardType: TextInputType.text,
+                          onSubmitted: (_) => FocusScope.of(context).unfocus(),
+                          focusNode: _focusNode,
                         ),
                       ),
                     ],
