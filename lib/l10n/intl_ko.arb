@@ -110,14 +110,23 @@
         "description": "Button label to leave the screen without saving or completing input",
         "type": "text"
     },
-    "editGoalPrompt": "이번에 해내고 싶은 건 뭔가요?",
-    "@editGoalPrompt": {
+    "addGoalPrompt": "이번에 해내고 싶은 건 뭔가요?",
+    "@addGoalPrompt": {
         "description": "A prompt shown when the user is asked to enter a new or edited goal",
         "type": "text"
     },
     "editCurrentGoal": "현재 목표 수정",
     "@editCurrentGoal": {
         "description": "Settings menu item for editing the current goal's title",
+        "type": "text"
+    },
+    "save": "저장",
+    "@save": {
+        "description": "Label for the save button when editing an existing goal"
+    },
+    "editGoalPrompt": "목표를 조금 다듬어볼까요?",
+    "@editGoalPrompt": {
+        "description": "A prompt shown when the user is editing an existing goal",
         "type": "text"
     }
 }

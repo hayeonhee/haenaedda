@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
 import 'package:haenaedda/ui/settings/handlers/edit_goal_handler.dart';
-import 'package:provider/provider.dart';
 
 class EditGoalPage extends StatefulWidget {
   final String? initialText;
+  final GoalEditMode mode;
 
-  const EditGoalPage({super.key, this.initialText});
+  const EditGoalPage({
+    super.key,
+    this.initialText,
+    this.mode = GoalEditMode.create,
+  });
 
   @override
   State<EditGoalPage> createState() => _EditGoalPageState();
@@ -17,12 +24,24 @@ class _EditGoalPageState extends State<EditGoalPage> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _isDiscardCheckInProgress = false;
+  bool _isButtonEnabled = false;
 
   @override
   void initState() {
     super.initState();
     _controller.text = widget.initialText ?? '';
-    _controller.addListener(() => setState(() {}));
+    _isButtonEnabled = _controller.text.trim().isNotEmpty &&
+        _controller.text.trim() != (widget.initialText ?? '').trim();
+    _controller.addListener(() {
+      final trimmed = _controller.text.trim();
+      setState(() {
+        _isButtonEnabled =
+            trimmed.isNotEmpty && trimmed != (widget.initialText ?? '').trim();
+      });
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
   }
 
   @override
@@ -35,6 +54,7 @@ class _EditGoalPageState extends State<EditGoalPage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -68,14 +88,14 @@ class _EditGoalPageState extends State<EditGoalPage> {
             ),
             actions: [
               TextButton(
-                onPressed: _controller.text.isEmpty
-                    ? null
-                    : () {
-                        final trimmed = _controller.text.trim();
-                        if (trimmed.isNotEmpty) {
-                          Navigator.of(context).pop(trimmed);
-                        }
-                      },
+                onPressed: _isButtonEnabled
+                    ? () {
+                        Navigator.of(context).pop(GoalEditResult(
+                          title: _controller.text.trim(),
+                          mode: widget.mode,
+                        ));
+                      }
+                    : null,
                 style: ButtonStyle(
                   splashFactory: NoSplash.splashFactory,
                   overlayColor: WidgetStateProperty.all(Colors.transparent),
@@ -83,12 +103,12 @@ class _EditGoalPageState extends State<EditGoalPage> {
                       WidgetStateProperty.all(colorScheme.onSurface),
                 ),
                 child: Text(
-                  AppLocalizations.of(context)!.add,
+                  widget.mode == GoalEditMode.create ? l10n.add : l10n.save,
                   style: TextStyle(
                     fontSize: 18,
-                    color: _controller.text.isEmpty
-                        ? colorScheme.outline
-                        : colorScheme.onSurface,
+                    color: _isButtonEnabled
+                        ? colorScheme.onSurface
+                        : colorScheme.outline,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -107,7 +127,9 @@ class _EditGoalPageState extends State<EditGoalPage> {
                   child: Column(
                     children: [
                       Text(
-                        AppLocalizations.of(context)!.editGoalPrompt,
+                        widget.mode == GoalEditMode.create
+                            ? l10n.addGoalPrompt
+                            : l10n.editGoalPrompt,
                         style: TextStyle(
                           fontSize: 16,
                           color: colorScheme.onSurface.withValues(alpha: 0.4),
@@ -121,7 +143,6 @@ class _EditGoalPageState extends State<EditGoalPage> {
                           controller: _controller,
                           maxLines: 2,
                           maxLength: 40,
-                          autofocus: true,
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -138,6 +159,17 @@ class _EditGoalPageState extends State<EditGoalPage> {
                           keyboardType: TextInputType.text,
                           onSubmitted: (_) => FocusScope.of(context).unfocus(),
                           focusNode: _focusNode,
+                          onChanged: (value) {
+                            setState(() {
+                              final trimmed = value.trim();
+                              final original =
+                                  (widget.initialText ?? '').trim();
+                              setState(() {
+                                _isButtonEnabled =
+                                    trimmed.isNotEmpty && trimmed != original;
+                              });
+                            });
+                          },
                         ),
                       ),
                     ],

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/edit_goal_page.dart';
+import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_pager.dart';
 
 class GoalCalendarPage extends StatefulWidget {
@@ -15,51 +16,24 @@ class GoalCalendarPage extends StatefulWidget {
 
 class _GoalCalendarPageState extends State<GoalCalendarPage> {
   final PageController _pageController = PageController();
-  bool _hasRedirected = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<RecordProvider>();
-      if (provider.isLoaded && provider.hasNoGoal) {
-        _navigateToAddGoalPage();
+      final isLoaded = provider.isLoaded;
+      final goals = provider.sortedGoals;
+      if (isLoaded && goals.isEmpty) {
+        _showEditGoalDialog();
       }
     });
   }
 
-  Future<void> _navigateToAddGoalPage() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const EditGoalPage()),
-    );
-    if (mounted && result is String && result.trim().isNotEmpty) {
-      final provider = context.read<RecordProvider>();
-      final (result: addResult, goal: newGoal) = await provider.addGoal(result);
-      if (newGoal != null) provider.setFocusedGoalForScroll(newGoal);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final isLoaded =
-        context.select<RecordProvider, bool>((provider) => provider.isLoaded);
-    final goals = context
-        .select<RecordProvider, List<Goal>>((provider) => provider.sortedGoals);
-
-    if (!isLoaded) return _buildLoadingIndicator();
-    if (goals.isEmpty && !_hasRedirected) {
-      _hasRedirected = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (context.mounted && goals.isEmpty) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const EditGoalPage()),
-          );
-        }
-      });
-    }
-    if (goals.isEmpty) return _buildLoadingIndicator();
+    final goals =
+        context.select<RecordProvider, List<Goal>>((p) => p.sortedGoals);
     return Scaffold(
       body: SafeArea(
         child: GoalPager(goals: goals, controller: _pageController),
@@ -67,13 +41,22 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
     );
   }
 
-  Widget _buildLoadingIndicator() {
-    return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(
-          color: Theme.of(context).colorScheme.primary,
-        ),
+  Future<void> _showEditGoalDialog() async {
+    final provider = context.read<RecordProvider>();
+    final result = await Navigator.push<GoalEditResult>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const EditGoalPage(mode: GoalEditMode.create),
       ),
     );
+
+    if (!context.mounted || result == null) return;
+    final trimmed = result.title.trim();
+    if (trimmed.isEmpty) return;
+    final (result: addResult, goal: newGoal) = await provider.addGoal(trimmed);
+    if (addResult == AddGoalResult.success && newGoal != null) {
+      provider.setFocusedGoalForScroll(newGoal);
+      setState(() {});
+    }
   }
 }

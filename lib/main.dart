@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/theme/app_theme.dart';
-import 'package:haenaedda/ui/goal_calendar/goal_calendar_page.dart';
+import 'package:haenaedda/ui/launcher/launcher_page.dart';
 
 void main() {
   runApp(
@@ -54,7 +54,7 @@ class _HaenaeddaState extends State<Haenaedda> {
         Locale('en'),
         Locale('ko'),
       ],
-      home: const GoalCalendarPage(),
+      home: const LauncherPage(),
     );
   }
 }
