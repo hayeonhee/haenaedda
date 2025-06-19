@@ -39,6 +39,9 @@ class _EditGoalPageState extends State<EditGoalPage> {
             trimmed.isNotEmpty && trimmed != (widget.initialText ?? '').trim();
       });
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
   }
 
   @override
@@ -140,7 +143,6 @@ class _EditGoalPageState extends State<EditGoalPage> {
                           controller: _controller,
                           maxLines: 2,
                           maxLength: 40,
-                          autofocus: true,
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
