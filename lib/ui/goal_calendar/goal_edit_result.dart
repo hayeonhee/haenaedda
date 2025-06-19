@@ -1,6 +1,8 @@
+enum GoalEditMode { create, update }
+
 class GoalEditResult {
   final String title;
-  final bool isNew;
+  final GoalEditMode mode;
 
-  GoalEditResult({required this.title, required this.isNew});
+  GoalEditResult({required this.title, required this.mode});
 }

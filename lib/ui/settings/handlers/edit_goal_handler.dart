@@ -113,7 +113,9 @@ Future<void> onAddGoalPressed(BuildContext context) async {
   final recordProvider = context.read<RecordProvider>();
   final result = await Navigator.push<GoalEditResult>(
     context,
-    MaterialPageRoute(builder: (_) => const EditGoalPage()),
+    MaterialPageRoute(
+      builder: (_) => const EditGoalPage(mode: GoalEditMode.create),
+    ),
   );
 
   if (!context.mounted || result == null) return;
@@ -146,7 +148,10 @@ Future<String?> onEditGoalTitlePressed(BuildContext context, Goal goal) async {
   final recordProvider = context.read<RecordProvider>();
   final result = await Navigator.of(context).push<GoalEditResult>(
     MaterialPageRoute(
-      builder: (_) => EditGoalPage(initialText: goal.title),
+      builder: (_) => EditGoalPage(
+        initialText: goal.title,
+        mode: GoalEditMode.update,
+      ),
     ),
   );
 

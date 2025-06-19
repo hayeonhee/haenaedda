@@ -21,7 +21,9 @@ class _AddFirstGoalFlowState extends State<AddFirstGoalFlow> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final result = await Navigator.push<GoalEditResult>(
         context,
-        MaterialPageRoute(builder: (_) => const EditGoalPage()),
+        MaterialPageRoute(
+          builder: (_) => const EditGoalPage(mode: GoalEditMode.create),
+        ),
       );
       if (!mounted || result == null) return;
       final trimmed = result.title.trim();

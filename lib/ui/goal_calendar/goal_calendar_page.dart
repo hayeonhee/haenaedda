@@ -45,7 +45,9 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
     final provider = context.read<RecordProvider>();
     final result = await Navigator.push<GoalEditResult>(
       context,
-      MaterialPageRoute(builder: (_) => const EditGoalPage()),
+      MaterialPageRoute(
+        builder: (_) => const EditGoalPage(mode: GoalEditMode.create),
+      ),
     );
 
     if (!context.mounted || result == null) return;

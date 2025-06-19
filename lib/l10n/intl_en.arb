@@ -110,14 +110,23 @@
         "description": "Button label to leave the screen without saving or completing input",
         "type": "text"
     },
-    "editGoalPrompt": "What do you want to achieve this time?",
-    "@editGoalPrompt": {
+    "addGoalPrompt": "What do you want to achieve this time?",
+    "@addGoalPrompt": {
         "description": "A prompt shown when the user is asked to enter a new or edited goal",
         "type": "text"
     },
     "editCurrentGoal": "Edit goal name",
     "@editCurrentGoal": {
         "description": "Settings menu item for editing the current goal's title",
+        "type": "text"
+    },
+    "save": "Save",
+    "@save": {
+        "description": "Label for the save button when editing an existing goal"
+    },
+    "editGoalPrompt": "How about tweaking your goal a bit?",
+    "@editGoalPrompt": {
+        "description": "A prompt shown when the user is editing an existing goal",
         "type": "text"
     }
 }
