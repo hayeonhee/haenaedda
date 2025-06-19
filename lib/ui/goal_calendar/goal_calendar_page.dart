@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/edit_goal_page.dart';
+import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_pager.dart';
 
 class GoalCalendarPage extends StatefulWidget {

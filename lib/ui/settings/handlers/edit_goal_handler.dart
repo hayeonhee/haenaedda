@@ -7,6 +7,7 @@ import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/theme/buttons.dart';
 import 'package:haenaedda/ui/goal_calendar/edit_goal_page.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_calendar_page.dart';
+import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
 
 Future<void> onDiscardDuringInput(
     BuildContext context, TextEditingController controller) async {
@@ -110,14 +111,16 @@ Future<bool?> confirmDiscardChanges(BuildContext context) {
 
 Future<void> onAddGoalPressed(BuildContext context) async {
   final recordProvider = context.read<RecordProvider>();
-  final inputText = await Navigator.push<String>(
+  final result = await Navigator.push<GoalEditResult>(
     context,
     MaterialPageRoute(builder: (_) => const EditGoalPage()),
   );
 
-  if (!context.mounted || inputText == null) return;
+  if (!context.mounted || result == null) return;
+  final trimmedTitle = result.title.trim();
+  if (trimmedTitle.isEmpty) return;
   final (result: addResult, goal: newGoal) =
-      await recordProvider.addGoal(inputText);
+      await recordProvider.addGoal(result.title);
   switch (addResult) {
     case AddGoalResult.emptyInput:
       break;
@@ -133,7 +136,7 @@ Future<void> onAddGoalPressed(BuildContext context) async {
           MaterialPageRoute(builder: (_) => const GoalCalendarPage()),
         );
       } else {
-        debugPrint('⚠️ Failed to add newGoal: newGoal is null');
+        debugPrint('Failed to add newGoal');
       }
       break;
   }
@@ -141,38 +144,40 @@ Future<void> onAddGoalPressed(BuildContext context) async {
 
 Future<String?> onEditGoalTitlePressed(BuildContext context, Goal goal) async {
   final recordProvider = context.read<RecordProvider>();
-  final newTitle = await Navigator.of(context).push<String>(
+  final result = await Navigator.of(context).push<GoalEditResult>(
     MaterialPageRoute(
       builder: (_) => EditGoalPage(initialText: goal.title),
     ),
   );
 
-  if (!context.mounted) return null;
-  final trimmed = newTitle?.trim();
-  if (trimmed != null && trimmed.isNotEmpty && trimmed != goal.title) {
-    final (result: editResult, goal: renamedGoal) =
-        await recordProvider.renameGoal(goal, trimmed);
-    switch (editResult) {
-      case RenameGoalResult.emptyInput:
-        break;
-      case RenameGoalResult.duplicate:
-        break;
-      case RenameGoalResult.saveFailed:
-        break;
-      case RenameGoalResult.notFound:
-        break;
-      case RenameGoalResult.success:
-        if (renamedGoal != null) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const GoalCalendarPage()),
-          );
-          return renamedGoal.title;
-        } else {
-          debugPrint('⚠️ Failed to rename Goal');
-        }
-        break;
-    }
+  if (!context.mounted || result == null) return null;
+  final trimmedTitle = result.title.trim();
+  if (trimmedTitle.isEmpty && trimmedTitle == goal.title) return null;
+
+  final (result: editResult, goal: renamedGoal) =
+      await recordProvider.renameGoal(goal, trimmedTitle);
+  switch (editResult) {
+    case RenameGoalResult.emptyInput:
+      break;
+    case RenameGoalResult.duplicate:
+      break;
+    case RenameGoalResult.saveFailed:
+      break;
+    case RenameGoalResult.notFound:
+      break;
+    case RenameGoalResult.success:
+      if (renamedGoal != null) {
+        recordProvider.setFocusedGoalForScroll(renamedGoal);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const GoalCalendarPage()),
+        );
+        return renamedGoal.title;
+      } else {
+        debugPrint('️Failed to rename Goal');
+      }
+      break;
   }
+
   return null;
 }

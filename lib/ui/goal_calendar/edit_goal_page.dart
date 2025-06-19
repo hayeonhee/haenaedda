@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
 import 'package:haenaedda/ui/settings/handlers/edit_goal_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -73,7 +74,8 @@ class _EditGoalPageState extends State<EditGoalPage> {
                     : () {
                         final trimmed = _controller.text.trim();
                         if (trimmed.isNotEmpty) {
-                          Navigator.of(context).pop(trimmed);
+                          Navigator.of(context)
+                              .pop(GoalEditResult(title: trimmed, isNew: true));
                         }
                       },
                 style: ButtonStyle(
