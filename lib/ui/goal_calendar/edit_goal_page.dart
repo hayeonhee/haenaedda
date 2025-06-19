@@ -18,12 +18,21 @@ class _EditGoalPageState extends State<EditGoalPage> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _isDiscardCheckInProgress = false;
+  bool _isButtonEnabled = false;
 
   @override
   void initState() {
     super.initState();
     _controller.text = widget.initialText ?? '';
-    _controller.addListener(() => setState(() {}));
+    _isButtonEnabled = _controller.text.trim().isNotEmpty &&
+        _controller.text.trim() != (widget.initialText ?? '').trim();
+    _controller.addListener(() {
+      final trimmed = _controller.text.trim();
+      setState(() {
+        _isButtonEnabled =
+            trimmed.isNotEmpty && trimmed != (widget.initialText ?? '').trim();
+      });
+    });
   }
 
   @override
@@ -69,15 +78,12 @@ class _EditGoalPageState extends State<EditGoalPage> {
             ),
             actions: [
               TextButton(
-                onPressed: _controller.text.isEmpty
-                    ? null
-                    : () {
-                        final trimmed = _controller.text.trim();
-                        if (trimmed.isNotEmpty) {
-                          Navigator.of(context)
-                              .pop(GoalEditResult(title: trimmed, isNew: true));
-                        }
-                      },
+                onPressed: _isButtonEnabled
+                    ? () {
+                        Navigator.of(context).pop(GoalEditResult(
+                            title: _controller.text, isNew: true));
+                      }
+                    : null,
                 style: ButtonStyle(
                   splashFactory: NoSplash.splashFactory,
                   overlayColor: WidgetStateProperty.all(Colors.transparent),
@@ -88,9 +94,9 @@ class _EditGoalPageState extends State<EditGoalPage> {
                   AppLocalizations.of(context)!.add,
                   style: TextStyle(
                     fontSize: 18,
-                    color: _controller.text.isEmpty
-                        ? colorScheme.outline
-                        : colorScheme.onSurface,
+                    color: _isButtonEnabled
+                        ? colorScheme.onSurface
+                        : colorScheme.outline,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -140,6 +146,11 @@ class _EditGoalPageState extends State<EditGoalPage> {
                           keyboardType: TextInputType.text,
                           onSubmitted: (_) => FocusScope.of(context).unfocus(),
                           focusNode: _focusNode,
+                          onChanged: (value) {
+                            setState(() {
+                              _isButtonEnabled = value.trim().isNotEmpty;
+                            });
+                          },
                         ),
                       ),
                     ],
