@@ -100,34 +100,34 @@
   - Dialog 내부에서 명확하게 값을 반환
     - Future<bool?>을 반환하는 구조로, 사용자의 선택 결과(확인/취소)를 상위에서 받음 
     - Navigator.pop(true)로 확인 의사를 전달
-
-    ``` dart
-    Future<bool?> showResetConfirmDialog(...) async {
-            return await showDialog<bool?>(
-            context: context,
-            builder: (context) => AlertDialog(
-                actions: [
-                    TextButton(
-                    onPressed: () => Navigator.of(context).pop(), // 취소
-                    child: Text(l10n.cancel),
-                    ),
-                    TextButton(
-                    onPressed: () => Navigator.of(context).pop(true), // 확인 
-                    child: Text(l10n.confirm),
-                    )
-                ],
-            ),
-        ),
-    }
-    ```
+ 
+      ``` dart
+       Future<bool?> showResetConfirmDialog(...) async {
+               return await showDialog<bool?>(
+               context: context,
+               builder: (context) => AlertDialog(
+                   actions: [
+                       TextButton(
+                       onPressed: () => Navigator.of(context).pop(), // 취소
+                       child: Text(l10n.cancel),
+                       ),
+                       TextButton(
+                       onPressed: () => Navigator.of(context).pop(true), // 확인 
+                       child: Text(l10n.confirm),
+                       )
+                   ],
+               ),
+           ),
+       }
+      ```
   - 호출부에서 await로 흐름 제어 + mounted 체크
     - 상태 변경이 일어날 수 있으므로 context.mounted를 반드시 확인
 
-    ``` dart
-    final confirmed = await showResetConfirmDialog(context, goal, type);
-
-    if (!context.mounted || confirmed != true) return;
-    ```
+      ``` dart
+       final confirmed = await showResetConfirmDialog(context, goal, type);
+  
+       if (!context.mounted || confirmed != true) return;
+      ```
 
 ### 사용자에게 초기화 결과에 대한 정확한 피드백을 주지 못하는 문제  
 
@@ -143,12 +143,14 @@
   - createTemporaryGoalIfAbsent() 메서드를 도입해 목표가 없을 시 자동으로 비어있는 목표를 생성해 앱이 정상 동작하도록 처리함
   - 추후 목표를 입력받는 초기 화면을 추가하여 빈 객체를 임의 생성하는 대신 사용자가 의도를 가지고 생성한 객체를 사용하도록 수정할 예정
 
-### SharedPreferences에서 데이터를 불러올 때, 값이 없을 경우 역직렬화에 실패하는 문제 
-- 문제상황
-  - DateTime Set이 비어 있을 때 (아무 날짜도 선택되지 않았을 때) 발생하는 역직렬화 오류 
-    > flutter: Error parsing DateTime set: type '_Map<String, dynamic>' is not a subtype of type 'String' in type cast
+### 목표 추가 직후, 해당 목표로 자동 스크롤되지 않는 문제
+
+- 문제상황 
+  - `PageController(initialPage: ...)`는 생성 시점에만 동작하는데, build 이후에 계산된 index나 Provider 상태가 늦게 반영되면 제대로 스크롤되지 않음
+  - goal 데이터는 바뀌었지만 index는 같게 유지돼서(PageView.builder는 index로 위젯을 재사용) SingleGoalCalendarView가 새로 빌드되지 않아 내부 UI가 이전 상태에 머묾
+
 - 해결 방법
-  - jsonString == null || jsonString.trim().isEmpty일 경우 DateRecordSet() 반환하는 방어 로직 추가
-  - 날짜 비교의 안정성과 직렬화/역직렬화 코드 중복 방지를 위해 사용자 정의 타입 DateRecordSet 도입
-    - 날짜 정규화(DateTime → year, month, day만 유지)
-    - 내부적으로 Set<DateTime>을 은닉하고 메서드 기반으로 제어
+  - index 계산을 initState에서 수행하고, 그 결과로 `PageController(initialPage: index)`를 생성
+  - goal.id를 기준으로 `ValueKey(goal.id)`를 지정하여 위젯 재사용 방지
+  - 파라미터 전달 방식 대신 Provider에 일회성 상태를 저장하고, 사용 후 바로 초기화하는 방식으로 전환
+ 
