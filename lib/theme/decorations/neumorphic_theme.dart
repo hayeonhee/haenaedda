@@ -110,4 +110,19 @@ class NeumorphicTheme {
       ],
     );
   }
+
+  static List<BoxShadow> buttonShadow() {
+    return [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: 0.05),
+        offset: const Offset(2, 2),
+        blurRadius: 5,
+      ),
+      BoxShadow(
+        color: Colors.white.withValues(alpha: 0.7),
+        offset: const Offset(-2, -2),
+        blurRadius: 5,
+      ),
+    ];
+  }
 }

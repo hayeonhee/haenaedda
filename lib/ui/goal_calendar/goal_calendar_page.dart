@@ -6,6 +6,7 @@ import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/edit_goal_page.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_pager.dart';
+import 'package:haenaedda/ui/settings/settings_button.dart';
 
 class GoalCalendarPage extends StatefulWidget {
   const GoalCalendarPage({super.key});
@@ -16,6 +17,7 @@ class GoalCalendarPage extends StatefulWidget {
 
 class _GoalCalendarPageState extends State<GoalCalendarPage> {
   final PageController _pageController = PageController();
+  final ValueNotifier<Goal?> _currentGoal = ValueNotifier(null);
 
   @override
   void initState() {
@@ -36,7 +38,25 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
         context.select<RecordProvider, List<Goal>>((p) => p.sortedGoals);
     return Scaffold(
       body: SafeArea(
-        child: GoalPager(goals: goals, controller: _pageController),
+        child: Stack(
+          children: [
+            GoalPager(
+              goals: goals,
+              controller: _pageController,
+              onGoalChanged: (goal) => _currentGoal.value = goal,
+            ),
+            Positioned(
+              bottom: 32,
+              right: 28,
+              child: ValueListenableBuilder<Goal?>(
+                  valueListenable: _currentGoal,
+                  builder: (context, goal, _) {
+                    if (goal == null) return const SizedBox.shrink();
+                    return SettingButton(goal: goal);
+                  }),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/goal_setting_action.dart';
 import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 import 'package:haenaedda/ui/settings/handlers/edit_goal_handler.dart';
 import 'package:haenaedda/ui/settings/settings_bottom_modal.dart';
 
@@ -15,8 +16,9 @@ class SettingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () async {
+    final colorScheme = Theme.of(context).colorScheme;
+    return GestureDetector(
+      onTap: () async {
         final recordProvider = context.read<RecordProvider>();
         final action = await showGeneralDialog<GoalSettingAction?>(
           context: context,
@@ -48,11 +50,20 @@ class SettingButton extends StatelessWidget {
           case null:
         }
       },
-      icon: const Icon(Icons.settings),
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      hoverColor: Colors.transparent,
-      focusColor: Colors.transparent,
+      child: Container(
+        width: 48,
+        height: 48,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          shape: BoxShape.circle,
+          boxShadow: NeumorphicTheme.buttonShadow(),
+        ),
+        child: Icon(
+          Icons.settings,
+          color: colorScheme.onSurface,
+        ),
+      ),
     );
   }
 }
