@@ -8,8 +8,14 @@ import 'package:haenaedda/ui/goal_calendar/single_goal_calendar_view.dart';
 class GoalPager extends StatefulWidget {
   final List<Goal> goals;
   final PageController controller;
+  final void Function(Goal)? onGoalChanged;
 
-  const GoalPager({super.key, required this.goals, required this.controller});
+  const GoalPager({
+    super.key,
+    required this.goals,
+    required this.controller,
+    this.onGoalChanged,
+  });
 
   @override
   State<GoalPager> createState() => _GoalPagerState();
@@ -38,6 +44,11 @@ class _GoalPagerState extends State<GoalPager> {
       controller: widget.controller,
       physics: const BouncingScrollPhysics(),
       itemCount: widget.goals.length,
+      onPageChanged: (index) {
+        if (widget.onGoalChanged != null && index < widget.goals.length) {
+          widget.onGoalChanged!(widget.goals[index]);
+        }
+      },
       itemBuilder: (context, index) {
         return AnimatedBuilder(
           animation: widget.controller,
