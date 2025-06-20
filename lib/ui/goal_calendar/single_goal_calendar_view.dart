@@ -52,8 +52,6 @@ class _SingleGoalCalendarViewState extends State<SingleGoalCalendarView> {
               CalendarHeaderSection(
                 goal: goal,
                 date: _focusedDate,
-                onGoalEditSubmitted: (String newTitle) =>
-                    context.read<RecordProvider>().renameGoal(goal, newTitle),
                 onMonthChanged: (DateTime newMonth) {
                   setState(() => _focusedDate = newMonth);
                 },
