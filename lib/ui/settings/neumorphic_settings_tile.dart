@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 
 class NeumorphicSettingsTile extends StatelessWidget {
   final String title;
+  final Color? titleColor;
   final bool isSelected;
   final VoidCallback onTap;
 
   const NeumorphicSettingsTile({
     super.key,
     required this.title,
+    this.titleColor,
     this.isSelected = false,
     required this.onTap,
   });
@@ -16,19 +17,32 @@ class NeumorphicSettingsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      behavior: HitTestBehavior.translucent,
       onTap: onTap,
       child: Container(
-        constraints: const BoxConstraints(minHeight: 48),
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: NeumorphicTheme.raisedSettingTileBoxDecoration(context),
-        alignment: Alignment.centerLeft,
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.outline,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white.withValues(alpha: 0.6),
+              offset: const Offset(-1, -1),
+              blurRadius: 10,
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.01),
+              offset: const Offset(2, 2),
+              blurRadius: 6,
+            ),
+          ],
+        ),
         child: DefaultTextStyle(
           style: TextStyle(
-            fontSize: 16,
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: titleColor ?? Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 1,
           ),
           child: Text(title),
         ),

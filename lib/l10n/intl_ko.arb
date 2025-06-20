@@ -52,32 +52,47 @@
     },
     "menuResetRecordsOnly": "기록만 초기화",
     "@menuResetRecordsOnly": {
-        "description": "Resets only the saved records, keeping the goal settings.",
+        "description": "Resets only the saved records for a single goal, keeping the goal settings.",
         "type": "text"
     },
-    "menuResetEntireGoal": "전체 초기화",
+    "menuResetEntireGoal": "목표 초기화",
     "@menuResetEntireGoal": {
-        "description": "Resets the goal completely including its title and saved records.",
+        "description": "Resets the selected goal completely, including its title and saved records.",
         "type": "text"
     },
-    "resetEntireGoal": "이 목표와 기록이 삭제돼요",
+    "menuResetAllGoals": "모든 목표 초기화",
+    "@menuResetAllGoals": {
+        "description": "Menu item for resetting all goals and their associated records in the app.",
+        "type": "text"
+    },
+    "resetEntireGoal": "이 목표가 초기화돼요",
     "@resetEntireGoal": {
-        "description": "Alert dialog title shown when user is about to delete a single goal and its records.",
+        "description": "Dialog title shown when the user is about to reset a single goal and its records.",
         "type": "text"
     },
-    "resetEntireGoalMessage": "목표와 기록이 모두 삭제됩니다. 계속하시겠어요?",
+    "resetEntireGoalMessage": "이 목표의 설정과 모든 기록이 삭제됩니다. 계속하시겠어요?",
     "@resetEntireGoalMessage": {
-        "description": "Alert dialog content explaining that one selected goal and all its records will be deleted",
+        "description": "Dialog content warning about the full reset of one goal.",
         "type": "text"
     },
     "resetRecordsOnly": "기록이 삭제돼요",
     "@resetRecordsOnly": {
-        "description": "Alert dialog title shown when user is about to delete only the records, not the goal itself",
+        "description": "Dialog title when the user is about to delete only the records from a goal.",
         "type": "text"
     },
-    "resetRecordsOnlyMessage": "기록만 삭제되며, 목표는 그대로 유지됩니다.",
+    "resetRecordsOnlyMessage": "기록만 삭제되며, 목표 설정은 그대로 유지됩니다.",
     "@resetRecordsOnlyMessage": {
-        "description": "Confirmation message for record-only reset.",
+        "description": "Dialog content for record-only reset.",
+        "type": "text"
+    },
+    "resetAllGoals": "모든 목표가 삭제돼요",
+    "@resetAllGoals": {
+        "description": "Dialog title when the user is about to delete all goals and their records.",
+        "type": "text"
+    },
+    "resetAllGoalsMessage": "모든 목표와 기록이 삭제됩니다. 이 작업은 되돌릴 수 없어요. 계속하시겠어요?",
+    "@resetAllGoalsMessage": {
+        "description": "Dialog content warning about the irreversible full reset of all goal data.",
         "type": "text"
     },
     "addGoal": "새로운 목표 추가",

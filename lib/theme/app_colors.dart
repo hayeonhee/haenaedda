@@ -14,6 +14,9 @@ class AppColors {
   static const Color error = Color(0xFFB00020);
   static const Color onError = Color(0xFFFFFFFF);
 
+  static const Color errorContainer = Color(0xFFF9DEDC);
+  static const Color onErrorContainer = Color(0xFF410E0B);
+
   static const Color hint = Color(0xFF8E8E93);
 
   static const Color surfaceContainerLowest = Color(0xFFD6DEE8);
