@@ -1,89 +1,73 @@
 import 'package:flutter/material.dart';
 
+import 'package:haenaedda/constants/dimensions.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/goal_setting_action.dart';
 import 'package:haenaedda/model/reset_type.dart';
 import 'package:haenaedda/ui/settings/handlers/reset_goal_handler.dart';
 import 'package:haenaedda/ui/settings/neumorphic_settings_tile.dart';
-import 'package:haenaedda/ui/widgets/section_divider.dart';
+import 'package:haenaedda/ui/widgets/bottom_right_button.dart';
 
-class SettingsBottomModal extends StatefulWidget {
+class SettingsBottomModal extends StatelessWidget {
   final Goal goal;
 
   const SettingsBottomModal({super.key, required this.goal});
 
   @override
-  State<SettingsBottomModal> createState() => _SettingsBottomModalState();
-}
-
-class _SettingsBottomModalState extends State<SettingsBottomModal> {
-  @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // This widget fills the empty space at the bottom caused by SafeArea.
-        // Without a background color, this area remains transparent and may look like a visual cut-off.
-        // It ensures a consistent look by matching the modal’s background color.
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          height: MediaQuery.of(context).padding.bottom,
-          child: Container(color: Theme.of(context).colorScheme.surface),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: SafeArea(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(12)),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 4.0),
-                  Row(
-                    children: [
-                      const SizedBox(width: 2),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4.0),
-                  const SectionDivider(),
-                  const SizedBox(height: 12.0),
-                  NeumorphicSettingsTile(
-                    title: AppLocalizations.of(context)!.editCurrentGoal,
-                    onTap: () => Navigator.of(context)
-                        .pop(GoalSettingAction.editGoalTitle),
-                  ),
-                  NeumorphicSettingsTile(
-                    title: AppLocalizations.of(context)!.addGoal,
-                    onTap: () =>
-                        Navigator.of(context).pop(GoalSettingAction.addGoal),
-                  ),
-                  const SizedBox(height: 16.0),
-                  NeumorphicSettingsTile(
-                    title: AppLocalizations.of(context)!.menuResetRecordsOnly,
-                    onTap: () => onResetButtonTap(
-                        context, widget.goal, ResetType.recordsOnly),
-                  ),
-                  NeumorphicSettingsTile(
-                    title: AppLocalizations.of(context)!.menuResetEntireGoal,
-                    onTap: () => onResetButtonTap(
-                        context, widget.goal, ResetType.entireGoal),
-                  ),
-                ],
-              ),
+    final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+    return SafeArea(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            bottom:
+                bottomRightButtonOffset.dy + bottomRightButtonSize.height + 16,
+            right: bottomRightButtonOffset.dx,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                NeumorphicSettingsTile(
+                  title: l10n.editCurrentGoal,
+                  onTap: () => Navigator.of(context)
+                      .pop(GoalSettingAction.editGoalTitle),
+                ),
+                NeumorphicSettingsTile(
+                  title: l10n.addGoal,
+                  onTap: () =>
+                      Navigator.of(context).pop(GoalSettingAction.addGoal),
+                ),
+                NeumorphicSettingsTile(
+                  title: l10n.menuResetRecordsOnly,
+                  titleColor: Theme.of(context).colorScheme.onErrorContainer,
+                  onTap: () =>
+                      onResetButtonTap(context, goal, ResetType.recordsOnly),
+                ),
+                NeumorphicSettingsTile(
+                  title: l10n.menuResetEntireGoal,
+                  titleColor: Theme.of(context).colorScheme.error,
+                  onTap: () =>
+                      onResetButtonTap(context, goal, ResetType.entireGoal),
+                ),
+                NeumorphicSettingsTile(
+                  title: l10n.menuResetAllGoals,
+                  titleColor: Theme.of(context).colorScheme.error,
+                  onTap: () =>
+                      onResetButtonTap(context, goal, ResetType.allGoals),
+                ),
+              ],
             ),
           ),
-        ),
-      ],
+          BottomRightButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Icon(Icons.close, color: colorScheme.onSurface),
+          ),
+        ],
+      ),
     );
   }
 }
