@@ -34,6 +34,11 @@ enum ResetEntireGoalResult {
   goalFailed,
 }
 
+enum ResetAllGoalsResult {
+  success,
+  failure,
+}
+
 class RecordProvider extends ChangeNotifier {
   List<Goal> _goals = [];
   List<Goal> _sortedGoals = [];
@@ -296,6 +301,19 @@ class RecordProvider extends ChangeNotifier {
     if (!goalCleared) return ResetEntireGoalResult.goalFailed;
 
     return ResetEntireGoalResult.success;
+  }
+
+  Future<ResetAllGoalsResult> resetAllGoals() async {
+    try {
+      _goals.clear();
+      _recordsByGoalId.clear();
+      await saveGoals();
+      await saveRecords();
+      notifyListeners();
+      return ResetAllGoalsResult.success;
+    } catch (e) {
+      return ResetAllGoalsResult.failure;
+    }
   }
 
   /// Creates a fallback goal if the goal list is empty.

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/theme/buttons.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/reset_type.dart';
 import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/theme/buttons.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_calendar_page.dart';
 
 Future<void> showResetFailureDialog(BuildContext context, ResetType type) {
@@ -13,6 +13,7 @@ Future<void> showResetFailureDialog(BuildContext context, ResetType type) {
   final message = switch (type) {
     ResetType.recordsOnly => l10n.resetFailure,
     ResetType.entireGoal => l10n.resetPartialFailureGoal,
+    ResetType.allGoals => l10n.resetFailure,
   };
 
   return showDialog<void>(
@@ -42,6 +43,7 @@ Future<bool?> showResetConfirmDialog(
         l10n.resetRecordsOnlyMessage
       ),
     ResetType.entireGoal => (l10n.resetEntireGoal, l10n.resetEntireGoalMessage),
+    ResetType.allGoals => (l10n.resetAllGoals, l10n.resetAllGoalsMessage),
   };
 
   return await showGeneralDialog(
@@ -146,6 +148,9 @@ Future<void> onResetButtonTap(
     case ResetType.entireGoal:
       await _handleEntireGoalReset(context, goal);
       break;
+    case ResetType.allGoals:
+      await _handleAllGoalsReset(context);
+      break;
   }
 }
 
@@ -188,6 +193,23 @@ Future<void> _handleEntireGoalReset(BuildContext context, Goal goal) async {
       break;
     case ResetEntireGoalResult.goalFailed:
       await showResetFailureDialog(context, ResetType.entireGoal);
+      break;
+  }
+}
+
+Future<void> _handleAllGoalsReset(BuildContext context) async {
+  final provider = context.read<RecordProvider>();
+  final result = await provider.resetAllGoals();
+  if (!context.mounted) return;
+  switch (result) {
+    case ResetAllGoalsResult.success:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const GoalCalendarPage()),
+      );
+      break;
+    case ResetAllGoalsResult.failure:
+      await showResetFailureDialog(context, ResetType.allGoals);
       break;
   }
 }
