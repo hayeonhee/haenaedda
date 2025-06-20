@@ -29,6 +29,7 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
       if (isLoaded && goals.isEmpty) {
         _showEditGoalDialog();
       }
+      _initializeCurrentGoal(goals);
     });
   }
 
@@ -59,6 +60,12 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
         ),
       ),
     );
+  }
+
+  void _initializeCurrentGoal(List<Goal> goals) {
+    if (goals.isNotEmpty) {
+      _currentGoal.value = goals[0];
+    }
   }
 
   Future<void> _showEditGoalDialog() async {
