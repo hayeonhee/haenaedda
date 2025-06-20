@@ -55,7 +55,7 @@ class _CalendarHeaderSectionState extends State<CalendarHeaderSection> {
                   maxLines: 2,
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               MonthNavigationBar(
                 referenceDate: _currentMonth,
                 onMonthChanged: (newMonth) {

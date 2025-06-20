@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 
 class MonthNavigationBar extends StatefulWidget {
   final DateTime referenceDate;
@@ -68,23 +69,16 @@ class _MonthNavigationBarState extends State<MonthNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ConstrainedBox(
       constraints: const BoxConstraints(
         minHeight: 48,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           if (!isAtFirstRecordedMonth)
-            IconButton(
-              onPressed: _goToPreviousMonth,
-              icon: const Icon(Icons.chevron_left),
-              color: Theme.of(context).colorScheme.onSurface,
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              hoverColor: Colors.transparent,
-              focusColor: Colors.transparent,
-            ),
+            _buildChevronButton(isLeft: true, onTap: _goToPreviousMonth),
           ConstrainedBox(
             constraints: BoxConstraints(
               maxWidth: MediaQuery.of(context).size.width * 0.3,
@@ -94,25 +88,38 @@ class _MonthNavigationBarState extends State<MonthNavigationBar> {
               child: Text(
                 '${_focusedDate.year}.${_focusedDate.month.toString().padLeft(2, '0')}',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w400,
                   fontSize: 16,
                 ),
               ),
             ),
           ),
           if (!isAtReferenceMonth)
-            IconButton(
-              onPressed: _goToNextMonth,
-              icon: const Icon(Icons.chevron_right),
-              color: Theme.of(context).colorScheme.onSurface,
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              hoverColor: Colors.transparent,
-              focusColor: Colors.transparent,
-            ),
+            _buildChevronButton(isLeft: false, onTap: _goToNextMonth),
         ],
       ),
+    );
+  }
+
+  Widget _buildChevronButton({
+    required bool isLeft,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: NeumorphicTheme.buttonShadow(),
+          ),
+          child: Icon(
+            isLeft ? Icons.chevron_left : Icons.chevron_right,
+            color: Theme.of(context).colorScheme.onSurface,
+          )),
     );
   }
 }
