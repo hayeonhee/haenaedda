@@ -94,10 +94,7 @@ Future<bool?> showResetConfirmDialog(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: TextButton(
-                        style: getButtonStyle(
-                          background: colorScheme.outline,
-                          foreground: colorScheme.onSurfaceVariant,
-                        ),
+                        style: getNeutralButtonStyle(context),
                         onPressed: () => Navigator.of(context).pop(),
                         child: Text(
                           l10n.cancel,
@@ -110,14 +107,11 @@ Future<bool?> showResetConfirmDialog(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: TextButton(
-                        style: getButtonStyle(
-                          background: colorScheme.onError,
-                          foreground: colorScheme.error,
-                        ),
+                        style: getDestructiveButtonStyle(context),
                         onPressed: () => Navigator.of(context).pop(true),
                         child: Text(
                           l10n.reset,
-                          style: getButtonTextStyle(color: colorScheme.error),
+                          style: getButtonTextStyle(color: colorScheme.onError),
                         ),
                       ),
                     ),

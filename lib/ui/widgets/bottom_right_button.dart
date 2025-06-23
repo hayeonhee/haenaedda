@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/constants/dimensions.dart';
 
+import 'package:haenaedda/constants/dimensions.dart';
 import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 
 class BottomRightButton extends StatelessWidget {
@@ -27,7 +27,7 @@ class BottomRightButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             shape: BoxShape.circle,
-            boxShadow: NeumorphicTheme.buttonShadow(),
+            boxShadow: NeumorphicTheme.buttonShadow(context),
           ),
           child: child,
         ),
