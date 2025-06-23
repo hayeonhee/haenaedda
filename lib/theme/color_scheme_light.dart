@@ -14,4 +14,5 @@ const lightColorScheme = ColorScheme(
   errorContainer: AppColors.errorContainer,
   onErrorContainer: AppColors.onErrorContainer,
   outline: AppColors.outline,
+  onSurfaceVariant: AppColors.onSurfaceVariant,
 );

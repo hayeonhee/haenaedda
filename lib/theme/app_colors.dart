@@ -17,7 +17,7 @@ class AppColors {
   static const Color errorContainer = Color(0xFFF9DEDC);
   static const Color onErrorContainer = Color(0xFF410E0B);
 
-  static const Color hint = Color(0xFF8E8E93);
+  static const Color onSurfaceVariant = Color(0xFF8E8E93);
 
   static const Color surfaceContainerLowest = Color(0xFFD6DEE8);
   static const Color surfaceContainerLow = Color(0xFFE9EDF2);
@@ -33,7 +33,7 @@ class AppColors {
 
   // Dark Theme Colors
   static const Color darkPrimary = Color(0xFF4A90E2);
-  static const Color darkOnPrimary = Color(0xFF000000);
+  static const Color darkOnPrimary = Color(0xFFFFFFFF);
 
   static const Color darkSecondary = Color(0xFFA0BCE0);
   static const Color darkOnSecondary = Color(0xFF000000);
@@ -43,6 +43,10 @@ class AppColors {
 
   static const Color darkError = Color(0xFFCF6679);
   static const Color darkOnError = Color(0xFF000000);
+  static const Color darkErrorContainer = Color(0xFF8C1D18);
+  static const Color darkOnErrorContainer = Color(0xFFFFDAD6);
+
+  static const Color darkOnSurfaceVariant = Color(0xFFB0B0B0);
 
   static const Color darkSurfaceContainerLowest = Color(0xFF121212);
   static const Color darkSurfaceContainerLow = Color(0xFF1A1A1A);

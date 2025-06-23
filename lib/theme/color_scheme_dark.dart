@@ -11,5 +11,8 @@ const darkColorScheme = ColorScheme(
   onSurface: AppColors.darkOnSurface,
   error: AppColors.darkError,
   onError: AppColors.darkOnError,
+  errorContainer: AppColors.darkErrorContainer,
+  onErrorContainer: AppColors.darkOnErrorContainer,
   outline: AppColors.darkOutline,
+  onSurfaceVariant: AppColors.darkOnSurfaceVariant,
 );
