@@ -76,10 +76,7 @@ Future<bool?> confirmDiscardChanges(BuildContext context) {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: TextButton(
-                        style: getButtonStyle(
-                          background: colorScheme.outline,
-                          foreground: colorScheme.onSurfaceVariant,
-                        ),
+                        style: getNeutralButtonStyle(context),
                         onPressed: () => Navigator.of(context).pop(false),
                         child:
                             Text(l10n.keepEditing, style: getButtonTextStyle()),
@@ -90,10 +87,7 @@ Future<bool?> confirmDiscardChanges(BuildContext context) {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: TextButton(
-                        style: getButtonStyle(
-                          background: colorScheme.onError,
-                          foreground: colorScheme.error,
-                        ),
+                        style: getDestructiveButtonStyle(context),
                         onPressed: () => Navigator.of(context).pop(true),
                         child: Text(l10n.leave, style: getButtonTextStyle()),
                       ),

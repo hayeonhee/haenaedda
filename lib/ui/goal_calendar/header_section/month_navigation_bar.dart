@@ -114,7 +114,7 @@ class _MonthNavigationBarState extends State<MonthNavigationBar> {
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(14),
-            boxShadow: NeumorphicTheme.buttonShadow(),
+            boxShadow: NeumorphicTheme.buttonShadow(context),
           ),
           child: Icon(
             isLeft ? Icons.chevron_left : Icons.chevron_right,

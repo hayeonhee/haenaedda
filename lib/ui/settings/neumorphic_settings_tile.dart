@@ -16,6 +16,8 @@ class NeumorphicSettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -26,12 +28,14 @@ class NeumorphicSettingsTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.white.withValues(alpha: 0.6),
+              color: isDark
+                  ? Colors.grey.withValues(alpha: 0.4)
+                  : Colors.white.withValues(alpha: 0.6),
               offset: const Offset(-1, -1),
-              blurRadius: 10,
+              blurRadius: isDark ? 8 : 10,
             ),
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.01),
+              color: Colors.black.withValues(alpha: isDark ? 0.9 : 0.01),
               offset: const Offset(2, 2),
               blurRadius: 6,
             ),
