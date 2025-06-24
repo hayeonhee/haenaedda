@@ -103,7 +103,10 @@ Future<bool?> confirmDiscardChanges(BuildContext context) {
   );
 }
 
-Future<void> onAddGoalPressed(BuildContext context) async {
+Future<(AddGoalResult, Goal?)> showAddGoalFlow(
+  BuildContext context, {
+  bool replaceToGoalCalendar = false,
+}) async {
   final recordProvider = context.read<RecordProvider>();
   final result = await Navigator.push<GoalEditResult>(
     context,
@@ -112,30 +115,23 @@ Future<void> onAddGoalPressed(BuildContext context) async {
     ),
   );
 
-  if (!context.mounted || result == null) return;
+  if (!context.mounted) return (AddGoalResult.saveFailed, null);
+  if (result == null) return (AddGoalResult.emptyInput, null);
+
   final trimmedTitle = result.title.trim();
-  if (trimmedTitle.isEmpty) return;
   final (result: addResult, goal: newGoal) =
-      await recordProvider.addGoal(result.title);
-  switch (addResult) {
-    case AddGoalResult.emptyInput:
-      break;
-    case AddGoalResult.duplicate:
-      break;
-    case AddGoalResult.saveFailed:
-      break;
-    case AddGoalResult.success:
-      if (newGoal != null) {
-        recordProvider.setFocusedGoalForScroll(newGoal);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const GoalCalendarPage()),
-        );
-      } else {
-        debugPrint('Failed to add newGoal');
-      }
-      break;
+      await recordProvider.addGoal(trimmedTitle);
+
+  if (addResult == AddGoalResult.success && newGoal != null) {
+    recordProvider.setFocusedGoalForScroll(newGoal);
+    if (replaceToGoalCalendar) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const GoalCalendarPage()),
+      );
+    }
   }
+  return (addResult, newGoal);
 }
 
 Future<String?> onEditGoalTitlePressed(BuildContext context, Goal goal) async {

@@ -5,8 +5,6 @@ import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/goal_setting_action.dart';
 import 'package:haenaedda/provider/record_provider.dart';
-import 'package:haenaedda/ui/goal_calendar/edit_goal_page.dart';
-import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_pager.dart';
 import 'package:haenaedda/ui/settings/handlers/edit_goal_handler.dart';
 import 'package:haenaedda/ui/settings/settings_bottom_modal.dart';
@@ -31,7 +29,8 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
       final isLoaded = provider.isLoaded;
       final goals = provider.sortedGoals;
       if (isLoaded && goals.isEmpty) {
-        _showEditGoalDialog();
+        showAddGoalFlow(context);
+        setState(() {});
       }
       _initializeCurrentGoal(goals);
     });
@@ -74,25 +73,6 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
     }
   }
 
-  Future<void> _showEditGoalDialog() async {
-    final provider = context.read<RecordProvider>();
-    final result = await Navigator.push<GoalEditResult>(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const EditGoalPage(mode: GoalEditMode.create),
-      ),
-    );
-
-    if (!context.mounted || result == null) return;
-    final trimmed = result.title.trim();
-    if (trimmed.isEmpty) return;
-    final (result: addResult, goal: newGoal) = await provider.addGoal(trimmed);
-    if (addResult == AddGoalResult.success && newGoal != null) {
-      provider.setFocusedGoalForScroll(newGoal);
-      setState(() {});
-    }
-  }
-
   Future<void> _onSettingButtonTap(BuildContext context, Goal goal) async {
     final recordProvider = context.read<RecordProvider>();
     final action = await showGeneralDialog<GoalSettingAction?>(
@@ -118,7 +98,7 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
     if (!context.mounted) return;
     switch (action) {
       case GoalSettingAction.addGoal:
-        await onAddGoalPressed(context);
+        await showAddGoalFlow(context);
       case GoalSettingAction.editGoalTitle:
         await onEditGoalTitlePressed(context, goal);
       case GoalSettingAction.resetRecordsOnly:
