@@ -22,17 +22,24 @@ class GoalPager extends StatefulWidget {
 }
 
 class _GoalPagerState extends State<GoalPager> {
+  bool _hasScrolledToFocusedGoal = false;
+
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_hasScrolledToFocusedGoal) return;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<RecordProvider>();
       final focusedGoal = provider.focusedGoalForScroll;
       final shouldScroll = provider.shouldScrollToFocusedPage;
       if (focusedGoal != null && shouldScroll) {
         final index = widget.goals.indexWhere((g) => g.id == focusedGoal.id);
-        if (index != -1) widget.controller.jumpToPage(index);
+        if (index != -1 && widget.controller.hasClients) {
+          widget.controller.jumpToPage(index);
+        }
         provider.clearFocusedGoalForScroll();
+        _hasScrolledToFocusedGoal = true;
       }
     });
   }
