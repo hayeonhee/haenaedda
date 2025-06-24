@@ -99,13 +99,18 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
     switch (action) {
       case GoalSettingAction.addGoal:
         await showAddGoalFlow(context);
+        break;
       case GoalSettingAction.editGoalTitle:
         await onEditGoalTitlePressed(context, goal);
+        break;
       case GoalSettingAction.resetRecordsOnly:
         recordProvider.removeRecordsOnly(goal.id);
+        break;
       case GoalSettingAction.resetEntireGoal:
         recordProvider.resetEntireGoal(goal.id);
+        break;
       case null:
+        break;
     }
   }
 }
