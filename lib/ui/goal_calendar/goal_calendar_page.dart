@@ -20,20 +20,39 @@ class GoalCalendarPage extends StatefulWidget {
 class _GoalCalendarPageState extends State<GoalCalendarPage> {
   final PageController _pageController = PageController();
   final ValueNotifier<Goal?> _currentGoal = ValueNotifier(null);
+  bool _isAddGoalFlowActive = false;
+  RecordProvider? _recordProvider;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<RecordProvider>();
-      final isLoaded = provider.isLoaded;
-      final goals = provider.sortedGoals;
-      if (isLoaded && goals.isEmpty) {
-        showAddGoalFlow(context);
-        setState(() {});
-      }
-      _initializeCurrentGoal(goals);
+      _recordProvider = context.read<RecordProvider>();
+      _recordProvider?.addListener(_checkGoalState);
+      _checkGoalState();
     });
+  }
+
+  void _checkGoalState() {
+    if (!_isAddGoalFlowActive &&
+        _recordProvider != null &&
+        _recordProvider!.isLoaded &&
+        _recordProvider!.sortedGoals.isEmpty) {
+      _isAddGoalFlowActive = true;
+      Future.microtask(() async {
+        if (mounted) {
+          await showAddGoalFlow(context);
+          _isAddGoalFlowActive = false;
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _recordProvider?.removeListener(_checkGoalState);
+    _currentGoal.dispose();
+    super.dispose();
   }
 
   @override
@@ -65,12 +84,6 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
         ),
       ),
     );
-  }
-
-  void _initializeCurrentGoal(List<Goal> goals) {
-    if (goals.isNotEmpty) {
-      _currentGoal.value = goals[0];
-    }
   }
 
   Future<void> _onSettingButtonTap(BuildContext context, Goal goal) async {
