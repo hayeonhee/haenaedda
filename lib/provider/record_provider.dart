@@ -74,9 +74,9 @@ class RecordProvider extends ChangeNotifier {
   Future<bool> loadData() async {
     final goalsLoaded = await _loadGoals();
     final recordsLoaded = await _loadRecords();
-    final isSuccess = goalsLoaded && recordsLoaded;
-    if (isSuccess) notifyListeners();
-    return isSuccess;
+    _isLoaded = goalsLoaded && recordsLoaded;
+    if (_isLoaded) notifyListeners();
+    return _isLoaded;
   }
 
   Future<bool> _loadGoals() async {
@@ -87,7 +87,6 @@ class RecordProvider extends ChangeNotifier {
       if (loadedGoalsJson == null) {
         _clearGoals();
         debugPrint('No saved goals found. Clearing internal goal state.');
-        _isLoaded = true;
         return true;
       }
 
@@ -253,7 +252,7 @@ class RecordProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     for (final entry in _recordsByGoalId.entries) {
       final dates = entry.value.toJson();
-      await prefs.setString(entry.key, dates);
+      await prefs.setString('${StorageKeys.record}${entry.key}', dates);
     }
   }
 
