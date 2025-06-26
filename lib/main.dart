@@ -7,19 +7,37 @@ import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/theme/app_theme.dart';
 import 'package:haenaedda/ui/launcher/launcher_page.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final recordProvider = RecordProvider();
+  await recordProvider.loadData();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) {
-          final recordProvider = RecordProvider();
-          recordProvider.loadData();
-          return recordProvider;
-        }),
+        ChangeNotifierProvider<RecordProvider>.value(
+          value: recordProvider,
+          child: const Haenaedda(),
+        ),
       ],
-      child: const Haenaedda(),
     ),
   );
+  WidgetsBinding.instance.addObserver(
+    _AppLifecycleObserver(onPause: () => recordProvider.saveAll()),
+  );
+}
+
+class _AppLifecycleObserver extends WidgetsBindingObserver {
+  final Future<void> Function() onPause;
+
+  _AppLifecycleObserver({required this.onPause});
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      onPause();
+    }
+  }
 }
 
 class Haenaedda extends StatefulWidget {
