@@ -66,6 +66,11 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
             GoalPager(
               goals: goals,
               controller: _pageController,
+              onCellTap: (goalId, date) {
+                final provider = context.read<RecordProvider>();
+                provider.toggleRecord(goalId, date);
+                provider.saveRecordsDebounced(goalId);
+              },
               onGoalChanged: (goal) => _currentGoal.value = goal,
             ),
             ValueListenableBuilder<Goal?>(

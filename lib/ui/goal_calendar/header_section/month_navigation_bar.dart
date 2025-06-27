@@ -36,7 +36,7 @@ class _MonthNavigationBarState extends State<MonthNavigationBar> {
 
   void _initFirstRecordedDateIfNeeded() {
     _firstRecordedDate ??=
-        context.read<RecordProvider>().getFirstRecordedDate();
+        context.read<RecordProvider>().findFirstRecordedDate();
   }
 
   bool get isAtFirstRecordedMonth {

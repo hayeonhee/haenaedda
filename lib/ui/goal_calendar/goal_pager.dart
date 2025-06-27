@@ -8,11 +8,13 @@ import 'package:haenaedda/ui/goal_calendar/single_goal_calendar_view.dart';
 class GoalPager extends StatefulWidget {
   final List<Goal> goals;
   final PageController controller;
-  final void Function(Goal)? onGoalChanged;
+  final void Function(String goalId, DateTime date) onCellTap;
+  final void Function(Goal goal)? onGoalChanged;
 
   const GoalPager({
     super.key,
     required this.goals,
+    required this.onCellTap,
     required this.controller,
     this.onGoalChanged,
   });
@@ -74,6 +76,7 @@ class _GoalPagerState extends State<GoalPager> {
           child: SingleGoalCalendarView(
             key: ValueKey(widget.goals[index].id),
             goal: widget.goals[index],
+            onCellTap: (goalId, date) => widget.onCellTap,
           ),
         );
       },

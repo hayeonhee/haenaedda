@@ -3,17 +3,22 @@ import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/calendar_grid_layout.dart';
-import 'package:haenaedda/model/date_record_set.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/ui/goal_calendar/calendar_day_cell.dart';
 import 'package:haenaedda/ui/goal_calendar/calendar_grid.dart';
 import 'package:haenaedda/ui/goal_calendar/header_section/calendar_header_section.dart';
 import 'package:haenaedda/ui/widgets/section_divider.dart';
 
 class SingleGoalCalendarView extends StatefulWidget {
   final Goal goal;
+  final void Function(String goalId, DateTime date) onCellTap;
 
-  const SingleGoalCalendarView({super.key, required this.goal});
+  const SingleGoalCalendarView({
+    super.key,
+    required this.goal,
+    required this.onCellTap,
+  });
 
   @override
   State<SingleGoalCalendarView> createState() => _SingleGoalCalendarViewState();
@@ -75,15 +80,24 @@ class _SingleGoalCalendarViewState extends State<SingleGoalCalendarView> {
                 }),
               ),
               const SizedBox(height: 24),
-              Selector<RecordProvider, DateRecordSet>(
-                  selector: (_, provider) => provider.getRecords(goal.id),
-                  builder: (_, selectedDates, __) => CalendarGrid(
-                        dateLayout: dateLayout,
-                        selectedDates: selectedDates,
-                        onCellTap: (selectedDate) => context
-                            .read<RecordProvider>()
-                            .toggleRecord(goal.id, selectedDate),
-                      )),
+              CalendarGrid(
+                dateLayout: dateLayout,
+                cellBuilder: (cellDate) {
+                  return Selector<RecordProvider, bool>(
+                    selector: (_, provider) =>
+                        provider.getRecords(goal.id)?.contains(cellDate) ??
+                        false,
+                    builder: (_, hasRecord, __) => CalendarDayCell(
+                      key: ValueKey(cellDate),
+                      goalId: goal.id,
+                      cellDate: cellDate,
+                      hasRecord: hasRecord,
+                      onTap: (goalId, date) =>
+                          widget.onCellTap(goalId, cellDate),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),

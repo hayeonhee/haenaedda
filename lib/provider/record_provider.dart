@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 
@@ -56,12 +57,17 @@ class RecordProvider extends ChangeNotifier {
 
   List<Goal> get goals => _goals;
   List<Goal> get sortedGoals => _sortedGoals;
-  Map<String, DateRecordSet> get recordsByGoalId => _recordsByGoalId;
+  UnmodifiableMapView<String, DateRecordSet> get recordsByGoalId =>
+      UnmodifiableMapView(_recordsByGoalId);
   bool get isLoaded => _isLoaded;
   bool get hasNoGoal => goals.isEmpty;
 
-  DateRecordSet getRecords(String goalId) {
-    return recordsByGoalId[goalId] ?? DateRecordSet();
+  DateRecordSet? getRecords(String goalId) {
+    return _recordsByGoalId[goalId];
+  }
+
+  DateRecordSet getOrCreateRecords(String goalId) {
+    return _recordsByGoalId.putIfAbsent(goalId, () => DateRecordSet());
   }
 
   Goal? getGoalById(String id) {
@@ -76,7 +82,7 @@ class RecordProvider extends ChangeNotifier {
     return isLoaded;
   }
 
-  DateTime getFirstRecordedDate() {
+  DateTime findFirstRecordedDate() {
     if (recordsByGoalId.isEmpty) return DateTime.now();
     final allDateTimes = recordsByGoalId.values
         .expand((recordSet) => recordSet.dateKeys)
@@ -164,7 +170,7 @@ class RecordProvider extends ChangeNotifier {
   }
 
   void toggleRecord(String goalId, DateTime date) {
-    final currentSet = recordsByGoalId[goalId] ?? DateRecordSet();
+    final currentSet = getOrCreateRecords(goalId);
     final updated = currentSet.toggle(date);
     recordsByGoalId[goalId] = updated;
     notifyListeners();
