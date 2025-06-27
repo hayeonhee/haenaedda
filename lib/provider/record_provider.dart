@@ -62,6 +62,11 @@ class RecordProvider extends ChangeNotifier {
   bool get isLoaded => _isLoaded;
   bool get hasNoGoal => goals.isEmpty;
 
+  void setRecord(String goalId, DateRecordSet recordSet) {
+    _recordsByGoalId[goalId] = recordSet;
+    notifyListeners();
+  }
+
   DateRecordSet? getRecords(String goalId) {
     return _recordsByGoalId[goalId];
   }
@@ -172,8 +177,7 @@ class RecordProvider extends ChangeNotifier {
   void toggleRecord(String goalId, DateTime date) {
     final currentSet = getOrCreateRecords(goalId);
     final updated = currentSet.toggle(date);
-    recordsByGoalId[goalId] = updated;
-    notifyListeners();
+    setRecord(goalId, updated);
   }
 
   void saveRecordsDebounced(
@@ -229,7 +233,7 @@ class RecordProvider extends ChangeNotifier {
       final prefs = await _sharedPrefsFuture;
       final success = await prefs.remove(goalId);
       if (success) {
-        recordsByGoalId.remove(goalId);
+        _recordsByGoalId.remove(goalId);
         notifyListeners();
       }
       return success;
@@ -273,7 +277,7 @@ class RecordProvider extends ChangeNotifier {
   Future<ResetAllGoalsResult> resetAllGoals() async {
     try {
       goals.clear();
-      recordsByGoalId.clear();
+      _recordsByGoalId.clear();
 
       final prefs = await _sharedPrefsFuture;
       final keysToRemove = prefs.getKeys().where(
@@ -331,7 +335,7 @@ class RecordProvider extends ChangeNotifier {
     try {
       final prefs = await _sharedPrefsFuture;
       final keys = prefs.getKeys();
-      recordsByGoalId.clear();
+      _recordsByGoalId.clear();
 
       final recordKeys =
           keys.where((key) => key.startsWith(StorageKeys.record));
@@ -343,7 +347,7 @@ class RecordProvider extends ChangeNotifier {
         debugPrint('key: $key → $dates');
         try {
           final goalId = key.substring(StorageKeys.record.length);
-          recordsByGoalId[goalId] = DateRecordSet.fromJson(dates);
+          _recordsByGoalId[goalId] = DateRecordSet.fromJson(dates);
         } catch (e) {
           debugPrint('Record parsing failed for $key: $e');
           return false;
