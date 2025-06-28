@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:haenaedda/model/calendar_grid_layout.dart';
+import 'package:haenaedda/ui/goal_calendar/empty_cell.dart';
 
 class CalendarGrid extends StatelessWidget {
   final CalendarGridLayout dateLayout;
@@ -15,13 +16,20 @@ class CalendarGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
         itemCount: dateLayout.totalCellCount,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 7,
         ),
         itemBuilder: (context, index) {
-          final cellDate = dateLayout.dateFromIndex(index);
-          return cellBuilder(cellDate);
+          if (index < dateLayout.leadingBlanks ||
+              index >= dateLayout.leadingBlanks + dateLayout.totalDaysOfMonth) {
+            return const EmptyCell();
+          } else {
+            final cellDate = dateLayout.dateFromIndex(index);
+            return cellBuilder(cellDate);
+          }
         });
   }
 }

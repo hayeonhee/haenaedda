@@ -17,9 +17,9 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider<RecordProvider>.value(
           value: recordProvider,
-          child: const Haenaedda(),
         ),
       ],
+      child: const Haenaedda(),
     ),
   );
   WidgetsBinding.instance.addObserver(
