@@ -9,7 +9,6 @@ class DateRecordSet {
   DateRecordSet([Set<String>? initial]) : _dateKeys = initial ?? {};
 
   Set<String> get dateKeys => _dateKeys;
-
   static DateRecordSet fromJson(String? jsonString) {
     if (jsonString == null || jsonString.trim().isEmpty) {
       return DateRecordSet();
@@ -19,15 +18,17 @@ class DateRecordSet {
       Set<String> extractDateKeys(dynamic input) {
         if (input is Map && input.containsKey(_jsonKeyDates)) {
           final list = input[_jsonKeyDates];
-          return (list as List)
-              .map((e) => e.toString().split('T').first)
-              .where((s) => DateKey.isValid(s))
-              .toSet();
+          return Set<String>.from(
+            (list as List)
+                .map((e) => e.toString().split('T').first)
+                .where((s) => DateKey.isValid(s)),
+          );
         } else if (input is List) {
-          return input
-              .map((e) => e.toString().split('T').first)
-              .where((s) => DateKey.isValid(s))
-              .toSet();
+          return Set<String>.from(
+            input
+                .map((e) => e.toString().split('T').first)
+                .where((s) => DateKey.isValid(s)),
+          );
         } else {
           debugPrint('⚠️ Unknown format for DateRecordSet: $input');
           return {};
