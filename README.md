@@ -73,66 +73,19 @@
 
 ## Trouble Shooting
 
-### Dialog의 "취소"버튼을 눌렀을 때 Dialog가 닫히지 않는 문제  
-
-- 문제상황  
-  - Navigator.pop() 이후 BuildContext가 이미 disposed된 상태였을 가능성 
-  - 또는 showDialog 위에 또 다른 showDialog가 중첩되었거나, Dialog를 닫는 로직이 명확하게 연결되지 않았을 가능성이 있었다
-- 해결 방법
-  - Dialog 내부에서 명확하게 값을 반환
-    - Future<bool?>을 반환하는 구조로, 사용자의 선택 결과(확인/취소)를 상위에서 받음 
-    - Navigator.pop(true)로 확인 의사를 전달
- 
-      ``` dart
-       Future<bool?> showResetConfirmDialog(...) async {
-               return await showDialog<bool?>(
-               context: context,
-               builder: (context) => AlertDialog(
-                   actions: [
-                       TextButton(
-                       onPressed: () => Navigator.of(context).pop(), // 취소
-                       child: Text(l10n.cancel),
-                       ),
-                       TextButton(
-                       onPressed: () => Navigator.of(context).pop(true), // 확인 
-                       child: Text(l10n.confirm),
-                       )
-                   ],
-               ),
-           ),
-       }
-      ```
-  - 호출부에서 await로 흐름 제어 + mounted 체크
-    - 상태 변경이 일어날 수 있으므로 context.mounted를 반드시 확인
-
-      ``` dart
-       final confirmed = await showResetConfirmDialog(context, goal, type);
-  
-       if (!context.mounted || confirmed != true) return;
-      ```
-
-### 사용자에게 초기화 결과에 대한 정확한 피드백을 주지 못하는 문제  
-
-- 문제상황
-  - 기록은 삭제됐으나 목표는 삭제되지 않는 한 경우가 존재함에도 실패 메시지가 동일하게 출력됨
-- 해결 방법
-  - ResetEntireGoalResult enum을 도입하여 결과를 세분화 (success, recordFailed, goalFailed), 이에 맞는 다국어 메시지를 intl에 추가하여 정확한 피드백 제공
-
-### 초기화 이후 보여줄 목표가 없어서 크래시가 나는 문제
-- 문제상황
-  - 목표 및 기록을 전부 초기화한 뒤 목표 리스트가 비는 문제 발생
-- 해결 방법
-  - createTemporaryGoalIfAbsent() 메서드를 도입해 목표가 없을 시 자동으로 비어있는 목표를 생성해 앱이 정상 동작하도록 처리함
-  - 추후 목표를 입력받는 초기 화면을 추가하여 빈 객체를 임의 생성하는 대신 사용자가 의도를 가지고 생성한 객체를 사용하도록 수정할 예정
-
-### 목표 추가 직후, 해당 목표로 자동 스크롤되지 않는 문제
+### 목표 추가 직후 해당 목표로 자동 스크롤되지 않음 
 
 - 문제상황 
-  - `PageController(initialPage: ...)`는 생성 시점에만 동작하는데, build 이후에 계산된 index나 Provider 상태가 늦게 반영되면 제대로 스크롤되지 않음
-  - goal 데이터는 바뀌었지만 index는 같게 유지돼서(PageView.builder는 index로 위젯을 재사용) SingleGoalCalendarView가 새로 빌드되지 않아 내부 UI가 이전 상태에 머묾
+  - `PageController(initialPage:)`는 생성 시점에만 동작해서 목표 추가 이후 index가 반영되지 않음 
+  - PageView.builder는 index 기준으로 위젯을 재사용해 index가 같으면 목표가 바뀌어도 위젯이 갱신되지 않음
+  - `jumpToPage()`를 호출했지만  PageController가 연결되지 않아 (hasClients == false) 스크롤이 미동작 
 
 - 해결 방법
-  - index 계산을 initState에서 수행하고, 그 결과로 `PageController(initialPage: index)`를 생성
-  - goal.id를 기준으로 `ValueKey(goal.id)`를 지정하여 위젯 재사용 방지
-  - 파라미터 전달 방식 대신 Provider에 일회성 상태를 저장하고, 사용 후 바로 초기화하는 방식으로 전환
+  - initState에서 index 계산하고, 렌더링 완료(addPostFrameCallback) 후 `jumpToPage()`를 호출
+  - goal.id를 기준으로 `ValueKey(goal.id)`지정해 위젯 재사용 방지
+  - Provider에 focusedGoalForScroll 값을 일회성으로 저장하고, 사용 이후 초기화
  
+- 실패한 시도
+  - `jumpToPage()`를 `initState()`에서 즉시 호출 -> PageController와 PageView 연결 전이라 무시됨
+  - 목표 추가 직후 `Navigator.pop()`으로 돌아오면서 호출 -> 렌더링 중이라 PageController 연결 여부 불안정
+  - goal index를 파라미터로 직접 넘겨 처리 -> 상태 반영보다 UI가 먼저 그려져 실패
