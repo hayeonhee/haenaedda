@@ -39,6 +39,7 @@ class _GoalPagerState extends State<GoalPager> {
         final index = widget.goals.indexWhere((g) => g.id == focusedGoal.id);
         if (index != -1 && widget.controller.hasClients) {
           widget.controller.jumpToPage(index);
+          widget.onGoalChanged?.call(widget.goals[index]);
         }
         provider.clearFocusedGoalForScroll();
         _hasScrolledToFocusedGoal = true;
@@ -76,7 +77,7 @@ class _GoalPagerState extends State<GoalPager> {
           child: SingleGoalCalendarView(
             key: ValueKey(widget.goals[index].id),
             goal: widget.goals[index],
-            onCellTap: (goalId, date) => widget.onCellTap,
+            onCellTap: (goalId, date) => widget.onCellTap(goalId, date),
           ),
         );
       },
