@@ -8,11 +8,13 @@ import 'package:haenaedda/ui/goal_calendar/single_goal_calendar_view.dart';
 class GoalPager extends StatefulWidget {
   final List<Goal> goals;
   final PageController controller;
-  final void Function(Goal)? onGoalChanged;
+  final void Function(String goalId, DateTime date) onCellTap;
+  final void Function(Goal goal)? onGoalChanged;
 
   const GoalPager({
     super.key,
     required this.goals,
+    required this.onCellTap,
     required this.controller,
     this.onGoalChanged,
   });
@@ -22,17 +24,25 @@ class GoalPager extends StatefulWidget {
 }
 
 class _GoalPagerState extends State<GoalPager> {
+  bool _hasScrolledToFocusedGoal = false;
+
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_hasScrolledToFocusedGoal) return;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<RecordProvider>();
       final focusedGoal = provider.focusedGoalForScroll;
       final shouldScroll = provider.shouldScrollToFocusedPage;
       if (focusedGoal != null && shouldScroll) {
         final index = widget.goals.indexWhere((g) => g.id == focusedGoal.id);
-        if (index != -1) widget.controller.jumpToPage(index);
+        if (index != -1 && widget.controller.hasClients) {
+          widget.controller.jumpToPage(index);
+          widget.onGoalChanged?.call(widget.goals[index]);
+        }
         provider.clearFocusedGoalForScroll();
+        _hasScrolledToFocusedGoal = true;
       }
     });
   }
@@ -67,6 +77,7 @@ class _GoalPagerState extends State<GoalPager> {
           child: SingleGoalCalendarView(
             key: ValueKey(widget.goals[index].id),
             goal: widget.goals[index],
+            onCellTap: (goalId, date) => widget.onCellTap(goalId, date),
           ),
         );
       },

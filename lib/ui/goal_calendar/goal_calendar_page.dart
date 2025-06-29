@@ -5,8 +5,6 @@ import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/goal_setting_action.dart';
 import 'package:haenaedda/provider/record_provider.dart';
-import 'package:haenaedda/ui/goal_calendar/edit_goal_page.dart';
-import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_pager.dart';
 import 'package:haenaedda/ui/settings/handlers/edit_goal_handler.dart';
 import 'package:haenaedda/ui/settings/settings_bottom_modal.dart';
@@ -22,19 +20,39 @@ class GoalCalendarPage extends StatefulWidget {
 class _GoalCalendarPageState extends State<GoalCalendarPage> {
   final PageController _pageController = PageController();
   final ValueNotifier<Goal?> _currentGoal = ValueNotifier(null);
+  bool _isAddGoalFlowActive = false;
+  RecordProvider? _recordProvider;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<RecordProvider>();
-      final isLoaded = provider.isLoaded;
-      final goals = provider.sortedGoals;
-      if (isLoaded && goals.isEmpty) {
-        _showEditGoalDialog();
-      }
-      _initializeCurrentGoal(goals);
+      _recordProvider = context.read<RecordProvider>();
+      _recordProvider?.addListener(_checkGoalState);
+      _checkGoalState();
     });
+  }
+
+  void _checkGoalState() {
+    if (!_isAddGoalFlowActive &&
+        _recordProvider != null &&
+        _recordProvider!.isLoaded &&
+        _recordProvider!.sortedGoals.isEmpty) {
+      _isAddGoalFlowActive = true;
+      Future.microtask(() async {
+        if (mounted) {
+          await showAddGoalFlow(context);
+          _isAddGoalFlowActive = false;
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _recordProvider?.removeListener(_checkGoalState);
+    _currentGoal.dispose();
+    super.dispose();
   }
 
   @override
@@ -48,6 +66,11 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
             GoalPager(
               goals: goals,
               controller: _pageController,
+              onCellTap: (goalId, date) {
+                final provider = context.read<RecordProvider>();
+                provider.toggleRecord(goalId, date);
+                provider.saveRecordsDebounced(goalId);
+              },
               onGoalChanged: (goal) => _currentGoal.value = goal,
             ),
             ValueListenableBuilder<Goal?>(
@@ -66,31 +89,6 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
         ),
       ),
     );
-  }
-
-  void _initializeCurrentGoal(List<Goal> goals) {
-    if (goals.isNotEmpty) {
-      _currentGoal.value = goals[0];
-    }
-  }
-
-  Future<void> _showEditGoalDialog() async {
-    final provider = context.read<RecordProvider>();
-    final result = await Navigator.push<GoalEditResult>(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const EditGoalPage(mode: GoalEditMode.create),
-      ),
-    );
-
-    if (!context.mounted || result == null) return;
-    final trimmed = result.title.trim();
-    if (trimmed.isEmpty) return;
-    final (result: addResult, goal: newGoal) = await provider.addGoal(trimmed);
-    if (addResult == AddGoalResult.success && newGoal != null) {
-      provider.setFocusedGoalForScroll(newGoal);
-      setState(() {});
-    }
   }
 
   Future<void> _onSettingButtonTap(BuildContext context, Goal goal) async {
@@ -118,14 +116,19 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
     if (!context.mounted) return;
     switch (action) {
       case GoalSettingAction.addGoal:
-        await onAddGoalPressed(context);
+        await showAddGoalFlow(context);
+        break;
       case GoalSettingAction.editGoalTitle:
         await onEditGoalTitlePressed(context, goal);
+        break;
       case GoalSettingAction.resetRecordsOnly:
         recordProvider.removeRecordsOnly(goal.id);
+        break;
       case GoalSettingAction.resetEntireGoal:
         recordProvider.resetEntireGoal(goal.id);
+        break;
       case null:
+        break;
     }
   }
 }
