@@ -10,21 +10,21 @@ import 'package:haenaedda/ui/goal_calendar/calendar_grid.dart';
 import 'package:haenaedda/ui/goal_calendar/header_section/calendar_header_section.dart';
 import 'package:haenaedda/ui/widgets/section_divider.dart';
 
-class SingleGoalCalendarView extends StatefulWidget {
+class GoalCalendarContent extends StatefulWidget {
   final Goal goal;
   final void Function(String goalId, DateTime date) onCellTap;
 
-  const SingleGoalCalendarView({
+  const GoalCalendarContent({
     super.key,
     required this.goal,
     required this.onCellTap,
   });
 
   @override
-  State<SingleGoalCalendarView> createState() => _SingleGoalCalendarViewState();
+  State<GoalCalendarContent> createState() => _GoalCalendarContentState();
 }
 
-class _SingleGoalCalendarViewState extends State<SingleGoalCalendarView> {
+class _GoalCalendarContentState extends State<GoalCalendarContent> {
   DateTime _focusedDate = DateTime.now();
 
   @override
@@ -77,7 +77,7 @@ class _SingleGoalCalendarViewState extends State<SingleGoalCalendarView> {
             ),
           ),
           const SizedBox(height: 24),
-          CalendarGrid(
+          GoalCalendarGrid(
             dateLayout: dateLayout,
             cellBuilder: (cellDate) {
               return Selector<RecordProvider, bool>(

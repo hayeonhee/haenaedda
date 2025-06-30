@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
-import 'package:haenaedda/ui/goal_calendar/single_goal_calendar_view.dart';
+import 'package:haenaedda/ui/goal_calendar/goal_calendar_content.dart';
 
 class GoalPager extends StatefulWidget {
   final List<Goal> goals;
@@ -74,7 +74,7 @@ class _GoalPagerState extends State<GoalPager> {
               child: Opacity(opacity: 1 - value.abs() * 0.3, child: child),
             );
           },
-          child: SingleGoalCalendarView(
+          child: GoalCalendarContent(
             key: ValueKey(widget.goals[index].id),
             goal: widget.goals[index],
             onCellTap: (goalId, date) => widget.onCellTap(goalId, date),

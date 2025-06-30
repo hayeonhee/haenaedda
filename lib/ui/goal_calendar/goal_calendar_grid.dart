@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:haenaedda/model/calendar_grid_layout.dart';
 import 'package:haenaedda/ui/goal_calendar/empty_cell.dart';
 
-class CalendarGrid extends StatelessWidget {
+class GoalCalendarGrid extends StatelessWidget {
   final CalendarGridLayout dateLayout;
   final Widget Function(DateTime) cellBuilder;
 
-  const CalendarGrid({
+  const GoalCalendarGrid({
     super.key,
     required this.dateLayout,
     required this.cellBuilder,
