@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:haenaedda/model/goal.dart';
-import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_calendar_content.dart';
 
 class GoalPager extends StatefulWidget {
   final List<Goal> goals;
   final PageController controller;
   final void Function(String goalId, DateTime date) onCellTap;
-  final void Function(Goal goal)? onGoalChanged;
+  final void Function(int index)? onPageChanged;
 
   const GoalPager({
     super.key,
     required this.goals,
-    required this.onCellTap,
     required this.controller,
-    this.onGoalChanged,
+    required this.onCellTap,
+    this.onPageChanged,
   });
 
   @override
@@ -24,29 +22,6 @@ class GoalPager extends StatefulWidget {
 }
 
 class _GoalPagerState extends State<GoalPager> {
-  bool _hasScrolledToFocusedGoal = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_hasScrolledToFocusedGoal) return;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<RecordProvider>();
-      final focusedGoal = provider.focusedGoalForScroll;
-      final shouldScroll = provider.shouldScrollToFocusedPage;
-      if (focusedGoal != null && shouldScroll) {
-        final index = widget.goals.indexWhere((g) => g.id == focusedGoal.id);
-        if (index != -1 && widget.controller.hasClients) {
-          widget.controller.jumpToPage(index);
-          widget.onGoalChanged?.call(widget.goals[index]);
-        }
-        provider.clearFocusedGoalForScroll();
-        _hasScrolledToFocusedGoal = true;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return PageView.builder(
@@ -55,8 +30,8 @@ class _GoalPagerState extends State<GoalPager> {
       physics: const BouncingScrollPhysics(),
       itemCount: widget.goals.length,
       onPageChanged: (index) {
-        if (widget.onGoalChanged != null && index < widget.goals.length) {
-          widget.onGoalChanged!(widget.goals[index]);
+        if (widget.onPageChanged != null && index < widget.goals.length) {
+          widget.onPageChanged?.call(index);
         }
       },
       itemBuilder: (context, index) {

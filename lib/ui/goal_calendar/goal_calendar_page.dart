@@ -19,8 +19,8 @@ class GoalCalendarPage extends StatefulWidget {
 
 class _GoalCalendarPageState extends State<GoalCalendarPage> {
   final PageController _pageController = PageController();
-  final ValueNotifier<Goal?> _currentGoal = ValueNotifier(null);
   bool _isAddGoalFlowActive = false;
+  int _currentPageIndex = 0;
   RecordProvider? _recordProvider;
 
   @override
@@ -30,6 +30,14 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
       _recordProvider = context.read<RecordProvider>();
       _recordProvider?.addListener(_checkGoalState);
       _checkGoalState();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToFocusedGoalIfNeeded();
     });
   }
 
@@ -51,7 +59,6 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
   @override
   void dispose() {
     _recordProvider?.removeListener(_checkGoalState);
-    _currentGoal.dispose();
     super.dispose();
   }
 
@@ -71,20 +78,20 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
                 provider.toggleRecord(goalId, date);
                 provider.saveRecordsDebounced(goalId);
               },
-              onGoalChanged: (goal) => _currentGoal.value = goal,
+              onPageChanged: (index) {
+                _currentPageIndex = index;
+              },
             ),
-            ValueListenableBuilder<Goal?>(
-                valueListenable: _currentGoal,
-                builder: (context, goal, _) {
-                  if (goal == null) return const SizedBox.shrink();
-                  return BottomRightButton(
-                    onPressed: () => _onSettingButtonTap(context, goal),
-                    child: Icon(
-                      Icons.settings,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  );
-                }),
+            BottomRightButton(
+              onPressed: () {
+                final goal = goals[_currentPageIndex];
+                _onSettingButtonTap(context, goal);
+              },
+              child: Icon(
+                Icons.settings,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
           ],
         ),
       ),
@@ -129,6 +136,23 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
         break;
       case null:
         break;
+    }
+  }
+
+  void _scrollToFocusedGoalIfNeeded() {
+    final provider = context.read<RecordProvider>();
+    final focusedGoal = provider.focusedGoalForScroll;
+    final shouldScroll = provider.shouldScrollToFocusedPage;
+
+    if (focusedGoal != null && shouldScroll) {
+      final index =
+          provider.sortedGoals.indexWhere((g) => g.id == focusedGoal.id);
+      if (index == -1) return;
+      if (!_pageController.hasClients) return;
+
+      _pageController.jumpToPage(index);
+      _currentPageIndex = index;
+      provider.clearFocusedGoalForScroll();
     }
   }
 }
