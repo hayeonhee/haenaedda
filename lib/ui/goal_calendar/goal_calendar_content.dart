@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/calendar_grid_layout.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/calendar_day_cell.dart';
-import 'package:haenaedda/ui/goal_calendar/calendar_grid.dart';
+import 'package:haenaedda/ui/goal_calendar/goal_calendar_grid.dart';
 import 'package:haenaedda/ui/goal_calendar/header_section/calendar_header_section.dart';
+import 'package:haenaedda/ui/goal_calendar/weekday_row.dart';
 import 'package:haenaedda/ui/widgets/section_divider.dart';
 
 class GoalCalendarContent extends StatefulWidget {
@@ -38,7 +38,6 @@ class _GoalCalendarContentState extends State<GoalCalendarContent> {
   @override
   Widget build(BuildContext context) {
     final dateLayout = CalendarGridLayout(_focusedDate);
-    final daysOfWeek = AppLocalizations.of(context)!.shortWeekdays.split(',');
     final goal = context.select<RecordProvider, Goal?>(
       (provider) => provider.getGoalById(widget.goal.id),
     );
@@ -59,23 +58,7 @@ class _GoalCalendarContentState extends State<GoalCalendarContent> {
           const SizedBox(height: 24),
           const SectionDivider(),
           const SizedBox(height: 48),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(
-              daysOfWeek.length,
-              (index) {
-                return Text(
-                  daysOfWeek[index],
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                );
-              },
-            ),
-          ),
+          const WeekdayRow(),
           const SizedBox(height: 24),
           GoalCalendarGrid(
             dateLayout: dateLayout,
