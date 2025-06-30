@@ -16,20 +16,24 @@ class GoalCalendarGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: dateLayout.totalCellCount,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 7,
-        ),
-        itemBuilder: (context, index) {
-          if (index < dateLayout.leadingBlanks ||
-              index >= dateLayout.leadingBlanks + dateLayout.totalDaysOfMonth) {
-            return const EmptyCell();
-          } else {
-            final cellDate = dateLayout.dateFromIndex(index);
-            return cellBuilder(cellDate);
-          }
-        });
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: dateLayout.totalCellCount,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 7,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 8,
+        childAspectRatio: 1,
+      ),
+      itemBuilder: (context, index) {
+        if (index < dateLayout.leadingBlanks ||
+            index >= dateLayout.leadingBlanks + dateLayout.totalDaysOfMonth) {
+          return const EmptyCell();
+        } else {
+          final cellDate = dateLayout.dateFromIndex(index);
+          return cellBuilder(cellDate);
+        }
+      },
+    );
   }
 }
