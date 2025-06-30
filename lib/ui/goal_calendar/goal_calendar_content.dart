@@ -6,7 +6,7 @@ import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/calendar_day_cell.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_calendar_grid.dart';
-import 'package:haenaedda/ui/goal_calendar/header_section/calendar_header_section.dart';
+import 'package:haenaedda/ui/goal_calendar/goal_calendar_header.dart';
 import 'package:haenaedda/ui/goal_calendar/weekday_row.dart';
 import 'package:haenaedda/ui/widgets/section_divider.dart';
 
@@ -48,7 +48,7 @@ class _GoalCalendarContentState extends State<GoalCalendarContent> {
       child: Column(
         children: [
           const SizedBox(height: 56),
-          CalendarHeaderSection(
+          GoalCalendarHeader(
             goal: goal,
             date: _focusedDate,
             onMonthChanged: (DateTime newMonth) {
