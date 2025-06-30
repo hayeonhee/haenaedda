@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 
 class MonthNavigationBar extends StatefulWidget {
-  final DateTime referenceDate;
+  final DateTime initialFocusedDate;
+  final DateTime firstRecordMonth;
   final void Function(DateTime)? onMonthChanged;
 
   const MonthNavigationBar({
     super.key,
-    required this.referenceDate,
+    required this.initialFocusedDate,
+    required this.firstRecordMonth,
     this.onMonthChanged,
   });
 
@@ -20,48 +20,35 @@ class MonthNavigationBar extends StatefulWidget {
 
 class _MonthNavigationBarState extends State<MonthNavigationBar> {
   late DateTime _focusedDate;
-  DateTime? _firstRecordedDate;
 
   @override
   void initState() {
     super.initState();
-    _focusedDate = widget.referenceDate;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _initFirstRecordedDateIfNeeded();
-  }
-
-  void _initFirstRecordedDateIfNeeded() {
-    _firstRecordedDate ??=
-        context.read<RecordProvider>().findFirstRecordedDate();
+    _focusedDate = widget.initialFocusedDate;
   }
 
   bool get isAtFirstRecordedMonth {
-    _initFirstRecordedDateIfNeeded();
-    return _focusedDate.year == _firstRecordedDate!.year &&
-        _focusedDate.month == _firstRecordedDate!.month;
+    return _focusedDate.year == widget.firstRecordMonth.year &&
+        _focusedDate.month == widget.firstRecordMonth.month;
   }
 
-  bool get isAtReferenceMonth =>
-      _focusedDate.year == widget.referenceDate.year &&
-      _focusedDate.month == widget.referenceDate.month;
+  bool get isAtInitialFocusedMonth =>
+      _focusedDate.year == widget.initialFocusedDate.year &&
+      _focusedDate.month == widget.initialFocusedDate.month;
 
   void _goToPreviousMonth() {
     if (!isAtFirstRecordedMonth) {
       setState(() {
-        _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1);
+        _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1, 1);
       });
       widget.onMonthChanged?.call(_focusedDate);
     }
   }
 
   void _goToNextMonth() {
-    if (!isAtReferenceMonth) {
+    if (!isAtInitialFocusedMonth) {
       setState(() {
-        _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1);
+        _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1, 1);
       });
       widget.onMonthChanged?.call(_focusedDate);
     }
@@ -95,7 +82,7 @@ class _MonthNavigationBarState extends State<MonthNavigationBar> {
               ),
             ),
           ),
-          if (!isAtReferenceMonth)
+          if (!isAtInitialFocusedMonth)
             _buildChevronButton(isLeft: false, onTap: _goToNextMonth),
         ],
       ),

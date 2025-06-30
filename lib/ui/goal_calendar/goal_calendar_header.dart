@@ -54,13 +54,20 @@ class _GoalCalendarHeaderState extends State<GoalCalendarHeader> {
           },
         ),
         const SizedBox(height: 32),
-        MonthNavigationBar(
-          referenceDate: _currentMonth,
-          onMonthChanged: (newMonth) {
-            setState(() {
-              _currentMonth = newMonth;
-            });
-            widget.onMonthChanged?.call(newMonth);
+        Selector<RecordProvider, DateTime?>(
+          selector: (_, provider) => provider.findFirstRecordedDate(),
+          builder: (context, firstRecordMonth, child) {
+            if (firstRecordMonth == null) return const SizedBox.shrink();
+            return MonthNavigationBar(
+              initialFocusedDate: _currentMonth,
+              firstRecordMonth: firstRecordMonth,
+              onMonthChanged: (newMonth) {
+                setState(() {
+                  _currentMonth = newMonth;
+                });
+                widget.onMonthChanged?.call(newMonth);
+              },
+            );
           },
         ),
       ],
