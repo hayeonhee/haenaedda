@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:haenaedda/provider/record_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/provider/calendar_month_provider.dart';
 import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 
 class MonthNavigationBar extends StatelessWidget {
-  final DateTime firstRecordMonth;
+  final String goalId;
 
-  const MonthNavigationBar({super.key, required this.firstRecordMonth});
+  const MonthNavigationBar({super.key, required this.goalId});
+
   String _formatYearMonth(DateTime date) =>
       '${date.year}.${date.month.toString().padLeft(2, '0')}';
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CalendarDateProvider>();
+    final firstRecordDate =
+        context.read<RecordProvider>().findFirstRecordedDate(goalId) ??
+            provider.initialVisibleDate;
     final visibleDate = provider.visibleDate;
-    final canGoToPrevious = provider.canGoToPrevious(firstRecordMonth);
-    final canGoToNext = provider.canGoToNext(firstRecordMonth);
+    final canGoToPrevious = provider.canGoToPrevious(firstRecordDate);
+    final canGoToNext = provider.canGoToNext(firstRecordDate);
     final colorScheme = Theme.of(context).colorScheme;
 
     return ConstrainedBox(
