@@ -5,27 +5,17 @@ import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/month_navigation_bar.dart';
 
-class GoalCalendarHeader extends StatefulWidget {
+class GoalCalendarHeader extends StatelessWidget {
   final Goal goal;
 
   const GoalCalendarHeader({super.key, required this.goal});
 
   @override
-  State<GoalCalendarHeader> createState() => _GoalCalendarHeaderState();
-}
-
-class _GoalCalendarHeaderState extends State<GoalCalendarHeader> {
-  @override
   Widget build(BuildContext context) {
-    final firstRecordDate =
-        context.read<RecordProvider>().findFirstRecordedDate(widget.goal.id);
-    if (firstRecordDate == null) return const SizedBox.shrink();
-
     return Column(
       children: [
         Selector<RecordProvider, String?>(
-          selector: (_, provider) =>
-              provider.getGoalById(widget.goal.id)?.title,
+          selector: (_, provider) => provider.getGoalById(goal.id)?.title,
           builder: (context, title, _) {
             if (title == null) return const SizedBox.shrink();
             return Padding(
@@ -44,7 +34,7 @@ class _GoalCalendarHeaderState extends State<GoalCalendarHeader> {
           },
         ),
         const SizedBox(height: 32),
-        MonthNavigationBar(firstRecordMonth: firstRecordDate)
+        MonthNavigationBar(goalId: goal.id)
       ],
     );
   }
