@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 
 class WeekdayRow extends StatelessWidget {
@@ -15,9 +16,9 @@ class WeekdayRow extends StatelessWidget {
           return Text(
             daysOfWeek[index],
             style: TextStyle(
-              fontSize: 15,
+              fontSize: 14,
               color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
           );

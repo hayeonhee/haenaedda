@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
+import 'package:haenaedda/provider/calendar_month_provider.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/theme/app_theme.dart';
 import 'package:haenaedda/ui/launcher/launcher_page.dart';
@@ -10,6 +11,7 @@ import 'package:haenaedda/ui/launcher/launcher_page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final recordProvider = RecordProvider();
+  final calendarMonthProvider = CalendarDateProvider();
   await recordProvider.loadData();
 
   runApp(
@@ -18,6 +20,9 @@ Future<void> main() async {
         ChangeNotifierProvider<RecordProvider>.value(
           value: recordProvider,
         ),
+        ChangeNotifierProvider<CalendarDateProvider>.value(
+          value: calendarMonthProvider,
+        )
       ],
       child: const Haenaedda(),
     ),

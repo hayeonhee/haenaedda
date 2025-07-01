@@ -9,6 +9,8 @@ class DateRecordSet {
   DateRecordSet([Set<String>? initial]) : _dateKeys = initial ?? {};
 
   Set<String> get dateKeys => _dateKeys;
+  bool get isEmpty => _dateKeys.isEmpty;
+
   static DateRecordSet fromJson(String? jsonString) {
     if (jsonString == null || jsonString.trim().isEmpty) {
       return DateRecordSet();

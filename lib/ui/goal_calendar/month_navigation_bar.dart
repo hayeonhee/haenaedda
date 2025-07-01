@@ -1,125 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:haenaedda/provider/record_provider.dart';
+import 'package:haenaedda/provider/calendar_month_provider.dart';
 import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
 
-class MonthNavigationBar extends StatefulWidget {
-  final DateTime referenceDate;
-  final void Function(DateTime)? onMonthChanged;
+class MonthNavigationBar extends StatelessWidget {
+  final DateTime firstRecordMonth;
 
-  const MonthNavigationBar({
-    super.key,
-    required this.referenceDate,
-    this.onMonthChanged,
-  });
-
-  @override
-  State<MonthNavigationBar> createState() => _MonthNavigationBarState();
-}
-
-class _MonthNavigationBarState extends State<MonthNavigationBar> {
-  late DateTime _focusedDate;
-  DateTime? _firstRecordedDate;
-
-  @override
-  void initState() {
-    super.initState();
-    _focusedDate = widget.referenceDate;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _initFirstRecordedDateIfNeeded();
-  }
-
-  void _initFirstRecordedDateIfNeeded() {
-    _firstRecordedDate ??=
-        context.read<RecordProvider>().findFirstRecordedDate();
-  }
-
-  bool get isAtFirstRecordedMonth {
-    _initFirstRecordedDateIfNeeded();
-    return _focusedDate.year == _firstRecordedDate!.year &&
-        _focusedDate.month == _firstRecordedDate!.month;
-  }
-
-  bool get isAtReferenceMonth =>
-      _focusedDate.year == widget.referenceDate.year &&
-      _focusedDate.month == widget.referenceDate.month;
-
-  void _goToPreviousMonth() {
-    if (!isAtFirstRecordedMonth) {
-      setState(() {
-        _focusedDate = DateTime(_focusedDate.year, _focusedDate.month - 1);
-      });
-      widget.onMonthChanged?.call(_focusedDate);
-    }
-  }
-
-  void _goToNextMonth() {
-    if (!isAtReferenceMonth) {
-      setState(() {
-        _focusedDate = DateTime(_focusedDate.year, _focusedDate.month + 1);
-      });
-      widget.onMonthChanged?.call(_focusedDate);
-    }
-  }
+  const MonthNavigationBar({super.key, required this.firstRecordMonth});
+  String _formatYearMonth(DateTime date) =>
+      '${date.year}.${date.month.toString().padLeft(2, '0')}';
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<CalendarDateProvider>();
+    final visibleDate = provider.visibleDate;
+    final canGoToPrevious = provider.canGoToPrevious(firstRecordMonth);
+    final canGoToNext = provider.canGoToNext(firstRecordMonth);
     final colorScheme = Theme.of(context).colorScheme;
+
     return ConstrainedBox(
       constraints: const BoxConstraints(
         minHeight: 48,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (!isAtFirstRecordedMonth)
-            _buildChevronButton(isLeft: true, onTap: _goToPreviousMonth),
+          _buildChevronButton(
+            context,
+            canGoToPrevious,
+            isLeft: true,
+            onTap: () {
+              final newMonth =
+                  DateTime(visibleDate.year, visibleDate.month - 1, 1);
+              provider.updateDate(newMonth);
+            },
+          ),
+          const SizedBox(width: 12),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.3,
+              maxWidth: MediaQuery.of(context).size.width * 0.4,
             ),
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                '${_focusedDate.year}.${_focusedDate.month.toString().padLeft(2, '0')}',
+                _formatYearMonth(visibleDate),
                 style: TextStyle(
                   color: colorScheme.onSurface,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 17,
+                  letterSpacing: 0.2,
                 ),
               ),
             ),
           ),
-          if (!isAtReferenceMonth)
-            _buildChevronButton(isLeft: false, onTap: _goToNextMonth),
+          const SizedBox(width: 12),
+          _buildChevronButton(
+            context,
+            canGoToNext,
+            isLeft: false,
+            onTap: () {
+              final newMonth =
+                  DateTime(visibleDate.year, visibleDate.month + 1, 1);
+              provider.updateDate(newMonth);
+            },
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildChevronButton({
+  Widget _buildChevronButton(
+    BuildContext context,
+    bool showChevron, {
+    double width = 24.0,
     required bool isLeft,
     VoidCallback? onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: NeumorphicTheme.buttonShadow(context),
-          ),
-          child: Icon(
-            isLeft ? Icons.chevron_left : Icons.chevron_right,
-            color: Theme.of(context).colorScheme.onSurface,
-          )),
-    );
+    return showChevron
+        ? GestureDetector(
+            onTap: onTap,
+            child: Container(
+                width: width,
+                height: width,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: NeumorphicTheme.buttonShadow(context),
+                ),
+                child: Icon(
+                  isLeft ? Icons.chevron_left : Icons.chevron_right,
+                  color: Theme.of(context).colorScheme.onSurface,
+                )),
+          )
+        : SizedBox(width: width, height: width);
   }
 }
