@@ -11,6 +11,10 @@
   - [초기화/삭제 다이얼로그](#초기화삭제-다이얼로그)
   - [기능 시연 영상](#기능-시연-영상)
 - [설계 및 구현](#설계-및-구현)
+  - [역할 분배](#역할-분배)
+  - [상태 관리 구조: Provider 기반 단방향 흐름](#상태-관리-구조-provider-기반-단방향-흐름)
+  - [퍼포먼스 최적화를 위한 상태 분리 전략](#퍼포먼스-최적화를-위한-상태-분리-전략)
+  - [데이터 구조 설계 및 모델링](#데이터-구조-설계-및-모델링)
 - [Trouble Shooting](#Trouble-Shooting)
   - [자동 스크롤 실패 - PageController 초기화 시점](#목표-추가-직후-해당-목표로-자동-스크롤되지-않음)
   - [프레임 드랍 - 셀 리빌드 최적화 실패](#ui-쓰레드에서-무거운-연산이-실행되어-프레임-드랍이-발생함)
@@ -66,10 +70,58 @@
 
 ## 설계 및 구현
 
+> UI와 상태, 유틸리티 계층 간의 명확한 책임 분리와, 단방향 데이터 흐름의 유지를 목표로 설계했습니다.
 
-### 데이터 구조 설계
+### 역할 분배 
 
-- 목표 ID와 날짜 기록은 `Map<String, DateRecordSet>`으로 관리됩니다.
+#### View 계층
+
+| class | 역할 | 
+| --- | --- |
+| GoalCalendarPage | 기록된 목표를 월별로 보여주는 메인 화면. PageView 기반의 GoalPager와 설정 버튼 등을 포함하여 전체 UI를 구성한다 |
+| GoalPager | 목표 리스트를 기반으로 각 목표에 대한 캘린더를 수직 PageView 형태로 렌더링한다 | 
+| GoalCalendarContent | 단일 목표의 월간 캘린더 UI를 구성하며, 헤더·요일표시·그리드 등으로 분리된다 | 
+| GoalCalendarGrid | 월 단위 날짜 배치를 계산하고, 각 셀 렌더링을 cellBuilder에 위임한다 | 
+| CalendarDayCell | 개별 날짜 셀의 UI와 동작. 기록 여부에 따라 스타일이 다르며, 클릭 시 onTap(goalId, date) 콜백을 상위로 전달한다 | 
+| RecordProvider | 목표 및 날짜별 기록 상태 관리. 추가/수정/삭제, 기록 저장/불러오기, 정렬 순서 등의 기능을 제공한다 |
+| CalendarDateProvider | 보여줄 월 상태 관리. 월 이동 기능 및 canGoToPrevious 등의 파생 상태 계산을 포함한다 | 
+
+#### Interaction Handler 
+
+| class | 역할 | 
+| --- | --- |
+| EditGoalHandler | 목표 추가·수정 과정에서 사용자 입력 처리, 저장 흐름, 유효성 검사 등을 담당한다 |
+| ResetGoalHandler | 목표 초기화 흐름(확인 다이얼로그, 삭제, 에러 처리 등)을 캡슐화하여 제공한다 |
+
+#### Utilities
+
+| class | 역할 | 
+| --- | --- |
+| CalendarGridLayout | 월 시작 요일, 셀 인덱스, 공백 셀 계산 등 달력 레이아웃 계산을 전담한다 | 
+| DateCompareExtension | 날짜 간 연/월 비교, 기간 계산 등의 기능을 DateTime extension으로 제공한다 |
+
+
+
+### 상태 관리 구조: Provider 기반 단방향 흐름
+
+- 사용자 인터랙션과 상태 로직의 관심사를 분리하고, Provider 기반 단방향 흐름으로 상태를 관리했습니다.
+- 예를 들어 `CalendarDayCell`에서 발생한 `onTap(goalId, date)` 이벤트는 상위 계층으로 콜백을 통해 전달되며, 최종 처리 책임은 부모 위젯에 있습니다.
+- 또한 `canGoToPrevious(DateTime)`은 단순한 플래그가 아닌 파생 상태(computed state)로, 최초 기록일과의 비교를 통해 UI 렌더링 조건을 동적으로 결정합니다.
+
+### 퍼포먼스 최적화를 위한 상태 분리 전략
+
+상태 접근 방식은 목적과 시점에 따라 구분하여 사용하며, 불필요한 리렌더링을 방지하도록 구성했습니다.
+
+| 사용 방법 | 목적 및 사용 시점 | 사용 예시 | 
+| --- | --- | --- |
+| context.read<T>() | 콜백·이벤트 내부에서 상태만 읽고 UI는 반응하지 않아도 될 때 | provider.toggleRecord(goalId, date) | 
+| context.watch<T>() | 전체 위젯이 상태 변경에 반응해야 할 때 | context.watch\<CalendarDateProvider>(); |
+| context.select<T, R>() | 상태의 특정 필드만 구독하고 싶을 때 | context.select<RecordProvider, Goal?>((p) => p.getGoalById(id)); |
+| Selector<T, R>() | 특정 위젯 단위에서만 리빌드가 필요할 때 | Selector<RecordProvider, bool>(...) (셀 기록 유무 감지) |
+
+### 데이터 구조 설계 및 모델링
+
+- 목표 및 기록은 `Map<String, DateRecordSet>` 형태로 관리되며, 날짜 기반의 빠른 조회가 가능합니다.
 - 정렬에는 Sparse Ordering을 적용해 유연한 순서 변경이 가능합니다.
 - 자세한 내용은 [데이터 구조 상세 보기](docs/data_structure.md)에서 확인할 수 있습니다.
 
