@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:haenaedda/model/calendar_grid_layout.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/theme/app_spacing.dart';
@@ -26,11 +25,8 @@ class GoalCalendarContent extends StatefulWidget {
 }
 
 class _GoalCalendarContentState extends State<GoalCalendarContent> {
-  DateTime _focusedDate = DateTime.now();
-
   @override
   Widget build(BuildContext context) {
-    final dateLayout = CalendarGridLayout(_focusedDate);
     final goal = context.select<RecordProvider, Goal?>(
       (provider) => provider.getGoalById(widget.goal.id),
     );
@@ -40,14 +36,8 @@ class _GoalCalendarContentState extends State<GoalCalendarContent> {
       padding: const EdgeInsets.all(AppSpacing.medium),
       child: Column(
         children: [
-          const SizedBox(height: AppSpacing.tripleExtraLarge),
-          GoalCalendarHeader(
-            goal: goal,
-            date: _focusedDate,
-            onMonthChanged: (DateTime newMonth) {
-              setState(() => _focusedDate = newMonth);
-            },
-          ),
+          const SizedBox(height: AppSpacing.doubleExtraLarge),
+          GoalCalendarHeader(goal: goal),
           const SizedBox(height: AppSpacing.large),
           const SectionDivider(),
           const SizedBox(height: AppSpacing.doubleExtraLarge),

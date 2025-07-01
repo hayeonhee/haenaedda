@@ -7,31 +7,20 @@ import 'package:haenaedda/ui/goal_calendar/month_navigation_bar.dart';
 
 class GoalCalendarHeader extends StatefulWidget {
   final Goal goal;
-  final DateTime date;
-  final void Function(DateTime)? onMonthChanged;
 
-  const GoalCalendarHeader({
-    super.key,
-    required this.goal,
-    required this.date,
-    this.onMonthChanged,
-  });
+  const GoalCalendarHeader({super.key, required this.goal});
 
   @override
   State<GoalCalendarHeader> createState() => _GoalCalendarHeaderState();
 }
 
 class _GoalCalendarHeaderState extends State<GoalCalendarHeader> {
-  late DateTime _currentMonth;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentMonth = widget.date;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final firstRecordMonth =
+        context.read<RecordProvider>().findFirstRecordedMonth(widget.goal.id);
+    if (firstRecordMonth == null) return const SizedBox.shrink();
+
     return Column(
       children: [
         Selector<RecordProvider, String?>(
@@ -54,22 +43,7 @@ class _GoalCalendarHeaderState extends State<GoalCalendarHeader> {
           },
         ),
         const SizedBox(height: 32),
-        Selector<RecordProvider, DateTime?>(
-          selector: (_, provider) => provider.findFirstRecordedDate(),
-          builder: (context, firstRecordMonth, child) {
-            if (firstRecordMonth == null) return const SizedBox.shrink();
-            return MonthNavigationBar(
-              initialFocusedDate: _currentMonth,
-              firstRecordMonth: firstRecordMonth,
-              onMonthChanged: (newMonth) {
-                setState(() {
-                  _currentMonth = newMonth;
-                });
-                widget.onMonthChanged?.call(newMonth);
-              },
-            );
-          },
-        ),
+        MonthNavigationBar(firstRecordMonth: firstRecordMonth)
       ],
     );
   }
