@@ -49,6 +49,7 @@ class RecordProvider extends ChangeNotifier {
   static const int _orderStep = 10;
   bool _isLoaded = false;
   final Map<String, Timer> _saveDebounceTimers = {};
+  final Map<String, DateTime> _firstRecordDateCache = {};
   late final Future<SharedPreferences> _sharedPrefsFuture;
 
   RecordProvider() {
@@ -64,6 +65,7 @@ class RecordProvider extends ChangeNotifier {
 
   void setRecord(String goalId, DateRecordSet recordSet) {
     _recordsByGoalId[goalId] = recordSet;
+    clearFirstRecordDateCache(goalId);
     notifyListeners();
   }
 
@@ -87,16 +89,18 @@ class RecordProvider extends ChangeNotifier {
     return isLoaded;
   }
 
-  DateTime findFirstRecordedDate() {
-    if (recordsByGoalId.isEmpty) return DateTime.now();
-    final allDateTimes = recordsByGoalId.values
-        .expand((recordSet) => recordSet.dateKeys)
-        .map((key) => DateTime.tryParse(key))
-        .whereType<DateTime>()
-        .toList();
-    if (allDateTimes.isEmpty) return DateTime.now();
-    allDateTimes.sort();
-    return allDateTimes.first;
+  DateTime? findFirstRecordedDate(String goalId) {
+    if (_firstRecordDateCache.containsKey(goalId)) {
+      return _firstRecordDateCache[goalId];
+    }
+    final recordSet = _recordsByGoalId[goalId];
+    if (recordSet == null || recordSet.dateKeys.isEmpty) return null;
+    final sorted = recordSet.dateKeys.map((key) => DateTime.parse(key)).toList()
+      ..sort();
+    final first = sorted.first;
+    final result = DateTime(first.year, first.month, 1);
+    _firstRecordDateCache[goalId] = result;
+    return result;
   }
 
   int? getNextFocusGoalIndexAfterRemoval(String removedId) {
@@ -228,12 +232,17 @@ class RecordProvider extends ChangeNotifier {
     debugPrint('💾 All records saved on app pause.');
   }
 
+  void clearFirstRecordDateCache(String goalId) {
+    _firstRecordDateCache.remove(goalId);
+  }
+
   Future<bool> removeRecordsOnly(String goalId) async {
     try {
       final prefs = await _sharedPrefsFuture;
       final success = await prefs.remove(goalId);
       if (success) {
         _recordsByGoalId.remove(goalId);
+        clearFirstRecordDateCache(goalId);
         notifyListeners();
       }
       return success;
@@ -255,6 +264,7 @@ class RecordProvider extends ChangeNotifier {
         final saved = await prefs.setString('goals', updatedGoalsJson);
         _recordsByGoalId.remove(goalId);
         _syncSortedGoals();
+        clearFirstRecordDateCache(goalId);
         notifyListeners();
         return saved;
       }
@@ -279,6 +289,7 @@ class RecordProvider extends ChangeNotifier {
     try {
       goals.clear();
       _recordsByGoalId.clear();
+      _firstRecordDateCache.clear();
 
       final prefs = await _sharedPrefsFuture;
       final keysToRemove = prefs.getKeys().where(

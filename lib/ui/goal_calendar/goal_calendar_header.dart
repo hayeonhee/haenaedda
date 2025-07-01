@@ -17,9 +17,9 @@ class GoalCalendarHeader extends StatefulWidget {
 class _GoalCalendarHeaderState extends State<GoalCalendarHeader> {
   @override
   Widget build(BuildContext context) {
-    final firstRecordMonth =
-        context.read<RecordProvider>().findFirstRecordedMonth(widget.goal.id);
-    if (firstRecordMonth == null) return const SizedBox.shrink();
+    final firstRecordDate =
+        context.read<RecordProvider>().findFirstRecordedDate(widget.goal.id);
+    if (firstRecordDate == null) return const SizedBox.shrink();
 
     return Column(
       children: [
@@ -44,7 +44,7 @@ class _GoalCalendarHeaderState extends State<GoalCalendarHeader> {
           },
         ),
         const SizedBox(height: 32),
-        MonthNavigationBar(firstRecordMonth: firstRecordMonth)
+        MonthNavigationBar(firstRecordMonth: firstRecordDate)
       ],
     );
   }
