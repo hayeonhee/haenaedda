@@ -29,7 +29,7 @@ class CalendarDayCell extends StatelessWidget {
           '${cellDate.day}',
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: hasRecord ? FontWeight.bold : FontWeight.normal,
+            fontWeight: hasRecord ? FontWeight.w500 : FontWeight.w400,
           ),
         ),
       ),

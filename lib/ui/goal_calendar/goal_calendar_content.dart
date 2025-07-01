@@ -45,7 +45,6 @@ class _GoalCalendarContentState extends State<GoalCalendarContent> {
           const SizedBox(height: AppSpacing.large),
           Expanded(
             child: GoalCalendarGrid(
-              dateLayout: dateLayout,
               cellBuilder: (cellDate) {
                 return Selector<RecordProvider, bool>(
                   selector: (_, provider) =>

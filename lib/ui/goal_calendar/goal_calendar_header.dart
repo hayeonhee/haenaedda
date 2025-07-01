@@ -33,9 +33,10 @@ class _GoalCalendarHeaderState extends State<GoalCalendarHeader> {
               child: Text(
                 title,
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 24,
                   color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: -0.1,
                 ),
                 maxLines: 2,
               ),
