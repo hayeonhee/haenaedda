@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/reset_type.dart';
-import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/theme/buttons.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_calendar_page.dart';
+import 'package:haenaedda/view_models/record_view_model.dart';
 
 Future<void> showResetFailureDialog(BuildContext context, ResetType type) {
   final l10n = AppLocalizations.of(context)!;
@@ -149,8 +149,8 @@ Future<void> onResetButtonTap(
 }
 
 Future<void> _handleRecordOnlyReset(BuildContext context, Goal goal) async {
-  final provider = context.read<RecordProvider>();
-  final success = await provider.removeRecordsOnly(goal.id);
+  final recordViewModel = context.read<RecordViewModel>();
+  final success = await recordViewModel.removeRecordsOnly(goal.id);
 
   if (!context.mounted) return;
   if (success) {
@@ -164,18 +164,19 @@ Future<void> _handleRecordOnlyReset(BuildContext context, Goal goal) async {
 }
 
 Future<void> _handleEntireGoalReset(BuildContext context, Goal goal) async {
-  final provider = context.read<RecordProvider>();
-  final removedGoalIndex = provider.getNextFocusGoalIndexAfterRemoval(goal.id);
-  final result = await provider.resetEntireGoal(goal.id);
+  final recordViewModel = context.read<RecordViewModel>();
+  final removedGoalIndex =
+      recordViewModel.getNextFocusGoalIndexAfterRemoval(goal.id);
+  final result = await recordViewModel.resetEntireGoal(goal.id);
 
   if (!context.mounted) return;
 
   switch (result) {
     case ResetEntireGoalResult.success:
       if (removedGoalIndex != null &&
-          removedGoalIndex < provider.sortedGoals.length) {
-        final nextGoal = provider.sortedGoals[removedGoalIndex];
-        provider.setFocusedGoalForScroll(nextGoal);
+          removedGoalIndex < recordViewModel.sortedGoals.length) {
+        final nextGoal = recordViewModel.sortedGoals[removedGoalIndex];
+        recordViewModel.setFocusedGoalForScroll(nextGoal);
       }
       Navigator.pushReplacement(
         context,
@@ -192,8 +193,8 @@ Future<void> _handleEntireGoalReset(BuildContext context, Goal goal) async {
 }
 
 Future<void> _handleAllGoalsReset(BuildContext context) async {
-  final provider = context.read<RecordProvider>();
-  final result = await provider.resetAllGoals();
+  final recordViewModel = context.read<RecordViewModel>();
+  final result = await recordViewModel.resetAllGoals();
   if (!context.mounted) return;
   switch (result) {
     case ResetAllGoalsResult.success:

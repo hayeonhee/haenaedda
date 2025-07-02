@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:haenaedda/utils/extensions/date_compare_extension.dart';
 
-class CalendarDateProvider with ChangeNotifier {
+class CalendarDateViewModel with ChangeNotifier {
   late final DateTime _initialVisibleDate;
   late DateTime _visibleDate;
 
-  CalendarDateProvider() {
+  CalendarDateViewModel() {
     final now = DateTime.now();
     _initialVisibleDate = DateTime(now.year, now.month);
     _visibleDate = _initialVisibleDate;

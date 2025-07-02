@@ -3,32 +3,32 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
-import 'package:haenaedda/provider/calendar_month_provider.dart';
-import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/theme/app_theme.dart';
 import 'package:haenaedda/ui/launcher/launcher_page.dart';
+import 'package:haenaedda/view_models/calendar_month_view_model.dart';
+import 'package:haenaedda/view_models/record_view_model.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final recordProvider = RecordProvider();
-  final calendarMonthProvider = CalendarDateProvider();
-  await recordProvider.loadData();
+  final recordViewModel = RecordViewModel();
+  final calendarMonthViewModel = CalendarDateViewModel();
+  await recordViewModel.loadData();
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<RecordProvider>.value(
-          value: recordProvider,
+        ChangeNotifierProvider<RecordViewModel>.value(
+          value: recordViewModel,
         ),
-        ChangeNotifierProvider<CalendarDateProvider>.value(
-          value: calendarMonthProvider,
+        ChangeNotifierProvider<CalendarDateViewModel>.value(
+          value: calendarMonthViewModel,
         )
       ],
       child: const Haenaedda(),
     ),
   );
   WidgetsBinding.instance.addObserver(
-    _AppLifecycleObserver(onPause: () => recordProvider.saveAll()),
+    _AppLifecycleObserver(onPause: () => recordViewModel.saveAll()),
   );
 }
 

@@ -41,7 +41,7 @@ enum ResetAllGoalsResult {
   failure,
 }
 
-class RecordProvider extends ChangeNotifier {
+class RecordViewModel extends ChangeNotifier {
   final List<Goal> _goals = [];
   List<Goal> _sortedGoals = [];
   final Map<String, DateRecordSet> _recordsByGoalId = {};
@@ -52,7 +52,7 @@ class RecordProvider extends ChangeNotifier {
   final Map<String, DateTime> _firstRecordDateCache = {};
   late final Future<SharedPreferences> _sharedPrefsFuture;
 
-  RecordProvider() {
+  RecordViewModel() {
     _sharedPrefsFuture = SharedPreferences.getInstance();
   }
 
