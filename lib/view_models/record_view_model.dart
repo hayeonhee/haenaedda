@@ -15,32 +15,6 @@ class StorageKeys {
   static const String record = 'record:';
 }
 
-enum AddGoalResult {
-  success,
-  emptyInput,
-  duplicate,
-  saveFailed,
-}
-
-enum RenameGoalResult {
-  success,
-  emptyInput,
-  notFound,
-  duplicate,
-  saveFailed,
-}
-
-enum ResetEntireGoalResult {
-  success,
-  recordFailed,
-  goalFailed,
-}
-
-enum ResetAllGoalsResult {
-  success,
-  failure,
-}
-
 class RecordViewModel extends ChangeNotifier {
   final List<Goal> _goals = [];
   List<Goal> _sortedGoals = [];
