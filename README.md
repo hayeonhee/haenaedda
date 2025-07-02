@@ -8,8 +8,7 @@
 - [기능](#기능)
   - [목표 달력 뷰](#목표-달력-뷰)
   - [목표 생성 및 수정 흐름](#목표-생성-및-수정-흐름)
-  - [초기화/삭제 다이얼로그](#초기화삭제-다이얼로그)
-  - [기능 시연 영상](#기능-시연-영상)
+  - [목표 및 기록 삭제/초기화](#-목표-및-기록-삭제초기화)
 - [설계 및 구현](#설계-및-구현)
   - [역할 분배](#역할-분배)
   - [상태 관리 구조: Provider 기반 단방향 흐름](#상태-관리-구조-provider-기반-단방향-흐름)
@@ -35,36 +34,25 @@
 ## 기능
 
 ### 목표 달력 뷰 (SingleGoalCalendarView)
-현재 목표의 달력 UI에서 날짜별 수행 여부를 체크하고, 설정 메뉴를 통해 목표별 제어가 가능합니다.
+월 단위 캘린더를 통해 각 목표의 수행 현황을 한눈에 확인할 수 있습니다. 날짜 셀을 눌러 기록을 토글하고, 설정 버튼을 통해 목표 수정이나 삭제 등의 동작을 수행할 수 있습니다.
 
 | 달력 뷰 | 설정 메뉴 |
 | --- | --- | 
 | <img src="https://github.com/user-attachments/assets/f0da5d97-8947-40af-a6d0-0e7cb0a1537b"> | ![스크린샷 2025-06-21 14 25 13](https://github.com/user-attachments/assets/86b2448d-76bd-45a6-bde5-652a43d1426c) |
 
 ### 목표 생성 및 수정 흐름
-사용자가 목표를 입력하다가 이탈하려 할 경우, 작성 중이던 내용이 저장되지 않음을 안내합니다.
+목표 입력 화면에서 사용자가 이탈하려 할 경우, 미작성 데이터가 저장되지 않는다는 점을 확인하는 안내 다이얼로그가 제공됩니다. 저장 후에는 자동으로 캘린더 뷰로 복귀합니다.
 
-| 목표 생성 중 이탈 알림 | 목표 수정 |
-| --- | --- | 
-| ![스크린샷 2025-06-21 14 25 21](https://github.com/user-attachments/assets/5590866b-8e5c-44a1-a63a-9b98ce4c916b)| ![스크린샷 2025-06-21 14 25 18](https://github.com/user-attachments/assets/563c38f9-a7e8-4b3d-ab04-a3c52f9d095f) |
+| 목표 생성 | 목표 수정 | 목표 생성 중 이탈 알림 |
+| --- | --- | --- | 
+| ![auto_scroll_to_newly_created_goal](https://github.com/user-attachments/assets/d10dd2c1-4099-4e1b-a3c8-1ea8f50dc57c) | ![edit_goal_name](https://github.com/user-attachments/assets/174c3f30-a383-4580-a765-ef3fad6c2ad1) | ![스크린샷 2025-06-21 14 25 21](https://github.com/user-attachments/assets/5590866b-8e5c-44a1-a63a-9b98ce4c916b) | 
 
+### 목표 및 기록 삭제/초기화
+목표를 삭제하거나 기록만 초기화할 수 있으며, 각 동작은 사용자 확인을 거쳐 실행됩니다.  
 
-### 초기화/삭제 다이얼로그 
-기록 또는 목표를 초기화할 때, 삭제 여부를 한 번 더 확인하는 다이얼로그를 표시합니다.
-
-| 한국어 | 영어 |
-| --- | --- | 
-| ![스크린샷 2025-06-21 14 25 23](https://github.com/user-attachments/assets/0f9b5806-1545-41da-b5f8-ae4de13488ed) | ![스크린샷 2025-06-21 14 25 28](https://github.com/user-attachments/assets/3834c316-7d99-4bcc-8123-74fb75400f3d) |
-
-
-
-### 기능 시연 영상
-- 새로 생성한 목표로 자동 이동 → [영상 보기](docs/features/auto_scroll_to_newly_created_goal.mp4)
-- 목표명 수정 → [영상 보기](docs/features/edit_goal_name.mp4)
-- 기록 초기화 → [영상 보기](docs/features/reset_records_only.mp4)
-- 목표 삭제 → [영상 보기](docs/features/reset_goal.mp4)
-- 전체 삭제 → [영상 보기](docs/features/reset_all_goals.mp4)
-
+| 기록 삭제 | 목표 삭제 | 전체 초기화 |
+| --- | --- | --- | 
+| ![reset_records_only](https://github.com/user-attachments/assets/40f02c55-108b-4e89-bbaa-73ee7b6a3673) | ![reset_goal](https://github.com/user-attachments/assets/d45714ff-1019-449f-aa55-f3aa2ceee46a) |![reset_all_goals](https://github.com/user-attachments/assets/65a98321-f062-4eee-8589-c083fefc9d15) | 
 
 ---
 
