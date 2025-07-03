@@ -6,8 +6,10 @@ import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/goal_setting_action.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_pager.dart';
 import 'package:haenaedda/ui/settings/handlers/edit_goal_handler.dart';
+import 'package:haenaedda/ui/settings/handlers/reset_goal_handler.dart';
 import 'package:haenaedda/ui/settings/settings_bottom_modal.dart';
 import 'package:haenaedda/ui/widgets/bottom_right_button.dart';
+import 'package:haenaedda/view_models/goal_view_models.dart';
 import 'package:haenaedda/view_models/record_view_model.dart';
 
 class GoalCalendarPage extends StatefulWidget {
@@ -22,13 +24,16 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
   bool _isAddGoalFlowActive = false;
   int _currentPageIndex = 0;
   RecordViewModel? _recordViewModel;
+  GoalViewModel? _goalViewModel;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _recordViewModel = context.read<RecordViewModel>();
+      _goalViewModel = context.read<GoalViewModel>();
       _recordViewModel?.addListener(_checkGoalState);
+      _goalViewModel?.addListener(_checkGoalState);
       _checkGoalState();
     });
   }
@@ -45,7 +50,7 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
     if (!_isAddGoalFlowActive &&
         _recordViewModel != null &&
         _recordViewModel!.isLoaded &&
-        _recordViewModel!.sortedGoals.isEmpty) {
+        _goalViewModel!.sortedGoals.isEmpty) {
       _isAddGoalFlowActive = true;
       Future.microtask(() async {
         if (mounted) {
@@ -64,15 +69,15 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
 
   @override
   Widget build(BuildContext context) {
-    final goals = context.select<RecordViewModel, List<Goal>>(
-      (recordViewModel) => recordViewModel.sortedGoals,
+    final goalViewModel = context.select<GoalViewModel, List<Goal>>(
+      (goalViewModel) => goalViewModel.sortedGoals,
     );
     return Scaffold(
       body: SafeArea(
         child: Stack(
           children: [
             GoalPager(
-              goals: goals,
+              goals: goalViewModel,
               controller: _pageController,
               onCellTap: (goalId, date) {
                 final recordViewModel = context.read<RecordViewModel>();
@@ -85,7 +90,7 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
             ),
             BottomRightButton(
               onPressed: () {
-                final goal = goals[_currentPageIndex];
+                final goal = goalViewModel[_currentPageIndex];
                 _onSettingButtonTap(context, goal);
               },
               child: Icon(
@@ -141,19 +146,19 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
   }
 
   void _scrollToFocusedGoalIfNeeded() {
-    final recordViewModel = context.read<RecordViewModel>();
-    final focusedGoal = recordViewModel.focusedGoalForScroll;
-    final shouldScroll = recordViewModel.shouldScrollToFocusedPage;
+    final goalViewModel = context.read<GoalViewModel>();
+    final focusedGoal = goalViewModel.focusedGoalForScroll;
+    final shouldScroll = goalViewModel.shouldScrollToFocusedPage;
 
     if (focusedGoal != null && shouldScroll) {
       final index =
-          recordViewModel.sortedGoals.indexWhere((g) => g.id == focusedGoal.id);
+          goalViewModel.sortedGoals.indexWhere((g) => g.id == focusedGoal.id);
       if (index == -1) return;
       if (!_pageController.hasClients) return;
 
       _pageController.jumpToPage(index);
       _currentPageIndex = index;
-      recordViewModel.clearFocusedGoalForScroll();
+      goalViewModel.clearFocusedGoalForScroll();
     }
   }
 }

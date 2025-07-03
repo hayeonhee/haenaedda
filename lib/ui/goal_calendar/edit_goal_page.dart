@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
 import 'package:haenaedda/ui/settings/handlers/edit_goal_handler.dart';
-import 'package:haenaedda/view_models/record_view_model.dart';
+import 'package:haenaedda/view_models/goal_view_models.dart';
 
 class EditGoalPage extends StatefulWidget {
   final String? initialText;
@@ -76,8 +76,8 @@ class _EditGoalPageState extends State<EditGoalPage> {
             backgroundColor: colorScheme.surface,
             leading: Builder(
               builder: (context) {
-                final hasNoGoal = context.select<RecordViewModel, bool>(
-                  (recordViewModel) => recordViewModel.hasNoGoal,
+                final hasNoGoal = context.select<GoalViewModel, bool>(
+                  (goalViewModel) => goalViewModel.hasNoGoal,
                 );
                 if (hasNoGoal) return const SizedBox.shrink();
                 return IconButton(
