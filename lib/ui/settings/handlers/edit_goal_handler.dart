@@ -3,11 +3,12 @@ import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
-import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/theme/buttons.dart';
 import 'package:haenaedda/ui/goal_calendar/edit_goal_page.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_calendar_page.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
+import 'package:haenaedda/view_models/goal_result.dart';
+import 'package:haenaedda/view_models/goal_view_models.dart';
 
 Future<void> onDiscardDuringInput(
     BuildContext context, TextEditingController controller) async {
@@ -107,7 +108,7 @@ Future<(AddGoalResult, Goal?)> showAddGoalFlow(
   BuildContext context, {
   bool replaceToGoalCalendar = false,
 }) async {
-  final recordProvider = context.read<RecordProvider>();
+  final goalViewModel = context.read<GoalViewModel>();
   final result = await Navigator.push<GoalEditResult>(
     context,
     MaterialPageRoute(
@@ -120,10 +121,10 @@ Future<(AddGoalResult, Goal?)> showAddGoalFlow(
 
   final trimmedTitle = result.title.trim();
   final (result: addResult, goal: newGoal) =
-      await recordProvider.addGoal(trimmedTitle);
+      await goalViewModel.addGoal(trimmedTitle);
 
   if (addResult == AddGoalResult.success && newGoal != null) {
-    recordProvider.setFocusedGoalForScroll(newGoal);
+    goalViewModel.setFocusedGoalForScroll(newGoal);
     if (replaceToGoalCalendar) {
       Navigator.pushReplacement(
         context,
@@ -135,7 +136,7 @@ Future<(AddGoalResult, Goal?)> showAddGoalFlow(
 }
 
 Future<String?> onEditGoalTitlePressed(BuildContext context, Goal goal) async {
-  final recordProvider = context.read<RecordProvider>();
+  final goalViewModel = context.read<GoalViewModel>();
   final result = await Navigator.of(context).push<GoalEditResult>(
     MaterialPageRoute(
       builder: (_) => EditGoalPage(
@@ -150,7 +151,7 @@ Future<String?> onEditGoalTitlePressed(BuildContext context, Goal goal) async {
   if (trimmedTitle.isEmpty && trimmedTitle == goal.title) return null;
 
   final (result: editResult, goal: renamedGoal) =
-      await recordProvider.renameGoal(goal, trimmedTitle);
+      await goalViewModel.renameGoal(goal, trimmedTitle);
   switch (editResult) {
     case RenameGoalResult.emptyInput:
       break;
@@ -162,7 +163,7 @@ Future<String?> onEditGoalTitlePressed(BuildContext context, Goal goal) async {
       break;
     case RenameGoalResult.success:
       if (renamedGoal != null) {
-        recordProvider.setFocusedGoalForScroll(renamedGoal);
+        goalViewModel.setFocusedGoalForScroll(renamedGoal);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const GoalCalendarPage()),

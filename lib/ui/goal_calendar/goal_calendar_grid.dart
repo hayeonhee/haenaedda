@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/model/calendar_grid_layout.dart';
-import 'package:haenaedda/provider/calendar_month_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/empty_cell.dart';
+import 'package:haenaedda/view_models/calendar_month_view_model.dart';
 
 class GoalCalendarGrid extends StatelessWidget {
   final Widget Function(DateTime) cellBuilder;
@@ -12,8 +12,8 @@ class GoalCalendarGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<CalendarDateProvider, DateTime>(
-      selector: (_, provider) => provider.visibleDate,
+    return Selector<CalendarDateViewModel, DateTime>(
+      selector: (_, dateViewModel) => dateViewModel.visibleDate,
       builder: (_, focusedMonth, __) {
         final layout = CalendarGridLayout(focusedMonth);
         return GridView.builder(

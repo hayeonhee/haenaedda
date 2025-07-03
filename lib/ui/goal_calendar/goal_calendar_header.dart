@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/model/goal.dart';
-import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/month_navigation_bar.dart';
+import 'package:haenaedda/view_models/goal_view_models.dart';
 
 class GoalCalendarHeader extends StatelessWidget {
   final Goal goal;
@@ -14,8 +14,9 @@ class GoalCalendarHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Selector<RecordProvider, String?>(
-          selector: (_, provider) => provider.getGoalById(goal.id)?.title,
+        Selector<GoalViewModel, String?>(
+          selector: (_, goalViewModel) =>
+              goalViewModel.getGoalById(goal.id)?.title,
           builder: (context, title, _) {
             if (title == null) return const SizedBox.shrink();
             return Padding(

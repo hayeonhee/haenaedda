@@ -4,11 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/goal_setting_action.dart';
-import 'package:haenaedda/provider/record_provider.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_pager.dart';
 import 'package:haenaedda/ui/settings/handlers/edit_goal_handler.dart';
+import 'package:haenaedda/ui/settings/handlers/reset_goal_handler.dart';
 import 'package:haenaedda/ui/settings/settings_bottom_modal.dart';
 import 'package:haenaedda/ui/widgets/bottom_right_button.dart';
+import 'package:haenaedda/view_models/goal_view_models.dart';
+import 'package:haenaedda/view_models/record_view_model.dart';
 
 class GoalCalendarPage extends StatefulWidget {
   const GoalCalendarPage({super.key});
@@ -21,14 +23,17 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
   final PageController _pageController = PageController();
   bool _isAddGoalFlowActive = false;
   int _currentPageIndex = 0;
-  RecordProvider? _recordProvider;
+  RecordViewModel? _recordViewModel;
+  GoalViewModel? _goalViewModel;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _recordProvider = context.read<RecordProvider>();
-      _recordProvider?.addListener(_checkGoalState);
+      _recordViewModel = context.read<RecordViewModel>();
+      _goalViewModel = context.read<GoalViewModel>();
+      _recordViewModel?.addListener(_checkGoalState);
+      _goalViewModel?.addListener(_checkGoalState);
       _checkGoalState();
     });
   }
@@ -43,9 +48,9 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
 
   void _checkGoalState() {
     if (!_isAddGoalFlowActive &&
-        _recordProvider != null &&
-        _recordProvider!.isLoaded &&
-        _recordProvider!.sortedGoals.isEmpty) {
+        _recordViewModel != null &&
+        _recordViewModel!.isLoaded &&
+        _goalViewModel!.sortedGoals.isEmpty) {
       _isAddGoalFlowActive = true;
       Future.microtask(() async {
         if (mounted) {
@@ -58,25 +63,26 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
 
   @override
   void dispose() {
-    _recordProvider?.removeListener(_checkGoalState);
+    _recordViewModel?.removeListener(_checkGoalState);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final goals =
-        context.select<RecordProvider, List<Goal>>((p) => p.sortedGoals);
+    final goalViewModel = context.select<GoalViewModel, List<Goal>>(
+      (goalViewModel) => goalViewModel.sortedGoals,
+    );
     return Scaffold(
       body: SafeArea(
         child: Stack(
           children: [
             GoalPager(
-              goals: goals,
+              goals: goalViewModel,
               controller: _pageController,
               onCellTap: (goalId, date) {
-                final provider = context.read<RecordProvider>();
-                provider.toggleRecord(goalId, date);
-                provider.saveRecordsDebounced(goalId);
+                final recordViewModel = context.read<RecordViewModel>();
+                recordViewModel.toggleRecord(goalId, date);
+                recordViewModel.saveRecordsDebounced(goalId);
               },
               onPageChanged: (index) {
                 _currentPageIndex = index;
@@ -84,7 +90,7 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
             ),
             BottomRightButton(
               onPressed: () {
-                final goal = goals[_currentPageIndex];
+                final goal = goalViewModel[_currentPageIndex];
                 _onSettingButtonTap(context, goal);
               },
               child: Icon(
@@ -99,7 +105,6 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
   }
 
   Future<void> _onSettingButtonTap(BuildContext context, Goal goal) async {
-    final recordProvider = context.read<RecordProvider>();
     final action = await showGeneralDialog<GoalSettingAction?>(
       context: context,
       barrierDismissible: true,
@@ -129,10 +134,13 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
         await onEditGoalTitlePressed(context, goal);
         break;
       case GoalSettingAction.resetRecordsOnly:
-        recordProvider.removeRecordsOnly(goal.id);
+        await handleResetRecordsOnly(context, goal);
         break;
       case GoalSettingAction.resetEntireGoal:
-        recordProvider.resetEntireGoal(goal.id);
+        await handleResetEntireGoal(context, goal);
+        break;
+      case GoalSettingAction.resetAllGoals:
+        await handleResetAllGoals(context);
         break;
       case null:
         break;
@@ -140,19 +148,19 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
   }
 
   void _scrollToFocusedGoalIfNeeded() {
-    final provider = context.read<RecordProvider>();
-    final focusedGoal = provider.focusedGoalForScroll;
-    final shouldScroll = provider.shouldScrollToFocusedPage;
+    final goalViewModel = context.read<GoalViewModel>();
+    final focusedGoal = goalViewModel.focusedGoalForScroll;
+    final shouldScroll = goalViewModel.shouldScrollToFocusedPage;
 
     if (focusedGoal != null && shouldScroll) {
       final index =
-          provider.sortedGoals.indexWhere((g) => g.id == focusedGoal.id);
+          goalViewModel.sortedGoals.indexWhere((g) => g.id == focusedGoal.id);
       if (index == -1) return;
       if (!_pageController.hasClients) return;
 
       _pageController.jumpToPage(index);
       _currentPageIndex = index;
-      provider.clearFocusedGoalForScroll();
+      goalViewModel.clearFocusedGoalForScroll();
     }
   }
 }

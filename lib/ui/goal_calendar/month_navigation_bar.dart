@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/provider/record_provider.dart';
 import 'package:provider/provider.dart';
 
-import 'package:haenaedda/provider/calendar_month_provider.dart';
 import 'package:haenaedda/theme/decorations/neumorphic_theme.dart';
+import 'package:haenaedda/view_models/calendar_month_view_model.dart';
+import 'package:haenaedda/view_models/record_view_model.dart';
 
 class MonthNavigationBar extends StatelessWidget {
   final String goalId;
@@ -15,13 +15,13 @@ class MonthNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<CalendarDateProvider>();
+    final recordViewModel = context.watch<CalendarDateViewModel>();
     final firstRecordDate =
-        context.read<RecordProvider>().findFirstRecordedDate(goalId) ??
-            provider.initialVisibleDate;
-    final visibleDate = provider.visibleDate;
-    final canGoToPrevious = provider.canGoToPrevious(firstRecordDate);
-    final canGoToNext = provider.canGoToNext(firstRecordDate);
+        context.read<RecordViewModel>().findFirstRecordedDate(goalId) ??
+            recordViewModel.initialVisibleDate;
+    final visibleDate = recordViewModel.visibleDate;
+    final canGoToPrevious = recordViewModel.canGoToPrevious(firstRecordDate);
+    final canGoToNext = recordViewModel.canGoToNext(firstRecordDate);
     final colorScheme = Theme.of(context).colorScheme;
 
     return ConstrainedBox(
@@ -38,7 +38,7 @@ class MonthNavigationBar extends StatelessWidget {
             onTap: () {
               final newMonth =
                   DateTime(visibleDate.year, visibleDate.month - 1, 1);
-              provider.updateDate(newMonth);
+              recordViewModel.updateDate(newMonth);
             },
           ),
           const SizedBox(width: 12),
@@ -67,7 +67,7 @@ class MonthNavigationBar extends StatelessWidget {
             onTap: () {
               final newMonth =
                   DateTime(visibleDate.year, visibleDate.month + 1, 1);
-              provider.updateDate(newMonth);
+              recordViewModel.updateDate(newMonth);
             },
           ),
         ],
