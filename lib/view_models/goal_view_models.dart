@@ -1,61 +1,33 @@
-import 'dart:async';
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:haenaedda/constants/storage_keys.dart';
-import 'package:haenaedda/model/date_record_set.dart';
+import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/utils/extensions/iterable_extensions.dart';
+import 'package:haenaedda/view_models/goal_result.dart';
 
-class RecordViewModel extends ChangeNotifier {
-  final Map<String, DateRecordSet> _recordsByGoalId = {};
-  final bool _isLoaded = false;
-  final Map<String, Timer> _saveDebounceTimers = {};
-  final Map<String, DateTime> _firstRecordDateCache = {};
+class GoalViewModel extends ChangeNotifier {
+  final List<Goal> _goals = [];
+  List<Goal> _sortedGoals = [];
+  static const String _firstGoalId = '10';
+  static const int _orderStep = 10;
+  bool _isLoaded = false;
   late final Future<SharedPreferences> _sharedPrefsFuture;
 
-  RecordViewModel() {
+  GoalViewModel() {
     _sharedPrefsFuture = SharedPreferences.getInstance();
   }
 
-  UnmodifiableMapView<String, DateRecordSet> get recordsByGoalId =>
-      UnmodifiableMapView(_recordsByGoalId);
+  List<Goal> get goals => _goals;
+  List<Goal> get sortedGoals => _sortedGoals;
   bool get isLoaded => _isLoaded;
+  bool get hasNoGoal => goals.isEmpty;
 
-  void setRecord(String goalId, DateRecordSet recordSet) {
-    _recordsByGoalId[goalId] = recordSet;
-    clearFirstRecordDateCache(goalId);
-    notifyListeners();
-  }
-
-  DateRecordSet? getRecords(String goalId) {
-    return _recordsByGoalId[goalId];
-  }
-
-  DateRecordSet getOrCreateRecords(String goalId) {
-    return _recordsByGoalId.putIfAbsent(goalId, () => DateRecordSet());
-  }
-
-  Future<bool> loadData() async {
-    final recordsLoaded = await _loadRecords();
-    notifyListeners();
-    return recordsLoaded;
-  }
-
-  DateTime? findFirstRecordedDate(String goalId) {
-    if (_firstRecordDateCache.containsKey(goalId)) {
-      return _firstRecordDateCache[goalId];
-    }
-    final recordSet = _recordsByGoalId[goalId];
-    if (recordSet == null || recordSet.dateKeys.isEmpty) return null;
-    final sorted = recordSet.dateKeys.map((key) => DateTime.parse(key)).toList()
-      ..sort();
-    final first = sorted.first;
-    final result = DateTime(first.year, first.month, 1);
-    _firstRecordDateCache[goalId] = result;
-    return result;
+  Goal? getGoalById(String id) {
+    return goals.firstWhereOrNull((g) => g.id == id);
   }
 
   int? getNextFocusGoalIndexAfterRemoval(String removedId) {
@@ -70,6 +42,12 @@ class RecordViewModel extends ChangeNotifier {
     final lastGoal = goals.last;
     final nextId = int.parse(lastGoal.id) + 1;
     return nextId.toString();
+  }
+
+  Future<bool> loadData() async {
+    final goalsLoaded = await _loadGoals();
+    notifyListeners();
+    return goalsLoaded;
   }
 
   /// Returns the next order value with a fixed step (default: 10).
@@ -88,7 +66,7 @@ class RecordViewModel extends ChangeNotifier {
       goals[i].order = (i + 1) * _orderStep;
     }
     _syncSortedGoals();
-    saveGoals();
+    saveAllGoals();
     notifyListeners();
   }
 
@@ -103,7 +81,7 @@ class RecordViewModel extends ChangeNotifier {
     final goal = _createGoal(trimmedTitle);
     goals.add(goal);
     _syncSortedGoals();
-    final isSaved = await saveGoals();
+    final isSaved = await saveAllGoals();
     if (!isSaved) {
       return (result: AddGoalResult.saveFailed, goal: null);
     }
@@ -128,86 +106,25 @@ class RecordViewModel extends ChangeNotifier {
     }
     goal.title = newTitle;
     _syncSortedGoals();
-    saveGoals();
+    saveAllGoals();
     notifyListeners();
     return (result: RenameGoalResult.success, goal: goal);
   }
 
-  void toggleRecord(String goalId, DateTime date) {
-    final currentSet = getOrCreateRecords(goalId);
-    final updated = currentSet.toggle(date);
-    setRecord(goalId, updated);
-  }
-
-  void saveRecordsDebounced(
-    String goalId, {
-    Duration duration = const Duration(milliseconds: 500),
-  }) {
-    _saveDebounceTimers[goalId]?.cancel();
-    _saveDebounceTimers[goalId] = Timer(duration, () => saveRecords(goalId));
-  }
-
-  Future<bool> saveGoals() async {
+  Future<bool> saveAllGoals() async {
     try {
       final prefs = await _sharedPrefsFuture;
       final encodedGoalsJson =
           jsonEncode(goals.map((g) => g.toJson()).toList());
       final isSaved =
           await prefs.setString(StorageKeys.goals, encodedGoalsJson);
-      if (isSaved) notifyListeners();
       return isSaved;
     } catch (error) {
       return false;
     }
   }
 
-  Future<void> saveRecords(String goalId) async {
-    final prefs = await _sharedPrefsFuture;
-    final recordSet = recordsByGoalId[goalId];
-    if (recordSet == null || recordSet.dateKeys.isEmpty) {
-      debugPrint('⚠️ No records to save for goalId: $goalId');
-      return;
-    }
-
-    final json = recordSet.toJson();
-    final key = '${StorageKeys.record}$goalId';
-    final success = await prefs.setString(key, json);
-    if (success) {
-      debugPrint('📦 key: $key → $json');
-    } else {
-      debugPrint('❌ Failed to save record for $goalId');
-    }
-  }
-
-  Future<void> saveAll() async {
-    final prefs = await _sharedPrefsFuture;
-    for (final entry in recordsByGoalId.entries) {
-      await prefs.setString(entry.key, entry.value.toJson());
-    }
-    debugPrint('💾 All records saved on app pause.');
-  }
-
-  void clearFirstRecordDateCache(String goalId) {
-    _firstRecordDateCache.remove(goalId);
-  }
-
-  Future<bool> removeRecordsOnly(String goalId) async {
-    try {
-      final prefs = await _sharedPrefsFuture;
-      final success = await prefs.remove(goalId);
-      if (success) {
-        _recordsByGoalId.remove(goalId);
-        clearFirstRecordDateCache(goalId);
-        notifyListeners();
-      }
-      return success;
-    } catch (e) {
-      debugPrint('Failed to remove records for goal $goalId: $e');
-      return false;
-    }
-  }
-
-  Future<bool> removeGoal(String goalId) async {
+  Future<bool> _removeGoalOnly(String goalId) async {
     try {
       final goalCountBefore = goals.length;
       goals.removeWhere((goal) => goal.id == goalId);
@@ -217,9 +134,7 @@ class RecordViewModel extends ChangeNotifier {
         final updatedGoalsJson =
             jsonEncode(goals.map((g) => g.toJson()).toList());
         final saved = await prefs.setString('goals', updatedGoalsJson);
-        _recordsByGoalId.remove(goalId);
         _syncSortedGoals();
-        clearFirstRecordDateCache(goalId);
         notifyListeners();
         return saved;
       }
@@ -231,20 +146,16 @@ class RecordViewModel extends ChangeNotifier {
   }
 
   Future<ResetEntireGoalResult> resetEntireGoal(String goalId) async {
-    final recordsCleared = await removeRecordsOnly(goalId);
-    if (!recordsCleared) return ResetEntireGoalResult.recordFailed;
-
-    final goalCleared = await removeGoal(goalId);
+    final goalCleared = await _removeGoalOnly(goalId);
     if (!goalCleared) return ResetEntireGoalResult.goalFailed;
-
     return ResetEntireGoalResult.success;
   }
 
   Future<ResetAllGoalsResult> resetAllGoals() async {
     try {
       goals.clear();
-      _recordsByGoalId.clear();
-      _firstRecordDateCache.clear();
+      // _recordsByGoalId.clear();
+      // _firstRecordDateCache.clear();
 
       final prefs = await _sharedPrefsFuture;
       final keysToRemove = prefs.getKeys().where(
@@ -268,7 +179,7 @@ class RecordViewModel extends ChangeNotifier {
     if (goals.isEmpty) {
       final fallbackGoal = _createGoal("");
       goals.add(fallbackGoal);
-      await saveGoals();
+      await saveAllGoals();
     }
   }
 
@@ -294,35 +205,6 @@ class RecordViewModel extends ChangeNotifier {
       return true;
     } catch (e) {
       debugPrint('Failed to load goals: $e');
-      return false;
-    }
-  }
-
-  Future<bool> _loadRecords() async {
-    try {
-      final prefs = await _sharedPrefsFuture;
-      final keys = prefs.getKeys();
-      _recordsByGoalId.clear();
-
-      final recordKeys =
-          keys.where((key) => key.startsWith(StorageKeys.record));
-      for (String key in recordKeys) {
-        final dates = prefs.getString(key);
-        debugPrint('key: $key → $dates');
-
-        if (dates == null) continue;
-        debugPrint('key: $key → $dates');
-        try {
-          final goalId = key.substring(StorageKeys.record.length);
-          _recordsByGoalId[goalId] = DateRecordSet.fromJson(dates);
-        } catch (e) {
-          debugPrint('Record parsing failed for $key: $e');
-          return false;
-        }
-      }
-      return true;
-    } catch (e) {
-      debugPrint('Failed to load records: $e');
       return false;
     }
   }

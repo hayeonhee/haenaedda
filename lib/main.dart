@@ -6,19 +6,25 @@ import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/theme/app_theme.dart';
 import 'package:haenaedda/ui/launcher/launcher_page.dart';
 import 'package:haenaedda/view_models/calendar_month_view_model.dart';
+import 'package:haenaedda/view_models/goal_view_models.dart';
 import 'package:haenaedda/view_models/record_view_model.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final recordViewModel = RecordViewModel();
+  final goalViewModel = GoalViewModel();
   final calendarMonthViewModel = CalendarDateViewModel();
   await recordViewModel.loadData();
+  await goalViewModel.loadData();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<RecordViewModel>.value(
           value: recordViewModel,
+        ),
+        ChangeNotifierProvider<GoalViewModel>.value(
+          value: goalViewModel,
         ),
         ChangeNotifierProvider<CalendarDateViewModel>.value(
           value: calendarMonthViewModel,
@@ -28,7 +34,10 @@ Future<void> main() async {
     ),
   );
   WidgetsBinding.instance.addObserver(
-    _AppLifecycleObserver(onPause: () => recordViewModel.saveAll()),
+    _AppLifecycleObserver(onPause: () async {
+      await recordViewModel.saveAllRecords();
+      await goalViewModel.saveAllGoals();
+    }),
   );
 }
 
