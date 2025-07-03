@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -58,81 +56,6 @@ class RecordViewModel extends ChangeNotifier {
     return result;
   }
 
-  int? getNextFocusGoalIndexAfterRemoval(String removedId) {
-    final index = sortedGoals.indexWhere((g) => g.id == removedId);
-    if (index == -1) return null;
-    final nextIndex = (index - 1).clamp(0, sortedGoals.length - 1);
-    return nextIndex;
-  }
-
-  String getNextGoalId() {
-    if (goals.isEmpty) return _firstGoalId;
-    final lastGoal = goals.last;
-    final nextId = int.parse(lastGoal.id) + 1;
-    return nextId.toString();
-  }
-
-  /// Returns the next order value with a fixed step (default: 10).
-  /// This keeps enough space between items for future insertions.
-  int getNextOrder() {
-    if (goals.isEmpty) return _orderStep;
-    final maxOrder = goals.map((g) => g.order).reduce(max);
-    return maxOrder + _orderStep;
-  }
-
-  /// Reassigns order values with equal spacing (e.g. 10, 20, 30...).
-  /// Call this when there isn't enough space between items
-  void rebalanceOrders() {
-    goals.sort((a, b) => a.order.compareTo(b.order));
-    for (int i = 0; i < goals.length; i++) {
-      goals[i].order = (i + 1) * _orderStep;
-    }
-    _syncSortedGoals();
-    saveGoals();
-    notifyListeners();
-  }
-
-  Future<({AddGoalResult result, Goal? goal})> addGoal(String title) async {
-    final trimmedTitle = title.trim();
-    if (trimmedTitle.isEmpty) {
-      return (result: AddGoalResult.emptyInput, goal: null);
-    }
-    if (_isDuplicateGoal(trimmedTitle)) {
-      return (result: AddGoalResult.duplicate, goal: null);
-    }
-    final goal = _createGoal(trimmedTitle);
-    goals.add(goal);
-    _syncSortedGoals();
-    final isSaved = await saveGoals();
-    if (!isSaved) {
-      return (result: AddGoalResult.saveFailed, goal: null);
-    }
-    notifyListeners();
-    return (result: AddGoalResult.success, goal: goal);
-  }
-
-  Future<({RenameGoalResult result, Goal? goal})> renameGoal(
-    Goal selectedGoal,
-    String newTitle,
-  ) async {
-    if (newTitle.trim().isEmpty) {
-      return (result: RenameGoalResult.emptyInput, goal: null);
-    }
-    if (_isDuplicateGoal(newTitle)) {
-      return (result: RenameGoalResult.duplicate, goal: null);
-    }
-    final goal =
-        goals.firstWhereOrNull((oldGoal) => oldGoal.id == selectedGoal.id);
-    if (goal == null) {
-      return (result: RenameGoalResult.notFound, goal: null);
-    }
-    goal.title = newTitle;
-    _syncSortedGoals();
-    saveGoals();
-    notifyListeners();
-    return (result: RenameGoalResult.success, goal: goal);
-  }
-
   void toggleRecord(String goalId, DateTime date) {
     final currentSet = getOrCreateRecords(goalId);
     final updated = currentSet.toggle(date);
@@ -145,20 +68,6 @@ class RecordViewModel extends ChangeNotifier {
   }) {
     _saveDebounceTimers[goalId]?.cancel();
     _saveDebounceTimers[goalId] = Timer(duration, () => saveRecords(goalId));
-  }
-
-  Future<bool> saveGoals() async {
-    try {
-      final prefs = await _sharedPrefsFuture;
-      final encodedGoalsJson =
-          jsonEncode(goals.map((g) => g.toJson()).toList());
-      final isSaved =
-          await prefs.setString(StorageKeys.goals, encodedGoalsJson);
-      if (isSaved) notifyListeners();
-      return isSaved;
-    } catch (error) {
-      return false;
-    }
   }
 
   Future<void> saveRecords(String goalId) async {
@@ -179,7 +88,7 @@ class RecordViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> saveAll() async {
+  Future<void> saveAllRecords() async {
     final prefs = await _sharedPrefsFuture;
     for (final entry in recordsByGoalId.entries) {
       await prefs.setString(entry.key, entry.value.toJson());
@@ -191,7 +100,7 @@ class RecordViewModel extends ChangeNotifier {
     _firstRecordDateCache.remove(goalId);
   }
 
-  Future<bool> removeRecordsOnly(String goalId) async {
+  Future<bool> removeRecords(String goalId) async {
     try {
       final prefs = await _sharedPrefsFuture;
       final success = await prefs.remove(goalId);
@@ -207,94 +116,48 @@ class RecordViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> removeGoal(String goalId) async {
-    try {
-      final goalCountBefore = goals.length;
-      goals.removeWhere((goal) => goal.id == goalId);
-      final goalRemoved = goals.length < goalCountBefore;
-      if (goalRemoved) {
-        final prefs = await _sharedPrefsFuture;
-        final updatedGoalsJson =
-            jsonEncode(goals.map((g) => g.toJson()).toList());
-        final saved = await prefs.setString('goals', updatedGoalsJson);
-        _recordsByGoalId.remove(goalId);
-        _syncSortedGoals();
-        clearFirstRecordDateCache(goalId);
-        notifyListeners();
-        return saved;
-      }
-      return false;
-    } catch (e) {
-      debugPrint('Failed to remove goal $goalId: $e');
-      return false;
+  Future<void> removeAllUnlinkedRecords(List<String> validGoalIds) async {
+    _removeUnlinkedRecords(validGoalIds);
+    await removeUnlinkedRecordsFromStorage(validGoalIds);
+  }
+
+  /// Removes in-memory records that do not have a matching goal ID.
+  void _removeUnlinkedRecords(List<String> validGoalIds) {
+    final unlinkedIds = _recordsByGoalId.keys
+        .where((id) => !validGoalIds.contains(id))
+        .toList();
+
+    for (final id in unlinkedIds) {
+      _recordsByGoalId.remove(id);
+      clearFirstRecordDateCache(id);
     }
-  }
 
-  Future<ResetEntireGoalResult> resetEntireGoal(String goalId) async {
-    final recordsCleared = await removeRecordsOnly(goalId);
-    if (!recordsCleared) return ResetEntireGoalResult.recordFailed;
-
-    final goalCleared = await removeGoal(goalId);
-    if (!goalCleared) return ResetEntireGoalResult.goalFailed;
-
-    return ResetEntireGoalResult.success;
-  }
-
-  Future<ResetAllGoalsResult> resetAllGoals() async {
-    try {
-      goals.clear();
-      _recordsByGoalId.clear();
-      _firstRecordDateCache.clear();
-
-      final prefs = await _sharedPrefsFuture;
-      final keysToRemove = prefs.getKeys().where(
-            (k) => k.startsWith(StorageKeys.record),
-          );
-      for (final key in keysToRemove) {
-        await prefs.remove(key);
-      }
-      await prefs.remove(StorageKeys.goals);
+    if (unlinkedIds.isNotEmpty) {
+      debugPrint('🧹 Removed unlinked records: $unlinkedIds');
       notifyListeners();
-      return ResetAllGoalsResult.success;
-    } catch (e) {
-      debugPrint('❌ resetAllGoals failed: $e');
-      return ResetAllGoalsResult.failure;
     }
   }
 
-  /// Creates a fallback goal if the goal list is empty.
-  /// This prevents the app from crashing after full reset.
-  Future<void> ensureAtLeastOneGoalExists() async {
-    if (goals.isEmpty) {
-      final fallbackGoal = _createGoal("");
-      goals.add(fallbackGoal);
-      await saveGoals();
+  /// Removes record entries from SharedPreferences that do not match any known goal ID.
+  Future<void> removeUnlinkedRecordsFromStorage(
+    List<String> validGoalIds,
+  ) async {
+    final prefs = await _sharedPrefsFuture;
+    final allKeys = prefs.getKeys();
+    final recordKeys = allKeys.where((k) => k.startsWith(StorageKeys.record));
+
+    final unlinkedKeys = recordKeys.where((key) {
+      final goalId = key.substring(StorageKeys.record.length);
+      return !validGoalIds.contains(goalId);
+    }).toList();
+
+    for (final key in unlinkedKeys) {
+      await prefs.remove(key);
     }
-  }
 
-  Future<bool> _loadGoals() async {
-    try {
-      final prefs = await _sharedPrefsFuture;
-      final loadedGoalsJson = prefs.getString(StorageKeys.goals);
-      if (loadedGoalsJson == null) {
-        _clearGoals();
-        debugPrint('No saved goals found. Clearing internal goal state.');
-        return true;
-      }
-
-      final decodedGoalsJson = jsonDecode(loadedGoalsJson);
-      final List<Goal> restoredGoals = (decodedGoalsJson as List)
-          .map((e) => Goal.fromJson((e as Map<String, dynamic>)))
-          .toList();
-      goals
-        ..clear()
-        ..addAll(restoredGoals);
-      _syncSortedGoals();
-      _isLoaded = true;
-      return true;
-    } catch (e) {
-      debugPrint('Failed to load goals: $e');
-      return false;
+    if (unlinkedKeys.isNotEmpty) {
+      debugPrint(
+          '🧹 Removed unlinked records from SharedPreferences: $unlinkedKeys');
     }
   }
 
@@ -325,46 +188,5 @@ class RecordViewModel extends ChangeNotifier {
       debugPrint('Failed to load records: $e');
       return false;
     }
-  }
-
-  void _syncSortedGoals() {
-    _sortedGoals = [...goals]..sort((a, b) => a.order.compareTo(b.order));
-  }
-
-  Goal _createGoal(String title) {
-    final String id = getNextGoalId();
-    final int order = getNextOrder();
-    return Goal(id, order, title);
-  }
-
-  bool _isDuplicateGoal(String newGoalTitle) {
-    return goals.any((goal) => goal.title == newGoalTitle);
-  }
-
-  void _clearGoals() {
-    _goals.clear();
-    _sortedGoals.clear();
-    notifyListeners();
-  }
-
-// 📌 Scroll Focus Management for Newly Added Goal
-// Used to scroll to the newly added goal once, immediately after creation.
-// Cleared in GoalPager after being consumed.
-
-  Goal? _focusedGoalForScroll;
-  bool _shouldScrollToFocusedPage = false;
-
-  Goal? get focusedGoalForScroll => _focusedGoalForScroll;
-  bool get shouldScrollToFocusedPage => _shouldScrollToFocusedPage;
-
-  void setFocusedGoalForScroll(Goal goal) {
-    _focusedGoalForScroll = goal;
-    _shouldScrollToFocusedPage = true;
-    notifyListeners();
-  }
-
-  void clearFocusedGoalForScroll() {
-    _focusedGoalForScroll = null;
-    _shouldScrollToFocusedPage = false;
   }
 }

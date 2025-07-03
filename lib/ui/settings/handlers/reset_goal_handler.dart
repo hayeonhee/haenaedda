@@ -6,6 +6,8 @@ import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/reset_type.dart';
 import 'package:haenaedda/theme/buttons.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_calendar_page.dart';
+import 'package:haenaedda/view_models/goal_result.dart';
+import 'package:haenaedda/view_models/goal_view_models.dart';
 import 'package:haenaedda/view_models/record_view_model.dart';
 
 Future<void> showResetFailureDialog(BuildContext context, ResetType type) {
@@ -137,20 +139,20 @@ Future<void> onResetButtonTap(
   if (!context.mounted || confirmed != true) return;
   switch (type) {
     case ResetType.recordsOnly:
-      await _handleRecordOnlyReset(context, goal);
+      await handleResetRecordsOnly(context, goal);
       break;
     case ResetType.entireGoal:
-      await _handleEntireGoalReset(context, goal);
+      await handleResetEntireGoal(context, goal);
       break;
     case ResetType.allGoals:
-      await _handleAllGoalsReset(context);
+      await handleResetAllGoals(context);
       break;
   }
 }
 
-Future<void> _handleRecordOnlyReset(BuildContext context, Goal goal) async {
+Future<void> handleResetRecordsOnly(BuildContext context, Goal goal) async {
   final recordViewModel = context.read<RecordViewModel>();
-  final success = await recordViewModel.removeRecordsOnly(goal.id);
+  final success = await recordViewModel.removeRecords(goal.id);
 
   if (!context.mounted) return;
   if (success) {
@@ -163,25 +165,32 @@ Future<void> _handleRecordOnlyReset(BuildContext context, Goal goal) async {
   }
 }
 
-Future<void> _handleEntireGoalReset(BuildContext context, Goal goal) async {
+Future<void> handleResetEntireGoal(BuildContext context, Goal goal) async {
+  final goalViewModel = context.read<GoalViewModel>();
   final recordViewModel = context.read<RecordViewModel>();
   final removedGoalIndex =
-      recordViewModel.getNextFocusGoalIndexAfterRemoval(goal.id);
-  final result = await recordViewModel.resetEntireGoal(goal.id);
+      goalViewModel.getNextFocusGoalIndexAfterRemoval(goal.id);
+  final isGoalReset = await goalViewModel.resetEntireGoal(goal.id);
 
   if (!context.mounted) return;
-
-  switch (result) {
+  switch (isGoalReset) {
     case ResetEntireGoalResult.success:
-      if (removedGoalIndex != null &&
-          removedGoalIndex < recordViewModel.sortedGoals.length) {
-        final nextGoal = recordViewModel.sortedGoals[removedGoalIndex];
-        recordViewModel.setFocusedGoalForScroll(nextGoal);
+      final isRecordReset = await recordViewModel.removeRecords(goal.id);
+      if (isRecordReset) {
+        if (removedGoalIndex != null &&
+            removedGoalIndex < goalViewModel.sortedGoals.length) {
+          final nextGoal = goalViewModel.sortedGoals[removedGoalIndex];
+          goalViewModel.setFocusedGoalForScroll(nextGoal);
+        }
+        if (!context.mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const GoalCalendarPage()),
+        );
+      } else {
+        final remainingGoalIds = goalViewModel.goals.map((g) => g.id).toList();
+        await recordViewModel.removeAllUnlinkedRecords(remainingGoalIds);
       }
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const GoalCalendarPage()),
-      );
       break;
     case ResetEntireGoalResult.recordFailed:
       await showResetFailureDialog(context, ResetType.recordsOnly);
@@ -192,12 +201,16 @@ Future<void> _handleEntireGoalReset(BuildContext context, Goal goal) async {
   }
 }
 
-Future<void> _handleAllGoalsReset(BuildContext context) async {
+Future<void> handleResetAllGoals(BuildContext context) async {
+  final goalViewModel = context.read<GoalViewModel>();
   final recordViewModel = context.read<RecordViewModel>();
-  final result = await recordViewModel.resetAllGoals();
+  final result = await goalViewModel.resetAllGoals();
   if (!context.mounted) return;
   switch (result) {
     case ResetAllGoalsResult.success:
+      final remainingGoalIds = goalViewModel.goals.map((g) => g.id).toList();
+      await recordViewModel.removeAllUnlinkedRecords(remainingGoalIds);
+      if (!context.mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const GoalCalendarPage()),

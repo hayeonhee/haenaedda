@@ -105,7 +105,6 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
   }
 
   Future<void> _onSettingButtonTap(BuildContext context, Goal goal) async {
-    final recordViewModel = context.read<RecordViewModel>();
     final action = await showGeneralDialog<GoalSettingAction?>(
       context: context,
       barrierDismissible: true,
@@ -135,10 +134,13 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
         await onEditGoalTitlePressed(context, goal);
         break;
       case GoalSettingAction.resetRecordsOnly:
-        recordViewModel.removeRecordsOnly(goal.id);
+        await handleResetRecordsOnly(context, goal);
         break;
       case GoalSettingAction.resetEntireGoal:
-        recordViewModel.resetEntireGoal(goal.id);
+        await handleResetEntireGoal(context, goal);
+        break;
+      case GoalSettingAction.resetAllGoals:
+        await handleResetAllGoals(context);
         break;
       case null:
         break;

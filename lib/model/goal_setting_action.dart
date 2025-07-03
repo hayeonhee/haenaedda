@@ -3,4 +3,5 @@ enum GoalSettingAction {
   editGoalTitle,
   resetRecordsOnly,
   resetEntireGoal,
+  resetAllGoals,
 }
