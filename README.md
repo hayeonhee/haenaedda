@@ -1,4 +1,4 @@
-# 해내따 — I did it
+# 해냈다 — I did it
 
 > 
 ### Index
@@ -23,13 +23,13 @@
 
 ---
 ## 소개 
-- 확장 가능한 구조와 상태 관리를 기반으로, 하루의 작은 성공 경험을 시각적으로 기록하는 달력 앱입니다.
+- 확장 가능한 구조와 상태 관리를 기반으로, '오늘 내가 해냈다'는 작은 성공 경험을 시각적으로 기록하는 달력 앱입니다.
 - 기획, 설계, 디자인, 개발을 담당했습니다.
 - 한국어/영어와 라이트/다크모드를 모두 지원합니다. 
 
 
 ## 기술 
-`Flutter` `Provider` `SharedPreferences` `intl` 
+`Flutter` `Dart` `MVVM` `Provider` `SharedPreferences` `Intl (i18n)` `DevTools`
 
 ## 기능
 
