@@ -46,7 +46,7 @@
 
 | 목표 수정 중 이탈 알림 | 목표 생성 | 목표 수정 |
 | --- | --- | --- | 
-| <img src="https://github.com/user-attachments/assets/8e1729e3-d1a5-496c-9a9c-5261433f9558" width="260"/> | !<img src="https://github.com/user-attachments/assets/d10dd2c1-4099-4e1b-a3c8-1ea8f50dc57c" width="260"/> | <img src="https://github.com/user-attachments/assets/174c3f30-a383-4580-a765-ef3fad6c2ad1" width="260"/> |
+| <img src="https://github.com/user-attachments/assets/8e1729e3-d1a5-496c-9a9c-5261433f9558" width="260"/> | <img src="https://github.com/user-attachments/assets/d10dd2c1-4099-4e1b-a3c8-1ea8f50dc57c" width="260"/> | <img src="https://github.com/user-attachments/assets/174c3f30-a383-4580-a765-ef3fad6c2ad1" width="260"/> |
 
 <br/>
 
@@ -82,7 +82,7 @@
 | GoalPager | 세로 스크롤 PageView. 각 목표별 캘린더를 렌더링한다 | 
 | GoalCalendarContent | 단일 목표의 월간 캘린더 UI. Header·요일·Grid 등으로 분리된다 | 
 | GoalCalendarGrid | 월간 달력을 구성하며, 날짜 셀과 빈 셀을 구분해 각각 렌더링한다. 날짜 셀의 렌더링은 cellBuilder에 위임된다 | 
-| CalendarDayCell | 실제 날짜 셀 UI. 기록 여부에 따라 스타일이 다르며, 클릭 시 onTap(goalId, date) 콜백을 상위로 전달한다 | 
+| CalendarDayCell | 실제 날짜 셀 UI. 기록 여부에 따라 스타일이 다르며, 클릭 시 `onTap(goalId, date)` 콜백을 상위로 전달한다 | 
 
 <br/>
 
@@ -263,10 +263,10 @@
 
 | 사용 방법 | 목적 및 사용 시점 | 사용 예시 | 
 | --- | --- | --- |
-| read<T>() | 콜백 내부에서 상태만 읽고 UI는 반응할 필요 없을 때 | toggleRecord(goalId, date) | 
-| watch<T>() | 전체 위젯이 상태 변경에 반응해야 할 때 | watch\<CalendarDateViewModel>(); |
-| select<T, R>() | 상태의 특정 필드만 구독하고 싶을 때 | select<RecordViewModel, Goal?>((vm) => vm.getGoalById(id)); |
-| Selector<T, R>() | 특정 하위 위젯 단위에서만 리빌드가 필요할 때 | Selector<RecordViewModel, bool>(...) (셀 하나의 기록 유무만 감지) |
+| `read<T>()` | 콜백 내부에서 상태만 읽고 UI는 반응할 필요 없을 때 | `toggleRecord(goalId, date)` | 
+| `watch<T>()` | 전체 위젯이 상태 변경에 반응해야 할 때 | `watch\<CalendarDateViewModel>();` |
+| `select<T, R>()` | 상태의 특정 필드만 구독하고 싶을 때 | `select<RecordViewModel, Goal?>((vm) => vm.getGoalById(id));` |
+| `Selector<T, R>()` | 특정 하위 위젯 단위에서만 리빌드가 필요할 때 | `Selector<RecordViewModel, bool>(..)1 |
 
 <br/>
 <br/>
