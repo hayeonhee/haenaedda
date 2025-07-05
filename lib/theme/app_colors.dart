@@ -14,7 +14,7 @@ class AppColors {
   static const Color error = Color(0xFFB00020);
   static const Color onError = Color(0xFFFFFFFF);
 
-  static const Color errorContainer = Color(0xFFF9DEDC);
+  static const Color errorContainer = Color(0xFFF6BDBA);
   static const Color onErrorContainer = Color(0xFF410E0B);
 
   static const Color onSurfaceVariant = Color(0xFF8E8E93);
@@ -41,7 +41,7 @@ class AppColors {
   static const Color darkSurface = Color(0xFF1E1E1E);
   static const Color darkOnSurface = Color(0xFFECECEC);
 
-  static const Color darkError = Color(0xFFCF6679);
+  static const Color darkError = Color(0xFFECA3A0);
   static const Color darkOnError = Color(0xFF000000);
   static const Color darkErrorContainer = Color(0xFF8C1D18);
   static const Color darkOnErrorContainer = Color(0xFFFFDAD6);

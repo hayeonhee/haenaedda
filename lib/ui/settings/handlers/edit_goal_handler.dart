@@ -77,7 +77,7 @@ Future<bool?> confirmDiscardChanges(BuildContext context) {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: TextButton(
-                        style: getNeutralButtonStyle(context),
+                        style: getPrimaryButtonStyle(context),
                         onPressed: () => Navigator.of(context).pop(false),
                         child:
                             Text(l10n.keepEditing, style: getButtonTextStyle()),
