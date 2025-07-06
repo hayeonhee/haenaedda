@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +14,15 @@ import 'package:haenaedda/view_models/record_view_model.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  FlutterError.onError = (FlutterErrorDetails details) async {
+    FlutterError.dumpErrorToConsole(details);
+    // TODO: Integrate with Crashlytics to report uncaught Flutter errors
+    final log = 'Error: ${details.exception}\nStack: ${details.stack}';
+    final file = File('error_log.txt');
+    await file.writeAsString(log, mode: FileMode.append);
+  };
+
   final recordViewModel = RecordViewModel();
   final goalViewModel = GoalViewModel();
   final calendarMonthViewModel = CalendarDateViewModel();
