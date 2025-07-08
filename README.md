@@ -40,14 +40,15 @@
 ## 기능
 
 ### 목표 생성 및 수정
-날짜 셀을 눌러 기록을 토글하고, 설정 버튼을 통해 목표 수정 및 삭제 등의 동작을 수행할 수 있습니다. <br/>
+날짜 셀을 눌러 목표 달성 여부를 토글하고, 설정 버튼을 통해 목표 수정, 삭제, 순서 변경 등의 동작을 수행할 수 있습니다. <br/>
 목표 입력 화면에서 이탈 시, 입력한 내용이 저장되지 않는다는 점을 알리는 안내 다이얼로그가 표시됩니다. 저장 후에는 자동으로 캘린더 뷰로 돌아갑니다.
+
 
 <br/>
 
-| 목표 수정 중 이탈 알림 | 목표 생성 | 목표 수정 |
+| 목표 생성 | 목표 수정 중 이탈 알림 | 목표 순서 변경 |
 | --- | --- | --- | 
-| <img src="https://github.com/user-attachments/assets/8e1729e3-d1a5-496c-9a9c-5261433f9558" width="260"/> | <img src="https://github.com/user-attachments/assets/d10dd2c1-4099-4e1b-a3c8-1ea8f50dc57c" width="260"/> | <img src="https://github.com/user-attachments/assets/174c3f30-a383-4580-a765-ef3fad6c2ad1" width="260"/> |
+| <img src="https://github.com/user-attachments/assets/d10dd2c1-4099-4e1b-a3c8-1ea8f50dc57c" width="260"/> | <img src="https://github.com/user-attachments/assets/8e1729e3-d1a5-496c-9a9c-5261433f9558" width="260"/> | <img src="https://github.com/user-attachments/assets/57c90092-efc3-4434-882a-877f86116017" width="260"/> |
 
 <br/>
 
