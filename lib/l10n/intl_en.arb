@@ -143,5 +143,11 @@
     "@editGoalPrompt": {
         "description": "A prompt shown when the user is editing an existing goal",
         "type": "text"
-    }
+    },
+      
+    "reorderGoals": "Reorder Goals",
+        "@reorderGoals": {
+            "description": "Title or label for the screen where users can change the order of their goals",
+            "type": "text"
+        }
 }
