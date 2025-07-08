@@ -133,6 +133,9 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
       case GoalSettingAction.editGoalTitle:
         await onEditGoalTitlePressed(context, goal);
         break;
+      case GoalSettingAction.reorderGoal:
+        await reorderGoals(context, replaceToGoalCalendar: true);
+        break;
       case GoalSettingAction.resetRecordsOnly:
         await handleResetRecordsOnly(context, goal);
         break;

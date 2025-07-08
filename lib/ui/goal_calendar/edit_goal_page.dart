@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
+import 'package:haenaedda/theme/buttons.dart';
 import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
-import 'package:haenaedda/ui/settings/handlers/edit_goal_handler.dart';
+import 'package:haenaedda/ui/settings/handlers/discard_changes_handler.dart';
+import 'package:haenaedda/ui/widgets/discard_aware_close_button.dart';
 import 'package:haenaedda/view_models/goal_view_models.dart';
 
 class EditGoalPage extends StatefulWidget {
@@ -30,15 +32,8 @@ class _EditGoalPageState extends State<EditGoalPage> {
   void initState() {
     super.initState();
     _controller.text = widget.initialText ?? '';
-    _isButtonEnabled = _controller.text.trim().isNotEmpty &&
-        _controller.text.trim() != (widget.initialText ?? '').trim();
-    _controller.addListener(() {
-      final trimmed = _controller.text.trim();
-      setState(() {
-        _isButtonEnabled =
-            trimmed.isNotEmpty && trimmed != (widget.initialText ?? '').trim();
-      });
-    });
+    _updateButtonEnabled();
+    _controller.addListener(_updateButtonEnabled);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
@@ -55,12 +50,17 @@ class _EditGoalPageState extends State<EditGoalPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
+
+    final original = widget.initialText?.trim() ?? '';
+    final current = _controller.text.trim();
+    final isDirty = current.isNotEmpty && current != original;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop || _isDiscardCheckInProgress) return;
         _isDiscardCheckInProgress = true;
-        await _handlePop(context);
+        await DiscardChangesHandler.maybePopWithDiscardCheck(context, isDirty);
         _isDiscardCheckInProgress = false;
       },
       child: GestureDetector(
@@ -80,10 +80,7 @@ class _EditGoalPageState extends State<EditGoalPage> {
                   (goalViewModel) => goalViewModel.hasNoGoal,
                 );
                 if (hasNoGoal) return const SizedBox.shrink();
-                return IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => _handlePop(context),
-                );
+                return DiscardAwareCloseButton(hasUnsavedChanges: isDirty);
               },
             ),
             actions: [
@@ -96,21 +93,10 @@ class _EditGoalPageState extends State<EditGoalPage> {
                         ));
                       }
                     : null,
-                style: ButtonStyle(
-                  splashFactory: NoSplash.splashFactory,
-                  overlayColor: WidgetStateProperty.all(Colors.transparent),
-                  foregroundColor:
-                      WidgetStateProperty.all(colorScheme.onSurface),
-                ),
+                style: getAppbarButtonStyle(context),
                 child: Text(
                   widget.mode == GoalEditMode.create ? l10n.add : l10n.save,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: _isButtonEnabled
-                        ? colorScheme.onSurface
-                        : colorScheme.outline,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: getAppbarButtonTextStyle(context, _isButtonEnabled),
                 ),
               ),
             ],
@@ -159,17 +145,7 @@ class _EditGoalPageState extends State<EditGoalPage> {
                           keyboardType: TextInputType.text,
                           onSubmitted: (_) => FocusScope.of(context).unfocus(),
                           focusNode: _focusNode,
-                          onChanged: (value) {
-                            setState(() {
-                              final trimmed = value.trim();
-                              final original =
-                                  (widget.initialText ?? '').trim();
-                              setState(() {
-                                _isButtonEnabled =
-                                    trimmed.isNotEmpty && trimmed != original;
-                              });
-                            });
-                          },
+                          onChanged: (_) => _updateButtonEnabled(),
                         ),
                       ),
                     ],
@@ -183,19 +159,11 @@ class _EditGoalPageState extends State<EditGoalPage> {
     );
   }
 
-  Future<void> _handlePop(BuildContext context) async {
-    final original = widget.initialText?.trim() ?? '';
-    final current = _controller.text.trim();
-    final isDirty = current.isNotEmpty && current != original;
-
-    if (!isDirty) {
-      if (context.mounted) Navigator.of(context).pop();
-      return;
-    }
-
-    final confirmed = await confirmDiscardChanges(context);
-    if (context.mounted && confirmed == true) {
-      Navigator.of(context).pop();
-    }
+  void _updateButtonEnabled() {
+    final trimmed = _controller.text.trim();
+    final original = (widget.initialText ?? '').trim();
+    setState(() {
+      _isButtonEnabled = trimmed.isNotEmpty && trimmed != original;
+    });
   }
 }

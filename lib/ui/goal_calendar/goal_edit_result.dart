@@ -1,4 +1,4 @@
-enum GoalEditMode { create, update }
+enum GoalEditMode { create, update, order }
 
 class GoalEditResult {
   final String title;

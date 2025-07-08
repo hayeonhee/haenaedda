@@ -70,6 +70,19 @@ class GoalViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateGoalOrder(List<Goal> reorderedGoals) async {
+    for (int i = 0; i < reorderedGoals.length; i++) {
+      reorderedGoals[i].order = (i + 1) * _orderStep;
+    }
+    _goals
+      ..clear()
+      ..addAll(reorderedGoals);
+
+    _syncSortedGoals();
+    await saveAllGoals();
+    notifyListeners();
+  }
+
   Future<({AddGoalResult result, Goal? goal})> addGoal(String title) async {
     final trimmedTitle = title.trim();
     if (trimmedTitle.isEmpty) {

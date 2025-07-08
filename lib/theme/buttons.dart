@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:haenaedda/theme/app_colors.dart';
 
-ButtonStyle _getTextButtonStyle({
+ButtonStyle getTextButtonStyle({
   required Color backgroundColor,
   required Color foregroundColor,
 }) {
@@ -32,7 +32,7 @@ ButtonStyle getPrimaryButtonStyle(BuildContext context) {
       isDark ? AppColors.darkSecondary : AppColors.secondary;
   final foregroundColor =
       isDark ? AppColors.darkOnSecondary : AppColors.onSecondary;
-  return _getTextButtonStyle(
+  return getTextButtonStyle(
     backgroundColor: backgroundColor,
     foregroundColor: foregroundColor,
   );
@@ -47,7 +47,7 @@ ButtonStyle getNeutralButtonStyle(BuildContext context) {
       : AppColors.surfaceContainerLow;
   final foregroundColor =
       isDark ? AppColors.darkOnSurface : AppColors.onSurfaceVariant;
-  return _getTextButtonStyle(
+  return getTextButtonStyle(
     backgroundColor: backgroundColor,
     foregroundColor: foregroundColor,
   );
@@ -59,7 +59,7 @@ ButtonStyle getDestructiveButtonStyle(BuildContext context) {
       isDark ? AppColors.darkError : AppColors.errorContainer;
   final foregroundColor =
       isDark ? AppColors.darkOnError : AppColors.onErrorContainer;
-  return _getTextButtonStyle(
+  return getTextButtonStyle(
     backgroundColor: backgroundColor,
     foregroundColor: foregroundColor,
   );
@@ -71,4 +71,22 @@ TextStyle getButtonTextStyle({
   FontWeight fontWeight = FontWeight.bold,
 }) {
   return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color);
+}
+
+ButtonStyle getAppbarButtonStyle(BuildContext context) {
+  return ButtonStyle(
+    splashFactory: NoSplash.splashFactory,
+    overlayColor: WidgetStateProperty.all(Colors.transparent),
+    foregroundColor:
+        WidgetStateProperty.all(Theme.of(context).colorScheme.onSurface),
+  );
+}
+
+TextStyle getAppbarButtonTextStyle(BuildContext context, bool isButtonEnabled) {
+  final colorScheme = Theme.of(context).colorScheme;
+  return TextStyle(
+    fontSize: 18,
+    color: isButtonEnabled ? colorScheme.onSurface : colorScheme.outline,
+    fontWeight: FontWeight.w600,
+  );
 }

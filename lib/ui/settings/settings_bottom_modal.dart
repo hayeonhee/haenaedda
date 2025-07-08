@@ -32,6 +32,11 @@ class SettingsBottomModal extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 NeumorphicSettingsTile(
+                  title: l10n.reorderGoals,
+                  onTap: () =>
+                      Navigator.of(context).pop(GoalSettingAction.reorderGoal),
+                ),
+                NeumorphicSettingsTile(
                   title: l10n.editCurrentGoal,
                   onTap: () => Navigator.of(context)
                       .pop(GoalSettingAction.editGoalTitle),
