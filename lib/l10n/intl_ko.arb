@@ -105,17 +105,17 @@
         "description": "Label for a button that adds a new goal or item",
         "type": "text"
     },
-    "unsavedChanges": "작성 중인 내용이 있어요",
+    "unsavedChanges": "저장되지 않은 변경사항이 있어요",
     "@unsavedChanges": {
         "description": "Alert dialog title shown when the user tries to leave a form without saving",
         "type": "text"
     },
-    "unsavedChangesMessage": "이대로 닫으면 입력한 내용은 저장되지 않아요.",
+    "unsavedChangesMessage": "이대로 나가면 변경한 내용이 모두 사라져요.",
     "@unsavedChangesMessage": {
         "description": "Alert dialog content shown when user is about to discard unsaved input",
         "type": "text"
     },
-    "keepEditing": "계속 작성",
+    "keepEditing": "계속 편집",
     "@keepEditing": {
         "description": "Button label to continue editing and stay on the current screen",
         "type": "text"
