@@ -28,9 +28,10 @@ ButtonStyle _getTextButtonStyle({
 /// Example: When the user is expected to proceed or submit data.
 ButtonStyle getPrimaryButtonStyle(BuildContext context) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
-  final backgroundColor = isDark ? AppColors.darkPrimary : AppColors.primary;
+  final backgroundColor =
+      isDark ? AppColors.darkSecondary : AppColors.secondary;
   final foregroundColor =
-      isDark ? AppColors.darkOnPrimary : AppColors.onPrimary;
+      isDark ? AppColors.darkOnSecondary : AppColors.onSecondary;
   return _getTextButtonStyle(
     backgroundColor: backgroundColor,
     foregroundColor: foregroundColor,
@@ -41,10 +42,11 @@ ButtonStyle getPrimaryButtonStyle(BuildContext context) {
 /// Example: When the action is not destructive and not the main flow.
 ButtonStyle getNeutralButtonStyle(BuildContext context) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
-  final backgroundColor =
-      isDark ? AppColors.darkSurfaceContainer : AppColors.surfaceContainer;
+  final backgroundColor = isDark
+      ? AppColors.darkSurfaceContainerHigh
+      : AppColors.surfaceContainerLow;
   final foregroundColor =
-      isDark ? AppColors.darkOnSurface : AppColors.onSurface;
+      isDark ? AppColors.darkOnSurface : AppColors.onSurfaceVariant;
   return _getTextButtonStyle(
     backgroundColor: backgroundColor,
     foregroundColor: foregroundColor,
