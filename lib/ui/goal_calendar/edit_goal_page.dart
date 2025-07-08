@@ -182,20 +182,4 @@ class _EditGoalPageState extends State<EditGoalPage> {
       ),
     );
   }
-
-  Future<void> _handlePop(BuildContext context) async {
-    final original = widget.initialText?.trim() ?? '';
-    final current = _controller.text.trim();
-    final isDirty = current.isNotEmpty && current != original;
-
-    if (!isDirty) {
-      if (context.mounted) Navigator.of(context).pop();
-      return;
-    }
-
-    final confirmed = await confirmDiscardChanges(context);
-    if (context.mounted && confirmed == true) {
-      Navigator.of(context).pop();
-    }
-  }
 }
