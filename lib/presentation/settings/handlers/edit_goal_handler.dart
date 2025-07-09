@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/ui/settings/reorder_goals_page.dart';
+import 'package:haenaedda/presentation/settings/reorder_goals_page.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/model/goal.dart';
-import 'package:haenaedda/ui/goal_calendar/edit_goal_page.dart';
-import 'package:haenaedda/ui/goal_calendar/goal_calendar_page.dart';
-import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
-import 'package:haenaedda/view_models/goal_result.dart';
-import 'package:haenaedda/view_models/goal_view_models.dart';
+import 'package:haenaedda/presentation/goal_calendar/edit_goal_page.dart';
+import 'package:haenaedda/presentation/goal_calendar/goal_calendar_page.dart';
+import 'package:haenaedda/presentation/goal_calendar/goal_edit_result.dart';
+import 'package:haenaedda/presentation/view_models/goal_result.dart';
+import 'package:haenaedda/presentation/view_models/goal_view_models.dart';
 
 Future<(AddGoalResult, Goal?)> showAddGoalFlow(
   BuildContext context, {

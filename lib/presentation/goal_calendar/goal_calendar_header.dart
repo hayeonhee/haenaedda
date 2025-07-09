@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/model/goal.dart';
-import 'package:haenaedda/ui/goal_calendar/month_navigation_bar.dart';
-import 'package:haenaedda/view_models/goal_view_models.dart';
+import 'package:haenaedda/presentation/goal_calendar/month_navigation_bar.dart';
+import 'package:haenaedda/presentation/view_models/goal_view_models.dart';
 
 class GoalCalendarHeader extends StatelessWidget {
   final Goal goal;

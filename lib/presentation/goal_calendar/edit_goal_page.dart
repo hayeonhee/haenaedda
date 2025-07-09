@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/theme/buttons.dart';
-import 'package:haenaedda/ui/goal_calendar/goal_edit_result.dart';
-import 'package:haenaedda/ui/settings/handlers/discard_changes_handler.dart';
-import 'package:haenaedda/ui/widgets/discard_aware_close_button.dart';
-import 'package:haenaedda/view_models/goal_view_models.dart';
+import 'package:haenaedda/presentation/goal_calendar/goal_edit_result.dart';
+import 'package:haenaedda/presentation/settings/handlers/discard_changes_handler.dart';
+import 'package:haenaedda/presentation/widgets/discard_aware_close_button.dart';
+import 'package:haenaedda/presentation/view_models/goal_view_models.dart';
 
 class EditGoalPage extends StatefulWidget {
   final String? initialText;
