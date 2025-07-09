@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:haenaedda/constants/storage_keys.dart';
-import 'package:haenaedda/model/date_record_set.dart';
+import 'package:haenaedda/domain/entities/date_record_set.dart';
 
 class RecordViewModel extends ChangeNotifier {
   final Map<String, DateRecordSet> _recordsByGoalId = {};

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:haenaedda/domain/entities/goal.dart';
+import 'package:haenaedda/domain/enums/goal_setting_action.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
-import 'package:haenaedda/model/goal.dart';
-import 'package:haenaedda/model/goal_setting_action.dart';
-import 'package:haenaedda/presentation/pages/goal_calendar/goal_pager.dart';
 import 'package:haenaedda/presentation/handlers/edit_goal_handler.dart';
 import 'package:haenaedda/presentation/handlers/reset_goal_handler.dart';
+import 'package:haenaedda/presentation/pages/goal_calendar/goal_pager.dart';
 import 'package:haenaedda/presentation/pages/settings/settings_bottom_modal.dart';
-import 'package:haenaedda/presentation/widgets/bottom_right_button.dart';
 import 'package:haenaedda/presentation/view_models/goal_view_models.dart';
 import 'package:haenaedda/presentation/view_models/record_view_model.dart';
+import 'package:haenaedda/presentation/widgets/bottom_right_button.dart';
 
 class GoalCalendarPage extends StatefulWidget {
   const GoalCalendarPage({super.key});

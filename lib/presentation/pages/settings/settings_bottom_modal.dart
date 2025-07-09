@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:haenaedda/constants/dimensions.dart';
+import 'package:haenaedda/domain/entities/goal.dart';
+import 'package:haenaedda/domain/enums/goal_setting_action.dart';
+import 'package:haenaedda/domain/enums/reset_type.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
-import 'package:haenaedda/model/goal.dart';
-import 'package:haenaedda/model/goal_setting_action.dart';
-import 'package:haenaedda/model/reset_type.dart';
 import 'package:haenaedda/presentation/handlers/reset_goal_handler.dart';
 import 'package:haenaedda/presentation/pages/settings/neumorphic_settings_tile.dart';
 import 'package:haenaedda/presentation/widgets/bottom_right_button.dart';

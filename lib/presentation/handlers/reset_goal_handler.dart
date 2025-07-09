@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:haenaedda/domain/entities/goal.dart';
+import 'package:haenaedda/domain/enums/goal_operation_result.dart';
+import 'package:haenaedda/domain/enums/reset_type.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
-import 'package:haenaedda/model/goal.dart';
-import 'package:haenaedda/model/reset_type.dart';
-import 'package:haenaedda/theme/buttons.dart';
 import 'package:haenaedda/presentation/pages/goal_calendar/goal_calendar_page.dart';
-import 'package:haenaedda/presentation/view_models/goal_result.dart';
 import 'package:haenaedda/presentation/view_models/goal_view_models.dart';
 import 'package:haenaedda/presentation/view_models/record_view_model.dart';
+import 'package:haenaedda/theme/buttons.dart';
 
 Future<void> showResetFailureDialog(BuildContext context, ResetType type) {
   final l10n = AppLocalizations.of(context)!;

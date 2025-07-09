@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:haenaedda/constants/storage_keys.dart';
-import 'package:haenaedda/model/goal.dart';
+import 'package:haenaedda/domain/entities/goal.dart';
 import 'package:haenaedda/extensions/iterable_extensions.dart';
-import 'package:haenaedda/presentation/view_models/goal_result.dart';
+import 'package:haenaedda/domain/enums/goal_operation_result.dart';
 
 class GoalViewModel extends ChangeNotifier {
   final List<Goal> _goals = [];
