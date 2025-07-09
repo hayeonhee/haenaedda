@@ -8,6 +8,7 @@ import 'package:haenaedda/presentation/handlers/edit_goal_handler.dart';
 import 'package:haenaedda/presentation/handlers/reset_goal_handler.dart';
 import 'package:haenaedda/presentation/pages/goal_calendar/goal_pager.dart';
 import 'package:haenaedda/presentation/pages/settings/settings_bottom_modal.dart';
+import 'package:haenaedda/presentation/view_models/goal_scroll_focus_manager.dart';
 import 'package:haenaedda/presentation/view_models/goal_view_models.dart';
 import 'package:haenaedda/presentation/view_models/record_view_model.dart';
 import 'package:haenaedda/presentation/widgets/bottom_right_button.dart';
@@ -152,8 +153,9 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
 
   void _scrollToFocusedGoalIfNeeded() {
     final goalViewModel = context.read<GoalViewModel>();
-    final focusedGoal = goalViewModel.focusedGoalForScroll;
-    final shouldScroll = goalViewModel.shouldScrollToFocusedPage;
+    final scrollFocusManager = context.read<GoalScrollFocusManager>();
+    final focusedGoal = scrollFocusManager.focusedGoal;
+    final shouldScroll = scrollFocusManager.shouldScroll;
 
     if (focusedGoal != null && shouldScroll) {
       final index =
@@ -163,7 +165,7 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
 
       _pageController.jumpToPage(index);
       _currentPageIndex = index;
-      goalViewModel.clearFocusedGoalForScroll();
+      scrollFocusManager.clear();
     }
   }
 }

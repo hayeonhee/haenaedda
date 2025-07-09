@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haenaedda/presentation/view_models/goal_scroll_focus_manager.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/domain/entities/goal.dart';
@@ -14,6 +15,7 @@ Future<(AddGoalResult, Goal?)> showAddGoalFlow(
   bool replaceToGoalCalendar = false,
 }) async {
   final goalViewModel = context.read<GoalViewModel>();
+  final scrollFocusManager = context.read<GoalScrollFocusManager>();
   final result = await Navigator.push<GoalEditResult>(
     context,
     MaterialPageRoute(
@@ -29,7 +31,7 @@ Future<(AddGoalResult, Goal?)> showAddGoalFlow(
       await goalViewModel.addGoal(trimmedTitle);
 
   if (addResult == AddGoalResult.success && newGoal != null) {
-    goalViewModel.setFocusedGoalForScroll(newGoal);
+    scrollFocusManager.set(newGoal);
     if (replaceToGoalCalendar) {
       Navigator.pushReplacement(
         context,
@@ -42,6 +44,7 @@ Future<(AddGoalResult, Goal?)> showAddGoalFlow(
 
 Future<String?> onEditGoalTitlePressed(BuildContext context, Goal goal) async {
   final goalViewModel = context.read<GoalViewModel>();
+  final scrollFocusManager = context.read<GoalScrollFocusManager>();
   final result = await Navigator.of(context).push<GoalEditResult>(
     MaterialPageRoute(
       builder: (_) => EditGoalPage(
@@ -68,7 +71,7 @@ Future<String?> onEditGoalTitlePressed(BuildContext context, Goal goal) async {
       break;
     case RenameGoalResult.success:
       if (renamedGoal != null) {
-        goalViewModel.setFocusedGoalForScroll(renamedGoal);
+        scrollFocusManager.set(renamedGoal);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const GoalCalendarPage()),

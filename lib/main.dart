@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:haenaedda/data/repositories/goal_local_repository.dart';
+import 'package:haenaedda/data/sources/local/goal_local_data_source.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
@@ -22,9 +24,11 @@ Future<void> main() async {
     final file = File('error_log.txt');
     await file.writeAsString(log, mode: FileMode.append);
   };
+  final goalDataSource = GoalLocalDataSource();
+  final goalRepository = GoalLocalRepository(goalDataSource);
+  final goalViewModel = GoalViewModel(goalRepository);
 
   final recordViewModel = RecordViewModel();
-  final goalViewModel = GoalViewModel();
   final calendarMonthViewModel = CalendarDateViewModel();
   await recordViewModel.loadData();
   await goalViewModel.loadData();

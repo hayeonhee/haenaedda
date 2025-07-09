@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haenaedda/presentation/view_models/goal_scroll_focus_manager.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/domain/entities/goal.dart';
@@ -168,6 +169,7 @@ Future<void> handleResetRecordsOnly(BuildContext context, Goal goal) async {
 Future<void> handleResetEntireGoal(BuildContext context, Goal goal) async {
   final goalViewModel = context.read<GoalViewModel>();
   final recordViewModel = context.read<RecordViewModel>();
+  final scrollFocusManager = context.read<GoalScrollFocusManager>();
   final removedGoalIndex =
       goalViewModel.getNextFocusGoalIndexAfterRemoval(goal.id);
   final isGoalReset = await goalViewModel.resetEntireGoal(goal.id);
@@ -180,7 +182,7 @@ Future<void> handleResetEntireGoal(BuildContext context, Goal goal) async {
         if (removedGoalIndex != null &&
             removedGoalIndex < goalViewModel.sortedGoals.length) {
           final nextGoal = goalViewModel.sortedGoals[removedGoalIndex];
-          goalViewModel.setFocusedGoalForScroll(nextGoal);
+          scrollFocusManager.set(nextGoal);
         }
         if (!context.mounted) return;
         Navigator.pushReplacement(
