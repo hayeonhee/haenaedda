@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:haenaedda/presentation/settings/handlers/edit_goal_handler.dart';
+import 'package:haenaedda/presentation/handlers/edit_goal_handler.dart';
 import 'package:haenaedda/presentation/widgets/loading_indicator.dart';
 
 class AddFirstGoalFlow extends StatefulWidget {

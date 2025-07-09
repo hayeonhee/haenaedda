@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/presentation/settings/handlers/discard_changes_handler.dart';
+import 'package:haenaedda/presentation/handlers/discard_changes_handler.dart';
 
 class DiscardAwareCloseButton extends StatelessWidget {
   final bool hasUnsavedChanges;

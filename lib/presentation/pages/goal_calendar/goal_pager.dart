@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:haenaedda/model/goal.dart';
-import 'package:haenaedda/presentation/goal_calendar/goal_calendar_content.dart';
+import 'package:haenaedda/presentation/pages/goal_calendar/goal_calendar_content.dart';
 
 class GoalPager extends StatelessWidget {
   final List<Goal> goals;

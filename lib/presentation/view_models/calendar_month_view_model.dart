@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/utils/extensions/date_compare_extension.dart';
+import 'package:haenaedda/extensions/date_compare_extension.dart';
 
 class CalendarDateViewModel with ChangeNotifier {
   late final DateTime _initialVisibleDate;

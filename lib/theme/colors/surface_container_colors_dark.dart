@@ -1,4 +1,4 @@
-import 'package:haenaedda/theme/app_colors.dart';
+import 'package:haenaedda/theme/colors/app_colors.dart';
 import 'package:haenaedda/theme/extensions/surface_container_colors.dart';
 
 const darkSurfaceContainerColors = SurfaceContainerColors(

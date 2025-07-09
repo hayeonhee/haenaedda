@@ -5,7 +5,7 @@ import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/model/goal.dart';
 import 'package:haenaedda/model/reset_type.dart';
 import 'package:haenaedda/theme/buttons.dart';
-import 'package:haenaedda/presentation/goal_calendar/goal_calendar_page.dart';
+import 'package:haenaedda/presentation/pages/goal_calendar/goal_calendar_page.dart';
 import 'package:haenaedda/presentation/view_models/goal_result.dart';
 import 'package:haenaedda/presentation/view_models/goal_view_models.dart';
 import 'package:haenaedda/presentation/view_models/record_view_model.dart';

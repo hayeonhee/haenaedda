@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/theme/app_theme.dart';
-import 'package:haenaedda/presentation/launcher/launcher_page.dart';
+import 'package:haenaedda/presentation/pages/launcher/launcher_page.dart';
 import 'package:haenaedda/presentation/view_models/calendar_month_view_model.dart';
 import 'package:haenaedda/presentation/view_models/goal_view_models.dart';
 import 'package:haenaedda/presentation/view_models/record_view_model.dart';

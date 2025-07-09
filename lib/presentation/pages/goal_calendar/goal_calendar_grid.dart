@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/model/calendar_grid_layout.dart';
-import 'package:haenaedda/presentation/goal_calendar/empty_cell.dart';
+import 'package:haenaedda/presentation/pages/goal_calendar/empty_cell.dart';
 import 'package:haenaedda/presentation/view_models/calendar_month_view_model.dart';
 
 class GoalCalendarGrid extends StatelessWidget {
