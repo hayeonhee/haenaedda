@@ -24,13 +24,16 @@ class RecordLocalDataSource implements RecordDataSource {
 
       for (final key in recordKeys) {
         final dates = prefs.getString(key);
-        if (dates == null) continue;
+        if (dates == null) {
+          debugPrint('$runtimeType.loadRecords failed: $key: no dates found');
+          continue;
+        }
         final goalId = key.substring(StorageKeys.record.length);
         recordsByGoalId[goalId] = DateRecordSet.fromJson(dates);
       }
       return RecordMap(recordsByGoalId);
     } catch (e) {
-      debugPrint('[RecordDataSource] Failed to load records: $e');
+      debugPrint('$runtimeType.loadRecords failed: $e');
       return RecordMap();
     }
   }
@@ -43,14 +46,17 @@ class RecordLocalDataSource implements RecordDataSource {
     try {
       final prefs = await _sharedPrefsFuture;
       final recordSet = records[goalId];
-      if (recordSet == null || recordSet.dateKeys.isEmpty) return false;
+      if (recordSet == null || recordSet.dateKeys.isEmpty) {
+        debugPrint('$runtimeType.saveRecords failed: $goalId: no record set');
+        return false;
+      }
 
       final json = recordSet.toJson();
       final key = '${StorageKeys.record}$goalId';
       final isSuccess = await prefs.setString(key, json);
       return isSuccess;
     } catch (e) {
-      debugPrint('[RecordDataSource] Failed to save records for $goalId: $e');
+      debugPrint('$runtimeType.saveRecords failed for $goalId: $e');
       return false;
     }
   }
@@ -66,13 +72,13 @@ class RecordLocalDataSource implements RecordDataSource {
       final isSuccess = await prefs.remove(key);
       return isSuccess;
     } catch (e) {
-      debugPrint('[RecordDataSource] Failed to remove records for $goalId: $e');
+      debugPrint('$runtimeType.removeRecords failed for $goalId: $e');
       return false;
     }
   }
 
   @override
-  Future<void> resetAllRecords() async {
+  Future<bool> resetAllRecords() async {
     try {
       final prefs = await _sharedPrefsFuture;
       final keys = prefs.getKeys();
@@ -80,10 +86,16 @@ class RecordLocalDataSource implements RecordDataSource {
           keys.where((key) => key.startsWith(StorageKeys.record));
 
       for (final key in recordKeys) {
-        await prefs.remove(key);
+        final removed = await prefs.remove(key);
+        if (!removed) {
+          debugPrint('$runtimeType.resetAllRecords failed to remove key: $key');
+          return false;
+        }
       }
+      return true;
     } catch (e) {
-      debugPrint('[RecordDataSource] Failed to reset all records: $e');
+      debugPrint('$runtimeType.resetAllRecords failed: $e');
+      return false;
     }
   }
 }

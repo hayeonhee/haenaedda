@@ -4,5 +4,5 @@ abstract class RecordDataSource {
   Future<RecordMap> loadRecords();
   Future<bool> saveRecords(String goalId, RecordMap records);
   Future<bool> removeRecords(String goalId, RecordMap records);
-  Future<void> resetAllRecords();
+  Future<bool> resetAllRecords();
 }

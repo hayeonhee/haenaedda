@@ -19,14 +19,17 @@ class GoalLocalDataSource implements GoalDataSource {
     try {
       final prefs = await _sharedPrefsFuture;
       final loadedGoalsJson = prefs.getString(StorageKeys.goals);
-      if (loadedGoalsJson == null) return [];
+      if (loadedGoalsJson == null) {
+        debugPrint('$runtimeType.loadGoals: no goals found');
+        return [];
+      }
 
       final decoded = jsonDecode(loadedGoalsJson);
       return (decoded as List)
           .map((e) => Goal.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      debugPrint('Failed to load goals: $e');
+      debugPrint('$runtimeType.loadGoals failed: $e');
       return [];
     }
   }
@@ -41,7 +44,7 @@ class GoalLocalDataSource implements GoalDataSource {
           await prefs.setString(StorageKeys.goals, updatedGoalsJson);
       return isSaved;
     } catch (e) {
-      debugPrint('Failed to remove goal $goalId: $e');
+      debugPrint('$runtimeType.removeGoal failed for $goalId: $e');
       return false;
     }
   }
@@ -56,6 +59,7 @@ class GoalLocalDataSource implements GoalDataSource {
           await prefs.setString(StorageKeys.goals, encodedGoalsJson);
       return isSaved;
     } catch (error) {
+      debugPrint('$runtimeType.saveGoals failed: $error');
       return false;
     }
   }
@@ -64,16 +68,15 @@ class GoalLocalDataSource implements GoalDataSource {
   Future<bool> resetAllGoals() async {
     try {
       final prefs = await _sharedPrefsFuture;
-      final keysToRemove = prefs.getKeys().where(
-            (k) => k.startsWith(StorageKeys.record),
-          );
+      final keysToRemove =
+          prefs.getKeys().where((k) => k.startsWith(StorageKeys.record));
       for (final key in keysToRemove) {
         await prefs.remove(key);
       }
       await prefs.remove(StorageKeys.goals);
       return true;
     } catch (e) {
-      debugPrint('resetAllGoals failed: $e');
+      debugPrint('$runtimeType.resetAllGoals failed: $e');
       return false;
     }
   }
