@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:haenaedda/common/utils/goal_list_helper.dart';
 import 'package:haenaedda/domain/entities/goal.dart';
 import 'package:haenaedda/domain/enums/goal_operation_result.dart';
 import 'package:haenaedda/domain/repositories/goal_repository.dart';
 import 'package:haenaedda/extensions/iterable_extensions.dart';
-import 'package:haenaedda/utils/goal_list_helper.dart';
 
 class GoalViewModel extends ChangeNotifier {
   final GoalRepository _goalRepository;
