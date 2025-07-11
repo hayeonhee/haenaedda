@@ -5,12 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
+import 'package:haenaedda/data/repositories/goal_local_repository.dart';
+import 'package:haenaedda/data/repositories/record_local_repository.dart';
+import 'package:haenaedda/data/sources/local/goal_local_data_source.dart';
+import 'package:haenaedda/data/sources/local/record_local_data_source.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
+import 'package:haenaedda/presentation/pages/launcher/launcher_page.dart';
+import 'package:haenaedda/presentation/view_models/calendar_month_view_model.dart';
+import 'package:haenaedda/presentation/view_models/goal_scroll_focus_manager.dart';
+import 'package:haenaedda/presentation/view_models/goal_view_models.dart';
+import 'package:haenaedda/presentation/view_models/record_view_model.dart';
 import 'package:haenaedda/theme/app_theme.dart';
-import 'package:haenaedda/ui/launcher/launcher_page.dart';
-import 'package:haenaedda/view_models/calendar_month_view_model.dart';
-import 'package:haenaedda/view_models/goal_view_models.dart';
-import 'package:haenaedda/view_models/record_view_model.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,12 +27,19 @@ Future<void> main() async {
     final file = File('error_log.txt');
     await file.writeAsString(log, mode: FileMode.append);
   };
+  final goalDataSource = GoalLocalDataSource();
+  final goalRepository = GoalLocalRepository(goalDataSource);
+  final goalViewModel = GoalViewModel(goalRepository);
 
-  final recordViewModel = RecordViewModel();
-  final goalViewModel = GoalViewModel();
+  final recordDataSource = RecordLocalDataSource();
+  final recordRepository = RecordLocalRepository(recordDataSource);
+  final recordViewModel = RecordViewModel(recordRepository);
+
   final calendarMonthViewModel = CalendarDateViewModel();
-  await recordViewModel.loadData();
+  final goalScrollFocusManager = GoalScrollFocusManager();
+
   await goalViewModel.loadData();
+  await recordViewModel.loadData();
 
   runApp(
     MultiProvider(
@@ -40,7 +52,10 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider<CalendarDateViewModel>.value(
           value: calendarMonthViewModel,
-        )
+        ),
+        ChangeNotifierProvider<GoalScrollFocusManager>.value(
+          value: goalScrollFocusManager,
+        ),
       ],
       child: const Haenaedda(),
     ),

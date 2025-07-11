@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/theme/app_colors.dart';
+import 'package:haenaedda/theme/colors/app_colors.dart';
 
 ButtonStyle getTextButtonStyle({
   required Color backgroundColor,
