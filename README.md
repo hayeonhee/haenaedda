@@ -266,9 +266,9 @@
 | 사용 방법 | 목적 및 사용 시점 | 사용 예시 | 
 | --- | --- | --- |
 | `read<T>()` | 콜백 내부에서 상태만 읽고 UI는 반응할 필요 없을 때 | `toggleRecord(goalId, date)` | 
-| `watch<T>()` | 전체 위젯이 상태 변경에 반응해야 할 때 | `watch\<CalendarDateViewModel>();` |
+| `watch<T>()` | 전체 위젯이 상태 변경에 반응해야 할 때 | `watch<CalendarDateViewModel>();` |
 | `select<T, R>()` | 상태의 특정 필드만 구독하고 싶을 때 | `select<RecordViewModel, Goal?>((vm) => vm.getGoalById(id));` |
-| `Selector<T, R>()` | 특정 하위 위젯 단위에서만 리빌드가 필요할 때 | `Selector<RecordViewModel, bool>(..)1 |
+| `Selector<T, R>()` | 특정 하위 위젯 단위에서만 리빌드가 필요할 때 | `Selector<RecordViewModel, bool>(..)` |
 
 <br/>
 <br/>
