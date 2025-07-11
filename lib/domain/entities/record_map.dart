@@ -13,6 +13,8 @@ class RecordMap {
     _map[goalId] = record;
   }
 
+  void addAll(RecordMap other) => _map.addAll(other._map);
+
   bool contains(String goalId) => _map.containsKey(goalId);
 
   void remove(String goalId) => _map.remove(goalId);
@@ -21,7 +23,7 @@ class RecordMap {
     return _map.putIfAbsent(goalId, ifAbsent);
   }
 
-  Map<String, DateRecordSet> get raw => _map;
+  void clear() => _map.clear();
 
   UnmodifiableMapView<String, DateRecordSet> get asReadOnlyMap =>
       UnmodifiableMapView(_map);

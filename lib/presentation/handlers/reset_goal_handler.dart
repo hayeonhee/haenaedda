@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:haenaedda/presentation/view_models/goal_scroll_focus_manager.dart';
 import 'package:provider/provider.dart';
 
 import 'package:haenaedda/domain/entities/goal.dart';
@@ -7,6 +6,7 @@ import 'package:haenaedda/domain/enums/goal_operation_result.dart';
 import 'package:haenaedda/domain/enums/reset_type.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/presentation/pages/goal_calendar/goal_calendar_page.dart';
+import 'package:haenaedda/presentation/view_models/goal_scroll_focus_manager.dart';
 import 'package:haenaedda/presentation/view_models/goal_view_models.dart';
 import 'package:haenaedda/presentation/view_models/record_view_model.dart';
 import 'package:haenaedda/theme/buttons.dart';
@@ -191,7 +191,7 @@ Future<void> handleResetEntireGoal(BuildContext context, Goal goal) async {
         );
       } else {
         final remainingGoalIds = goalViewModel.goals.map((g) => g.id).toList();
-        await recordViewModel.removeAllUnlinkedRecords(remainingGoalIds);
+        await recordViewModel.removeUnlinkedRecords(remainingGoalIds);
       }
       break;
     case ResetEntireGoalResult.recordFailed:
@@ -211,7 +211,7 @@ Future<void> handleResetAllGoals(BuildContext context) async {
   switch (result) {
     case ResetAllGoalsResult.success:
       final remainingGoalIds = goalViewModel.goals.map((g) => g.id).toList();
-      await recordViewModel.removeAllUnlinkedRecords(remainingGoalIds);
+      await recordViewModel.removeUnlinkedRecords(remainingGoalIds);
       if (!context.mounted) return;
       Navigator.pushReplacement(
         context,

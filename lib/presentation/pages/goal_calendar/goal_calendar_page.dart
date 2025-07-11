@@ -83,7 +83,7 @@ class _GoalCalendarPageState extends State<GoalCalendarPage> {
               onCellTap: (goalId, date) {
                 final recordViewModel = context.read<RecordViewModel>();
                 recordViewModel.toggleRecord(goalId, date);
-                recordViewModel.saveRecordsDebounced(goalId);
+                recordViewModel.scheduleDebouncedSave(goalId);
               },
               onPageChanged: (index) {
                 _currentPageIndex = index;

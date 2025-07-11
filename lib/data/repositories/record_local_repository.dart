@@ -23,6 +23,13 @@ class RecordLocalRepository with SafeRunnerMixin implements RecordRepository {
       );
 
   @override
+  Future<bool> removeUnlinkedRecords(List<String> validGoalIds) => runSafely(
+        () => _source.removeUnlinkedRecords(validGoalIds),
+        '$runtimeType.removeUnlinkedRecords',
+        false,
+      );
+
+  @override
   Future<bool> resetAllRecords() => runSafely(
         () => _source.resetAllRecords(),
         '$runtimeType.resetAllRecords',
@@ -33,6 +40,13 @@ class RecordLocalRepository with SafeRunnerMixin implements RecordRepository {
   Future<bool> saveRecords(String goalId, RecordMap records) => runSafely(
         () => _source.saveRecords(goalId, records),
         '$runtimeType.saveRecords',
+        false,
+      );
+
+  @override
+  Future<bool> saveAllRecords(RecordMap records) => runSafely(
+        () => _source.saveAllRecords(records),
+        '$runtimeType.saveAllRecords',
         false,
       );
 }

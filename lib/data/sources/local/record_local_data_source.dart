@@ -62,6 +62,23 @@ class RecordLocalDataSource implements RecordDataSource {
   }
 
   @override
+  Future<bool> saveAllRecords(RecordMap records) async {
+    try {
+      final prefs = await _sharedPrefsFuture;
+      for (final entry in records.asReadOnlyMap.entries) {
+        await prefs.setString(
+          '${StorageKeys.record}${entry.key}',
+          entry.value.toJson(),
+        );
+      }
+      return true;
+    } catch (e) {
+      debugPrint('$runtimeType.saveAllRecords failed: $e');
+      return false;
+    }
+  }
+
+  @override
   Future<bool> removeRecords(
     String goalId,
     RecordMap records,
@@ -73,6 +90,30 @@ class RecordLocalDataSource implements RecordDataSource {
       return isSuccess;
     } catch (e) {
       debugPrint('$runtimeType.removeRecords failed for $goalId: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> removeUnlinkedRecords(List<String> validGoalIds) async {
+    try {
+      final prefs = await _sharedPrefsFuture;
+      final allKeys = prefs.getKeys();
+      final recordKeys = allKeys.where((k) => k.startsWith(StorageKeys.record));
+      final unlinkedKeys = recordKeys.where((key) {
+        final goalId = key.substring(StorageKeys.record.length);
+        return !validGoalIds.contains(goalId);
+      }).toList();
+
+      for (final key in unlinkedKeys) {
+        await prefs.remove(key);
+      }
+      if (unlinkedKeys.isNotEmpty) {
+        debugPrint('$runtimeType.removeUnlinkedRecords removed: $unlinkedKeys');
+      }
+      return true;
+    } catch (e) {
+      debugPrint('$runtimeType.removeUnlinkedRecords failed: $e');
       return false;
     }
   }

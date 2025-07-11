@@ -2,38 +2,27 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:haenaedda/constants/storage_keys.dart';
 import 'package:haenaedda/domain/entities/date_record_set.dart';
+import 'package:haenaedda/domain/entities/record_map.dart';
+import 'package:haenaedda/domain/repositories/record_repository.dart';
 
 class RecordViewModel extends ChangeNotifier {
-  final Map<String, DateRecordSet> _recordsByGoalId = {};
-  final bool _isLoaded = false;
+  final RecordRepository _repository;
+
+  RecordViewModel(this._repository);
+
+  final RecordMap _records = RecordMap();
   final Map<String, Timer> _saveDebounceTimers = {};
   final Map<String, DateTime> _firstRecordDateCache = {};
-  late final Future<SharedPreferences> _sharedPrefsFuture;
+  bool _isLoaded = false;
 
-  RecordViewModel() {
-    _sharedPrefsFuture = SharedPreferences.getInstance();
-  }
-
-  UnmodifiableMapView<String, DateRecordSet> get recordsByGoalId =>
-      UnmodifiableMapView(_recordsByGoalId);
+  UnmodifiableMapView<String, DateRecordSet> get records =>
+      _records.asReadOnlyMap;
   bool get isLoaded => _isLoaded;
 
-  void setRecord(String goalId, DateRecordSet recordSet) {
-    _recordsByGoalId[goalId] = recordSet;
-    clearFirstRecordDateCache(goalId);
-    notifyListeners();
-  }
-
   DateRecordSet? getRecords(String goalId) {
-    return _recordsByGoalId[goalId];
-  }
-
-  DateRecordSet getOrCreateRecords(String goalId) {
-    return _recordsByGoalId.putIfAbsent(goalId, () => DateRecordSet());
+    return _records[goalId];
   }
 
   Future<bool> loadData() async {
@@ -46,23 +35,25 @@ class RecordViewModel extends ChangeNotifier {
     if (_firstRecordDateCache.containsKey(goalId)) {
       return _firstRecordDateCache[goalId];
     }
-    final recordSet = _recordsByGoalId[goalId];
+    final recordSet = _records[goalId];
     if (recordSet == null || recordSet.dateKeys.isEmpty) return null;
     final sorted = recordSet.dateKeys.map((key) => DateTime.parse(key)).toList()
       ..sort();
     final first = sorted.first;
-    final result = DateTime(first.year, first.month, 1);
-    _firstRecordDateCache[goalId] = result;
-    return result;
+    final firstDate = DateTime(first.year, first.month, 1);
+    _firstRecordDateCache[goalId] = firstDate;
+    return firstDate;
   }
 
   void toggleRecord(String goalId, DateTime date) {
-    final currentSet = getOrCreateRecords(goalId);
-    final updated = currentSet.toggle(date);
-    setRecord(goalId, updated);
+    final currentSet = _records.putIfAbsent(goalId, () => DateRecordSet());
+    final updatedSet = currentSet.toggle(date);
+    _records[goalId] = updatedSet;
+    _removeFirstRecordedDateCache(goalId);
+    notifyListeners();
   }
 
-  void saveRecordsDebounced(
+  void scheduleDebouncedSave(
     String goalId, {
     Duration duration = const Duration(milliseconds: 500),
   }) {
@@ -71,122 +62,73 @@ class RecordViewModel extends ChangeNotifier {
   }
 
   Future<void> saveRecords(String goalId) async {
-    final prefs = await _sharedPrefsFuture;
-    final recordSet = recordsByGoalId[goalId];
-    if (recordSet == null || recordSet.dateKeys.isEmpty) {
-      debugPrint('⚠️ No records to save for goalId: $goalId');
-      return;
-    }
-
-    final json = recordSet.toJson();
-    final key = '${StorageKeys.record}$goalId';
-    final success = await prefs.setString(key, json);
-    if (success) {
-      debugPrint('📦 key: $key → $json');
-    } else {
-      debugPrint('❌ Failed to save record for $goalId');
+    final isSuccess = await _repository.saveRecords(goalId, _records);
+    if (!isSuccess) {
+      debugPrint('$runtimeType.saveRecords failed for $goalId');
     }
   }
 
   Future<void> saveAllRecords() async {
-    final prefs = await _sharedPrefsFuture;
-    for (final entry in recordsByGoalId.entries) {
-      await prefs.setString(entry.key, entry.value.toJson());
+    final isSuccess = await _repository.saveAllRecords(_records);
+    if (!isSuccess) {
+      debugPrint('$runtimeType.saveAllRecords failed');
     }
-    debugPrint('💾 All records saved on app pause.');
-  }
-
-  void clearFirstRecordDateCache(String goalId) {
-    _firstRecordDateCache.remove(goalId);
   }
 
   Future<bool> removeRecords(String goalId) async {
-    try {
-      final prefs = await _sharedPrefsFuture;
-      final success = await prefs.remove(goalId);
-      if (success) {
-        _recordsByGoalId.remove(goalId);
-        clearFirstRecordDateCache(goalId);
-        notifyListeners();
-      }
-      return success;
-    } catch (e) {
-      debugPrint('Failed to remove records for goal $goalId: $e');
-      return false;
-    }
-  }
-
-  Future<void> removeAllUnlinkedRecords(List<String> validGoalIds) async {
-    _removeUnlinkedRecords(validGoalIds);
-    await removeUnlinkedRecordsFromStorage(validGoalIds);
-  }
-
-  /// Removes in-memory records that do not have a matching goal ID.
-  void _removeUnlinkedRecords(List<String> validGoalIds) {
-    final unlinkedIds = _recordsByGoalId.keys
-        .where((id) => !validGoalIds.contains(id))
-        .toList();
-
-    for (final id in unlinkedIds) {
-      _recordsByGoalId.remove(id);
-      clearFirstRecordDateCache(id);
-    }
-
-    if (unlinkedIds.isNotEmpty) {
-      debugPrint('🧹 Removed unlinked records: $unlinkedIds');
+    final isSuccess = await _repository.removeRecords(goalId, _records);
+    if (isSuccess) {
+      _removeRecordFromMemory(goalId);
       notifyListeners();
     }
+    return isSuccess;
   }
 
-  /// Removes record entries from SharedPreferences that do not match any known goal ID.
-  Future<void> removeUnlinkedRecordsFromStorage(
-    List<String> validGoalIds,
-  ) async {
-    final prefs = await _sharedPrefsFuture;
-    final allKeys = prefs.getKeys();
-    final recordKeys = allKeys.where((k) => k.startsWith(StorageKeys.record));
-
-    final unlinkedKeys = recordKeys.where((key) {
-      final goalId = key.substring(StorageKeys.record.length);
-      return !validGoalIds.contains(goalId);
-    }).toList();
-
-    for (final key in unlinkedKeys) {
-      await prefs.remove(key);
+  Future<void> removeUnlinkedRecords(List<String> validGoalIds) async {
+    _removeUnlinkedRecordsFromMemory(validGoalIds);
+    final isSuccess = await _repository.removeUnlinkedRecords(validGoalIds);
+    if (!isSuccess) {
+      debugPrint('$runtimeType.removeUnlinkedRecords failed');
     }
+  }
 
-    if (unlinkedKeys.isNotEmpty) {
-      debugPrint(
-          '🧹 Removed unlinked records from SharedPreferences: $unlinkedKeys');
-    }
+  void resetAllRecords() {
+    _records.clear();
+    notifyListeners();
   }
 
   Future<bool> _loadRecords() async {
     try {
-      final prefs = await _sharedPrefsFuture;
-      final keys = prefs.getKeys();
-      _recordsByGoalId.clear();
-
-      final recordKeys =
-          keys.where((key) => key.startsWith(StorageKeys.record));
-      for (String key in recordKeys) {
-        final dates = prefs.getString(key);
-        debugPrint('key: $key → $dates');
-
-        if (dates == null) continue;
-        debugPrint('key: $key → $dates');
-        try {
-          final goalId = key.substring(StorageKeys.record.length);
-          _recordsByGoalId[goalId] = DateRecordSet.fromJson(dates);
-        } catch (e) {
-          debugPrint('Record parsing failed for $key: $e');
-          return false;
-        }
-      }
+      final records = await _repository.loadRecords();
+      resetAllRecords();
+      _records.addAll(records);
+      _isLoaded = true;
       return true;
     } catch (e) {
-      debugPrint('Failed to load records: $e');
+      debugPrint('$runtimeType.loadRecords failed: $e');
       return false;
+    }
+  }
+
+  void _removeFirstRecordedDateCache(String goalId) {
+    _firstRecordDateCache.remove(goalId);
+  }
+
+  void _removeRecordFromMemory(String goalId) {
+    _records.remove(goalId);
+    _removeFirstRecordedDateCache(goalId);
+  }
+
+  void _removeUnlinkedRecordsFromMemory(List<String> validGoalIds) {
+    final unlinkedIds =
+        _records.keys.where((id) => !validGoalIds.contains(id)).toList();
+
+    for (final id in unlinkedIds) {
+      _removeRecordFromMemory(id);
+    }
+    if (unlinkedIds.isNotEmpty) {
+      debugPrint('$runtimeType.removeUnlinkedRecords removed: $unlinkedIds');
+      notifyListeners();
     }
   }
 }
