@@ -144,10 +144,31 @@
         "description": "A prompt shown when the user is editing an existing goal",
         "type": "text"
     },
-      
     "reorderGoals": "Reorder Goals",
         "@reorderGoals": {
             "description": "Title or label for the screen where users can change the order of their goals",
             "type": "text"
+    },
+    "goalLimitTitle": "Goal Limit Reached",
+    "@goalLimitTitle": {
+        "description": "Title shown when the user tries to add a goal but has reached the goal limit",
+        "type": "text"
+    },
+    "goalLimitMessage": "You can have up to {maxGoalCount} goals.\nRemove an existing goal to add a new one.",
+    "@goalLimitMessage": {
+        "description": "Message shown when the user has reached the goal creation limit.",
+        "type": "text",
+        "placeholders": {
+            "maxGoalCount": {
+                "type": "int",
+                "example": "5",
+                "description": "The maximum number of goals a user can have"
+            }
         }
+    },
+    "ok": "OK",
+    "@ok": {
+        "description": "Generic confirmation button for dismissing dialogs without performing an action",
+        "type": "text"
+    }
 }
