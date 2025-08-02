@@ -3,6 +3,7 @@ enum AddGoalResult {
   emptyInput,
   duplicate,
   saveFailed,
+  limitExceeded,
 }
 
 enum RenameGoalResult {

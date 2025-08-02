@@ -3,23 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:haenaedda/common/utils/goal_list_helper.dart';
 import 'package:haenaedda/domain/entities/goal.dart';
 import 'package:haenaedda/domain/enums/goal_operation_result.dart';
+import 'package:haenaedda/domain/policies/goal_policy.dart';
 import 'package:haenaedda/domain/repositories/goal_repository.dart';
 import 'package:haenaedda/extensions/iterable_extensions.dart';
 
 class GoalViewModel extends ChangeNotifier {
   final GoalRepository _goalRepository;
+  final GoalPolicy _goalPolicy;
 
   final List<Goal> _goals = [];
   List<Goal> _sortedGoals = [];
 
   bool _isLoaded = false;
 
-  GoalViewModel(this._goalRepository);
+  GoalViewModel(this._goalRepository, this._goalPolicy);
 
   List<Goal> get goals => _goals;
   List<Goal> get sortedGoals => _sortedGoals;
   bool get isLoaded => _isLoaded;
   bool get hasNoGoal => goals.isEmpty;
+  bool get isAddable => goals.length < _goalPolicy.maxGoalCount;
 
   Goal? getGoalById(String id) {
     return goals.firstWhereOrNull((g) => g.id == id);
@@ -64,6 +67,9 @@ class GoalViewModel extends ChangeNotifier {
   }
 
   Future<({AddGoalResult result, Goal? goal})> addGoal(String title) async {
+    if (goals.length >= _goalPolicy.maxGoalCount) {
+      return (result: AddGoalResult.limitExceeded, goal: null);
+    }
     final trimmedTitle = title.trim();
     if (trimmedTitle.isEmpty) {
       return (result: AddGoalResult.emptyInput, goal: null);
