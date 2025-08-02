@@ -144,9 +144,32 @@
         "description": "A prompt shown when the user is editing an existing goal",
         "type": "text"
         },
-        "reorderGoals": "목표 순서 변경",
-        "@reorderGoals": {
-            "description": "Title or label for the screen where users can change the order of their goals",
-            "type": "text"
+    "reorderGoals": "목표 순서 변경",
+    "@reorderGoals": {
+        "description": "Title or label for the screen where users can change the order of their goals",
+        "type": "text"
+    },
+    "goalLimitTitle": "목표 개수 제한",
+    "@goalLimitTitle": {
+        "description": "Title shown when the user tries to add a goal but has reached the goal limit",
+        "type": "text"
+    },
+    "goalLimitMessage": "목표는 최대 {maxGoalCount}개까지만 등록할 수 있어요.\n새 목표를 추가하려면 기존 목표를 삭제해 주세요.",
+    "@goalLimitMessage": {
+        "description": "Message shown when the user has reached the goal creation limit.",
+        "type": "text",
+        "placeholders": {
+            "maxGoalCount": {
+                "type": "int",
+                "example": "5",
+                "description": "The maximum number of goals a user can have"
+            }
         }
+    },
+    "ok": "OK",
+    "@ok": {
+        "description": "Generic confirmation button for dismissing dialogs without performing an action",
+        "type": "text"
     }
+}
+

@@ -46,7 +46,7 @@ ButtonStyle getNeutralButtonStyle(BuildContext context) {
       ? AppColors.darkSurfaceContainerHigh
       : AppColors.surfaceContainerLow;
   final foregroundColor =
-      isDark ? AppColors.darkOnSurface : AppColors.onSurfaceVariant;
+      isDark ? AppColors.darkOnSurface : AppColors.onSurface;
   return getTextButtonStyle(
     backgroundColor: backgroundColor,
     foregroundColor: foregroundColor,
