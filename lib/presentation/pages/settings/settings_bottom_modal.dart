@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:haenaedda/constants/dimensions.dart';
 import 'package:haenaedda/domain/entities/goal.dart';
 import 'package:haenaedda/domain/enums/goal_setting_action.dart';
 import 'package:haenaedda/domain/enums/reset_type.dart';
+import 'package:haenaedda/domain/policies/default_goal_policy.dart';
 import 'package:haenaedda/gen_l10n/app_localizations.dart';
 import 'package:haenaedda/presentation/handlers/reset_goal_handler.dart';
 import 'package:haenaedda/presentation/pages/settings/neumorphic_settings_tile.dart';
+import 'package:haenaedda/presentation/view_models/goal_view_models.dart';
 import 'package:haenaedda/presentation/widgets/bottom_right_button.dart';
+import 'package:haenaedda/presentation/widgets/dialogs/one_button_dialog.dart';
 
 class SettingsBottomModal extends StatelessWidget {
   final Goal goal;
@@ -18,6 +22,9 @@ class SettingsBottomModal extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
+    final isUnderGoalLimit =
+        context.select((GoalViewModel viewModel) => (viewModel.isAddable));
+
     return SafeArea(
       child: Stack(
         alignment: Alignment.center,
@@ -43,8 +50,7 @@ class SettingsBottomModal extends StatelessWidget {
                 ),
                 NeumorphicSettingsTile(
                   title: l10n.addGoal,
-                  onTap: () =>
-                      Navigator.of(context).pop(GoalSettingAction.addGoal),
+                  onTap: () => _handleAddGoalTap(context, isUnderGoalLimit),
                 ),
                 NeumorphicSettingsTile(
                   title: l10n.menuResetRecordsOnly,
@@ -74,5 +80,19 @@ class SettingsBottomModal extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _handleAddGoalTap(BuildContext context, bool canAdd) async {
+    final l10n = AppLocalizations.of(context)!;
+    if (canAdd) {
+      showOneButtonDialog(
+        context,
+        l10n.goalLimitTitle,
+        l10n.goalLimitMessage(defaultGoalPolicy.maxGoalCount),
+        l10n.ok,
+      );
+      return;
+    }
+    Navigator.of(context).pop(GoalSettingAction.addGoal);
   }
 }
